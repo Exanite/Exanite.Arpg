@@ -191,7 +191,8 @@ namespace UniRx.Async
                     }
                     else if (current is IEnumerator e3)
                     {
-                        while (e3.MoveNext())
+                        var e4 = ConsumeEnumerator(e3);
+                        while (e4.MoveNext())
                         {
                             yield return null;
                         }
@@ -229,14 +230,6 @@ namespace UniRx.Async
                         break;
                     }
                 };
-            }
-
-            static IEnumerator UnwrapEnumerator(IEnumerator enumerator)
-            {
-                while (enumerator.MoveNext())
-                {
-                    yield return null;
-                }
             }
 
             static IEnumerator UnwrapWaitAsyncOperation(AsyncOperation asyncOperation)
