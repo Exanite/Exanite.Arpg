@@ -1,5 +1,6 @@
 ﻿using Exanite.Core.Editor.Helpers;
 using Exanite.Core.Extensions;
+using Exanite.MapGeneration.Extensions;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -27,28 +28,37 @@ namespace Exanite.MapGeneration.Editor
 
             HandlesHelpers.DrawRectangle(TargetTile.transform.position, TargetTile.transform.rotation, TargetTile.transform.lossyScale);
 
-            for (int s = 0; s < Tile.Sides; s++)
+            for (int x = 0; x < Tile.Sides; x++) // draws arrows starting from PositiveZ side going clockwise
             {
-                var baseRotation = Quaternion.Euler(Vector3.up * 90 * s);
+                var baseRotation = Quaternion.Euler(Vector3.up * 90 * x);
                 var basePosition = baseRotation * Vector3.forward * 0.5f;
                 var tangent = Vector3.Cross(Vector3.up, basePosition.normalized);
 
-                for (int c = 0; c < Tile.ConnectionsPerSide; c++)
+                for (int y = 0; y < Tile.ConnectionsPerSide; y++)
                 {
-                    var position = basePosition + GetOffset(Tile.ConnectionsPerSide, c) * tangent;
+                    // rotate by the inverse of the target tile's rotation to cancel out TransformRotation's y-axis rotation
+                    // then flip by the target tile's flip axis to cancel out TransformPoint applying its own scale
+                    var side = (TileSide)x;
+                    side = side.Rotate(TargetTile.Rotation.Inverse());
+                    side = side.Flip(TargetTile.Flip);
+
+                    // if only axis is flipped (none or both flips cancel out), reverse connections
+                    bool onlyOneAxisFlipped = TargetTile.Flip.HasFlag(TileFlip.FlipX) != TargetTile.Flip.HasFlag(TileFlip.FlipZ);
+                    int connection = onlyOneAxisFlipped ? (int)MathHelper.Remap(y, 0f, 2f, 2f, 0f) : y;
+
+                    var position = basePosition + GetOffset(Tile.ConnectionsPerSide, y) * tangent;
                     position = TargetTile.transform.TransformPoint(position);
 
                     var rotation = TargetTile.transform.TransformRotation(baseRotation);
 
-                    Handles.color = TargetTile.GetConnection((TileSide)s, c) ? ConnectedColor : DisconnectedColor;
+                    Handles.color = TargetTile.GetConnection(side, connection) ? ConnectedColor : DisconnectedColor;
 
-                    Handles.Label(position, $"{(s, c)}");
                     bool clicked = Handles.Button(position, rotation, 0.5f, 0.5f, Handles.ArrowHandleCap);
 
                     if (clicked)
                     {
-                        bool current = TargetTile.GetConnection((TileSide)s, c);
-                        TargetTile.SetConnection(!current, (TileSide)s, c);
+                        bool current = TargetTile.GetConnection(side, connection);
+                        TargetTile.SetConnection(!current, side, connection);
 
                         ConnectionRulesProperty.ValueEntry.WeakSmartValue = TargetTile.Connections;
                     }
