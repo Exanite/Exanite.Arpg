@@ -2,6 +2,7 @@
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
+using UnityEngine;
 
 namespace Exanite.MapGeneration
 {
@@ -10,10 +11,43 @@ namespace Exanite.MapGeneration
         public const int Sides = 4;
         public const int ConnectionsPerSide = 3;
 
-        [ShowInInspector, EnumToggleButtons, OdinSerialize] public TileFlip Flip { get; set; }
-        [ShowInInspector, EnumPaging, OdinSerialize] public TileRotation Rotation { get; set; }
+        [OdinSerialize, HideInInspector] private TileFlip flip;
+        [OdinSerialize, HideInInspector] private TileRotation rotation;
 
-        [OdinSerialize] public bool[,] Connections { get; set; } = new bool[Sides, ConnectionsPerSide];
+        [ShowInInspector, EnumToggleButtons]
+        public TileFlip Flip
+        {
+            get
+            {
+                return flip;
+            }
+            set
+            {
+                flip = value;
+
+                transform.localScale = new Vector3(
+                    flip.HasFlag(TileFlip.FlipX) ? -1 : 1,
+                    1,
+                    flip.HasFlag(TileFlip.FlipZ) ? -1 : 1);
+            }
+        }
+
+        [ShowInInspector, EnumPaging]
+        public TileRotation Rotation
+        {
+            get
+            {
+                return rotation;
+            }
+            set
+            {
+                rotation = value;
+
+                transform.localRotation = Quaternion.Euler(0, (int)rotation * 90, 0);
+            }
+        }
+
+        [OdinSerialize, HideInInspector] public bool[,] Connections { get; set; } = new bool[Sides, ConnectionsPerSide];
 
         public bool GetConnection(TileSide side, int connection)
         {
