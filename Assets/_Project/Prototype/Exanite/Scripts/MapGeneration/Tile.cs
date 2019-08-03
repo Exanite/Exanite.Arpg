@@ -11,8 +11,8 @@ namespace Exanite.MapGeneration
         public const int Sides = 4;
         public const int ConnectionsPerSide = 3;
 
-        [OdinSerialize, HideInInspector] private TileFlip flip;
-        [OdinSerialize, HideInInspector] private TileRotation rotation;
+        [SerializeField, HideInInspector] private TileFlip flip;
+        [SerializeField, HideInInspector] private TileRotation rotation;
 
         [ShowInInspector, EnumToggleButtons]
         public TileFlip Flip
