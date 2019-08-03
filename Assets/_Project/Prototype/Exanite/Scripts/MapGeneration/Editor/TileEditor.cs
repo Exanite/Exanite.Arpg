@@ -1,31 +1,28 @@
 ﻿using Exanite.Core.Editor.Helpers;
 using Exanite.Core.Extensions;
 using Exanite.MapGeneration.Extensions;
-using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Exanite.MapGeneration.Editor
 {
     [CustomEditor(typeof(Tile))]
-    public class TileEditor : OdinEditor
+    public class TileEditor : UnityEditor.Editor
     {
         private readonly Color ConnectedColor = Color.green;
         private readonly Color DisconnectedColor = Color.white;
 
         private Tile TargetTile { get; set; }
-        private InspectorProperty ConnectionRulesProperty { get; set; }
 
-        protected override void OnEnable()
+        private void OnEnable()
         {
             TargetTile = target as Tile;
-            ConnectionRulesProperty = Tree.GetPropertyAtPath("ConnectionRules");
         }
 
         protected virtual void OnSceneGUI()
         {
-            Tree.UpdateTree();
-
             HandlesHelpers.DrawRectangle(TargetTile.transform.position, TargetTile.transform.rotation, TargetTile.transform.lossyScale);
 
             for (int x = 0; x < Tile.Sides; x++) // draws arrows starting from PositiveZ side going clockwise
@@ -60,12 +57,10 @@ namespace Exanite.MapGeneration.Editor
                         bool current = TargetTile.GetConnection(side, connection);
                         TargetTile.SetConnection(!current, side, connection);
 
-                        ConnectionRulesProperty.ValueEntry.WeakSmartValue = TargetTile.Connections;
+                        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
                     }
                 }
             }
-
-            Tree.ApplyChanges();
         }
 
         protected float GetOffset(int connections, int index)
