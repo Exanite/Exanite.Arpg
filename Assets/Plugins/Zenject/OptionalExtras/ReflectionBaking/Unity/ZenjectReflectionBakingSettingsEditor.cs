@@ -116,7 +116,7 @@ namespace Zenject.ReflectionBaking
                     ReflectionBakingInternalUtil.TryForceUnityFullCompile();
                 }
 
-#if !UNITY_2018_1_OR_NEWER
+#if !UNITY_2018
                 if (_isEnabledInEditor.boolValue)
                 {
                     EditorGUILayout.HelpBox(

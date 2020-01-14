@@ -120,33 +120,14 @@
             Installed Odin Inspector Version Info.
             </summary>
         </member>
+        <member name="P:Sirenix.OdinInspector.Editor.OdinInspectorVersion.BuildName">
+            <summary>
+            Gets the name of the current running version of Odin Inspector.
+            </summary>
+        </member>
         <member name="P:Sirenix.OdinInspector.Editor.OdinInspectorVersion.Version">
             <summary>
             Gets the current running version of Odin Inspector.
-            </summary>
-        </member>
-        <member name="T:Sirenix.OdinInspector.Editor.UnityEditorEventUtility">
-            <summary>
-            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
-            which can be done because the people at Unity didn't know what events were once upon a time.
-            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
-            </summary>
-        </member>
-        <member name="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayActionThreadSafe(System.Action)">
-            <summary>
-            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
-            which can be done because the people at Unity didn't know what events were once upon a time.
-            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
-            <para />
-            As opposed to <see cref="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayAction(System.Action)"/>, this method is safe to call from any thread, and will
-            delay the actual subscription to a safe time.
-            </summary>
-        </member>
-        <member name="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayAction(System.Action)">
-            <summary>
-            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
-            which can be done because the people at Unity didn't know what events were once upon a time.
-            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
             </summary>
         </member>
         <member name="T:Sirenix.OdinInspector.Editor.PrefabModificationHandler">
@@ -3228,6 +3209,20 @@
             The attribute can be applied to Odin drawers, Odin property resolvers and Odin attribute processor types.
             </summary>
         </member>
+        <member name="T:Sirenix.OdinInspector.Editor.Validation.NoValidationInInspectorAttribute">
+            <summary>
+            Put this attribute on a validator class to prevent the ValidatorDrawer from running that validator in the inspector.
+            Typically you would use this for a validation-related attribute that has its own, complex custom drawer that should
+            handle the validation and error/warning drawing while the inspector is being drawn, but still needs a validator to 
+            run for the project validation scans.
+            </summary>
+        </member>
+        <member name="T:Sirenix.OdinInspector.Editor.Validation.RegisterValidatorAttribute">
+            <summary>
+            Apply this to an assembly to register validators for the validation system.
+            This enables locating of all relevant validator types very quickly.
+            </summary>
+        </member>
         <member name="T:Sirenix.OdinInspector.Editor.OdinGettingStartedWindow">
             <summary>
             The Odin Getting Started Window
@@ -3405,12 +3400,12 @@
             <param name="name">The name of the menu item.</param>
             <param name="value">The instance the value item represents.</param>
         </member>
-        <member name="E:Sirenix.OdinInspector.Editor.OdinMenuItem.OnDrawItem">
+        <member name="F:Sirenix.OdinInspector.Editor.OdinMenuItem.OnDrawItem">
             <summary>
             Occurs right after the menu item is done drawing, and right before mouse input is handles so you can take control of that.
             </summary>
         </member>
-        <member name="E:Sirenix.OdinInspector.Editor.OdinMenuItem.OnRightClick">
+        <member name="F:Sirenix.OdinInspector.Editor.OdinMenuItem.OnRightClick">
             <summary>
             Occurs when the user has right-clicked the menu item.
             </summary>
@@ -3619,6 +3614,11 @@
         <member name="F:Sirenix.OdinInspector.Editor.OdinMenuStyle.Offset">
             <summary>
             The global offset of the menu item content
+            </summary>
+        </member>
+        <member name="F:Sirenix.OdinInspector.Editor.OdinMenuStyle.LabelVerticalOffset">
+            <summary>
+            The vertical offset of the menu item label
             </summary>
         </member>
         <member name="F:Sirenix.OdinInspector.Editor.OdinMenuStyle.IndentAmount">
@@ -4935,6 +4935,11 @@
         <member name="P:Sirenix.OdinInspector.Editor.GeneralDrawerConfig.ExpandFoldoutByDefault">
             <summary>
             If set to true, most foldouts throughout the inspector will be expanded by default.
+            </summary>
+        </member>
+        <member name="P:Sirenix.OdinInspector.Editor.GeneralDrawerConfig.ShowButtonResultsByDefault">
+            <summary>
+            If set to true, buttons will show the result values from invoking them in the inspector by default.
             </summary>
         </member>
         <member name="P:Sirenix.OdinInspector.Editor.GeneralDrawerConfig.GUIFoldoutAnimationDuration">
@@ -6571,16 +6576,6 @@
         <member name="M:Sirenix.OdinInspector.Editor.OdinEditor.DrawTree">
             <summary>
             Draws the property tree.
-            </summary>
-        </member>
-        <member name="M:Sirenix.OdinInspector.Editor.OdinEditor.GetInspectorWindow">
-            <summary>
-            Not yet documented.
-            </summary>
-        </member>
-        <member name="M:Sirenix.OdinInspector.Editor.OdinEditor.MockUnityGenericInspector">
-            <summary>
-            Not yet documented.
             </summary>
         </member>
         <member name="M:Sirenix.OdinInspector.Editor.OdinEditor.OnDisable">
