@@ -111,6 +111,26 @@ namespace Zenject
             FireId(null, signal);
         }
 
+        public bool IsSignalDeclared<TSignal>()
+        {
+            return IsSignalDeclared(typeof(TSignal), null);
+        }
+
+        public bool IsSignalDeclared<TSignal>(object identifier)
+        {
+            return IsSignalDeclared(typeof(TSignal), identifier);
+        }
+
+        public bool IsSignalDeclared(Type signalType)  
+        {
+            return IsSignalDeclared(signalType, null);
+        }
+
+        public bool IsSignalDeclared(Type signalType, object identifier) 
+        {
+            return GetDeclaration(signalType, identifier, false) != null;
+        }
+
         public void TryFireId<TSignal>(object identifier, TSignal signal)
         {
             var declaration = GetDeclaration(typeof(TSignal), identifier, false);
