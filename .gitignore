@@ -4,8 +4,7 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
-Assets/AssetStoreTools/*
-Recordings/*
+Assets/AssetStoreTools*
 
 # Visual Studio cache directory
 .vs/
@@ -50,4 +49,4 @@ Thumbs.db
 *.log
 
 # Automatically generated backup files
-*.blend1*
+*.blend1

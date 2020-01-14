@@ -20,7 +20,7 @@ namespace Sirenix.Utilities
         private const string DEFINE = "ODIN_INSPECTOR";
 
         [InitializeOnLoadMethod]
-        private static void AssureScriptingDefineSymbol()
+        private static void EnsureScriptingDefineSymbol()
         {
             var currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
 

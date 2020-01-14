@@ -24,7 +24,7 @@ namespace Zenject
         }
 
         public DiContainer CreateSubContainer(
-            List<TypeValuePair> args, InjectContext parentContext)
+            List<TypeValuePair> args, InjectContext parentContext, out Action injectAction)
         {
             bool shouldMakeActive;
             var gameObj = CreateGameObject(out shouldMakeActive);
@@ -33,19 +33,23 @@ namespace Zenject
 
             AddInstallers(args, context);
 
-            _container.Inject(context);
+            context.Install(_container);
 
-            if (shouldMakeActive && !_container.IsValidating)
+            injectAction = () => 
             {
-#if ZEN_INTERNAL_PROFILING
-                using (ProfileTimers.CreateTimedBlock("User Code"))
-#endif
-                {
-                    gameObj.SetActive(true);
-                }
-            }
+                // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
+                _container.Inject(context);
 
-            // Note: We don't need to call ResolveRoots here because GameObjectContext does this for us
+                if (shouldMakeActive && !_container.IsValidating)
+                {
+#if ZEN_INTERNAL_PROFILING
+                    using (ProfileTimers.CreateTimedBlock("User Code"))
+#endif
+                    {
+                        gameObj.SetActive(true);
+                    }
+                }
+            };
 
             return context.Container;
         }
