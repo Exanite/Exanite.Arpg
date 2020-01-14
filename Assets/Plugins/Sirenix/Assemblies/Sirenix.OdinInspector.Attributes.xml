@@ -367,6 +367,11 @@
             If the button contains parameters, you can disable the foldout it creates by setting this to true.
             </summary>
         </member>
+        <member name="P:Sirenix.OdinInspector.ButtonAttribute.DrawResult">
+            <summary>
+            If the button has a return type, set this to false to not draw the result. Default value is true.
+            </summary>
+        </member>
         <member name="M:Sirenix.OdinInspector.ButtonAttribute.#ctor">
             <summary>
             Creates a button in the inspector named after the method.
@@ -2460,7 +2465,8 @@
         </member>
         <member name="F:Sirenix.OdinInspector.DisplayAsStringAttribute.Overflow">
             <summary>
-            If <c>true</c> the string will overflow to multiple lines, if there's not enough space when drawn.
+            If <c>true</c>, the string will overflow past the drawn space and be clipped when there's not enough space for the text.
+            If <c>false</c> the string will expand to multiple lines, if there's not enough space when drawn.
             </summary>
         </member>
         <member name="M:Sirenix.OdinInspector.DisplayAsStringAttribute.#ctor">
@@ -2472,7 +2478,7 @@
             <summary>
             Displays the property as a string in the inspector.
             </summary>
-            <param name="overflow">Value indicating if the string should overflow to multiple lines or not.</param>
+            <param name="overflow">Value indicating if the string should overflow past the available space, or expand to multiple lines when there's not enough horizontal space.</param>
         </member>
         <member name="T:Sirenix.OdinInspector.DontApplyToListElementsAttribute">
             <summary>
@@ -3112,6 +3118,11 @@
         <member name="F:Sirenix.OdinInspector.InlineEditorAttribute.ObjectFieldMode">
             <summary>
             How the InlineEditor attribute drawer should draw the object field.
+            </summary>
+        </member>
+        <member name="F:Sirenix.OdinInspector.InlineEditorAttribute.DisableGUIForVCSLockedAssets">
+            <summary>
+            Whether to set GUI.enabled = false when drawing an editor for an asset that is locked by source control. Defaults to true.
             </summary>
         </member>
         <member name="M:Sirenix.OdinInspector.InlineEditorAttribute.#ctor(Sirenix.OdinInspector.InlineEditorModes,Sirenix.OdinInspector.InlineEditorObjectFieldModes)">

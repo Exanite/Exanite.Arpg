@@ -2210,6 +2210,7 @@
         <member name="P:Sirenix.Utilities.Editor.GUIHelper.ContextWidth">
             <summary>
             Gets the current editor gui context width. Only set these if you know what it does.
+            Setting this has been removed. Use PushContextWidth and PopContextWidth instead.
             </summary>
         </member>
         <member name="P:Sirenix.Utilities.Editor.GUIHelper.BetterLabelWidth">
@@ -2316,6 +2317,18 @@
             Gets the playmode color tint.
             </summary>
             <returns>The playmode color tint.</returns>
+        </member>
+        <member name="M:Sirenix.Utilities.Editor.GUIHelper.PushContextWidth(System.Single)">
+            <summary>
+            Pushes a context width to the context width stack.
+            Remember to pop the value again with <see cref="M:Sirenix.Utilities.Editor.GUIHelper.PopContextWidth"/>.
+            </summary>
+            <param name="width">The width to push.</param>
+        </member>
+        <member name="M:Sirenix.Utilities.Editor.GUIHelper.PopContextWidth">
+            <summary>
+            Pops a value pushed by <see cref="M:Sirenix.Utilities.Editor.GUIHelper.PushContextWidth(System.Single)"/>.
+            </summary>
         </member>
         <member name="M:Sirenix.Utilities.Editor.GUIHelper.PushColor(UnityEngine.Color,System.Boolean)">
             <summary>
@@ -5438,6 +5451,11 @@
             Expand foldouts by default.
             </summary>
         </member>
+        <member name="P:Sirenix.Utilities.Editor.SirenixEditorGUI.ShowButtonResultsByDefault">
+            <summary>
+            Show buttons results by default.
+            </summary>
+        </member>
         <member name="M:Sirenix.Utilities.Editor.SirenixEditorGUI.ObjectField(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.Object,System.Type,System.Boolean,System.Boolean)">
             <summary>
             Draws a GUI field for objects.
@@ -6811,12 +6829,12 @@
             Toolbar button selected style.
             </summary>
         </member>
-        <member name="P:Sirenix.Utilities.Editor.SirenixGUIStyles.ToolbarSeachCancelButton">
+        <member name="P:Sirenix.Utilities.Editor.SirenixGUIStyles.ToolbarSearchCancelButton">
             <summary>
             Toolbar search cancel button style.
             </summary>
         </member>
-        <member name="P:Sirenix.Utilities.Editor.SirenixGUIStyles.ToolbarSeachTextField">
+        <member name="P:Sirenix.Utilities.Editor.SirenixGUIStyles.ToolbarSearchTextField">
             <summary>
             Toolbar search field style.
             </summary>
@@ -7157,11 +7175,12 @@
             Gets all assets of the specified type.
             </summary>
         </member>
-        <member name="M:Sirenix.Utilities.Editor.AssetUtilities.GetAllAssetsOfType(System.Type)">
+        <member name="M:Sirenix.Utilities.Editor.AssetUtilities.GetAllAssetsOfType(System.Type,System.String)">
             <summary>
             Gets all assets of the specified type.
             </summary>
             <param name="type">The type of assets to find.</param>
+            <param name="folderPath">The asset folder path.</param>
         </member>
         <member name="M:Sirenix.Utilities.Editor.AssetUtilities.GetAllAssetsOfTypeWithProgress(System.Type,System.String)">
             <summary>
@@ -7417,6 +7436,158 @@
             <param name="sprite"></param>
             <returns></returns>
         </member>
+        <member name="T:Sirenix.Utilities.AssemblyTypeFlags">
+            <summary>
+            AssemblyTypeFlags is a bitmask used to filter types and assemblies related to Unity.
+            </summary>
+            <seealso cref="T:Sirenix.Utilities.AssemblyUtilities"/>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.None">
+            <summary>
+            Excludes all types.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.UserTypes">
+            <summary>
+            UserTypes includes all custom user scripts that are not located in an editor or plugin folder.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.PluginTypes">
+            <summary>
+            PluginTypes includes all types located in the plugins folder and are not located in an editor folder.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.UnityTypes">
+            <summary>
+            UnityTypes includes all types depended on UnityEngine and from UnityEngine, except editor, plugin and user types.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.UserEditorTypes">
+            <summary>
+            UserEditorTypes includes all custom user scripts that are located in an editor folder but not in a plugins folder.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.PluginEditorTypes">
+            <summary>
+            PluginEditorTypes includes all editor types located in the plugins folder.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.UnityEditorTypes">
+            <summary>
+            UnityEditorTypes includes all editor types that are not user editor types nor plugin editor types.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.OtherTypes">
+            <summary>
+            OtherTypes includes all other types that are not depended on UnityEngine or UnityEditor.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.CustomTypes">
+            <summary>
+            CustomTypes includes includes all types manually added to the Unity project.
+            This includes UserTypes, UserEditorTypes, PluginTypes and PluginEditorTypes.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.GameTypes">
+            <summary>
+            GameTypes includes all assemblies that are likely to be included in builds.
+            This includes UserTypes, PluginTypes, UnityTypes and OtherTypes.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.EditorTypes">
+            <summary>
+            EditorTypes includes UserEditorTypes, PluginEditorTypes and UnityEditorTypes.
+            </summary>
+        </member>
+        <member name="F:Sirenix.Utilities.AssemblyTypeFlags.All">
+            <summary>
+            All includes UserTypes, PluginTypes, UnityTypes, UserEditorTypes, PluginEditorTypes, UnityEditorTypes and OtherTypes.
+            </summary>
+        </member>
+        <member name="T:Sirenix.Utilities.AssemblyUtilities">
+            <summary>
+            A utility class for finding types in various asssembly.
+            </summary>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.#cctor">
+            <summary>
+            Initializes the <see cref="T:Sirenix.Utilities.AssemblyUtilities"/> class.
+            </summary>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.Load(System.Reflection.Assembly[])">
+            <summary>
+            Re-scans the entire AppDomain.
+            </summary>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetAllAssemblies">
+            <summary>
+            Gets an <see cref="T:Sirenix.Utilities.ImmutableList"/> of all assemblies in the current <see cref="T:System.AppDomain"/>.
+            </summary>
+            <returns>An <see cref="T:Sirenix.Utilities.ImmutableList"/> of all assemblies in the current <see cref="T:System.AppDomain"/>.</returns>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetAssemblyTypeFlag(System.Reflection.Assembly)">
+            <summary>
+            Gets the <see cref="T:Sirenix.Utilities.AssemblyTypeFlags"/> for a given assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>The <see cref="T:Sirenix.Utilities.AssemblyTypeFlags"/> for a given assembly.</returns>
+            <exception cref="T:System.NullReferenceException"><paramref name="assembly"/> is null.</exception>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetTypeByCachedFullName(System.String)">
+            <summary>
+            Gets the type.
+            </summary>
+            <param name="fullName">The full name of the type without any assembly information.</param>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetType(System.String)">
+            <summary>
+            Gets the type.
+            </summary>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.IsDependentOn(System.Reflection.Assembly,System.Reflection.Assembly)">
+            <summary>
+            Determines whether an assembly is depended on another assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <param name="otherAssembly">The other assembly.</param>
+            <returns>
+              <c>true</c> if <paramref name="assembly"/> has a reference in <paramref name="otherAssembly"/> or <paramref name="assembly"/> is the same as <paramref name="otherAssembly"/>.
+            </returns>
+            <exception cref="T:System.NullReferenceException"><paramref name="assembly"/> is null.</exception>
+            <exception cref="T:System.NullReferenceException"><paramref name="otherAssembly"/> is null.</exception>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.IsDynamic(System.Reflection.Assembly)">
+            <summary>
+            Determines whether the assembly module is a of type <see cref="T:System.Reflection.Emit.ModuleBuilder"/>.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>
+              <c>true</c> if the specified assembly of type <see cref="T:System.Reflection.Emit.ModuleBuilder"/>; otherwise, <c>false</c>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">assembly</exception>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetAssemblyDirectory(System.Reflection.Assembly)">
+            <summary>
+            Gets the full file path to a given assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>The full file path to a given assembly, or <c>Null</c> if no file path was found.</returns>
+            <exception cref="T:System.NullReferenceException"><paramref name="assembly"/> is Null.</exception>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetAssemblyFilePath(System.Reflection.Assembly)">
+            <summary>
+            Gets the full directory path to a given assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>The full directory path in which a given assembly is located, or <c>Null</c> if no file path was found.</returns>
+        </member>
+        <member name="M:Sirenix.Utilities.AssemblyUtilities.GetTypes(Sirenix.Utilities.AssemblyTypeFlags)">
+            <summary>
+            Get types from the current AppDomain with a specified <see cref="T:Sirenix.Utilities.AssemblyTypeFlags"/> filter.
+            </summary>
+            <param name="assemblyTypeFlags">The <see cref="T:Sirenix.Utilities.AssemblyTypeFlags"/> filters.</param>
+            <returns>Types from the current AppDomain with the specified <see cref="T:Sirenix.Utilities.AssemblyTypeFlags"/> filters.</returns>
+        </member>
         <member name="T:Sirenix.Utilities.MemberFinderExtensions">
             <summary>
             Not yet documented.
@@ -7654,6 +7825,36 @@
         <member name="P:Sirenix.OdinInspector.Editor.IResizableColumn.Resizable">
             <summary>
             Gets a value indicating whether this <see cref="T:Sirenix.OdinInspector.Editor.IResizableColumn"/> is resizable.
+            </summary>
+        </member>
+        <member name="T:Sirenix.OdinInspector.Editor.UnityEditorEventUtility">
+            <summary>
+            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
+            which can be done because the people at Unity didn't know what events were once upon a time.
+            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
+            </summary>
+        </member>
+        <member name="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayActionThreadSafe(System.Action)">
+            <summary>
+            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
+            which can be done because the people at Unity didn't know what events were once upon a time.
+            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
+            <para />
+            As opposed to <see cref="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayAction(System.Action)"/>, this method is safe to call from any thread, and will
+            delay the actual subscription to a safe time.
+            </summary>
+        </member>
+        <member name="M:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.DelayAction(System.Action)">
+            <summary>
+            Sometimes, an idiot overrides a delay action subscription to <see cref="F:UnityEditor.EditorApplication.delayCall"/>,
+            which can be done because the people at Unity didn't know what events were once upon a time.
+            This method subscribes to a lot of different callbacks, in the hopes of catching at least one.
+            </summary>
+        </member>
+        <member name="E:Sirenix.OdinInspector.Editor.UnityEditorEventUtility.EditorApplication_delayCall">
+            <summary>
+            In 2020.1, Unity changed EditorApplication.delayCall from a field to an event, meaning 
+            we now have to use reflection to access it consistently across all versions of Unity.
             </summary>
         </member>
     </members>
