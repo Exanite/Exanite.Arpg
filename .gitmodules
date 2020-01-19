@@ -4,3 +4,6 @@
 [submodule "Assets/Exanite.TileSystem"]
 	path = Assets/Exanite.TileSystem
 	url = https://Exanite@bitbucket.org/Exanite/exanite.tilesystem.git
+[submodule "Assets/Exanite.AssetRegistry"]
+	path = Assets/Exanite.AssetRegistry
+	url = https://Exanite@bitbucket.org/Exanite/exanite.assetregistry.git
