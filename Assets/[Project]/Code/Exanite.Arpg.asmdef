@@ -1,0 +1,22 @@
+{
+    "name": "Exanite.Arpg",
+    "references": [
+        "Zenject"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "Serilog.dll",
+        "Serilog.Enrichers.Thread.dll",
+        "Serilog.Sinks.File.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
