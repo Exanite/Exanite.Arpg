@@ -6,7 +6,7 @@ using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using UnityEngine;
 
-namespace Prototype
+namespace Exanite.Arpg.Logging
 {
     /// <summary>
     /// Writes <see cref="LogEvent"/>s to the Unity Console
