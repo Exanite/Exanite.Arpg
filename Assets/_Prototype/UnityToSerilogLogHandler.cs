@@ -26,7 +26,7 @@ namespace Prototype
             inner = Debug.unityLogger.logHandler;
             Debug.unityLogger.logHandler = this;
 
-            log.ForContext<UnityToSerilogLogHandler>().Information("Intercepting Debug.Log messages");
+            log.ForContext<UnityToSerilogLogHandler>().Debug("Intercepting Debug.Log messages");
         }
 
         /// <summary>
