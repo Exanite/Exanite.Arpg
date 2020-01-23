@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HideSerializationCautionaryMessage: 1
   HidePrefabCautionaryMessage: 1
-  HideOdinSerializeAttributeWarningMessages: 0
+  HideOdinSerializeAttributeWarningMessages: 1
   HideNonSerializedShowInInspectorWarningMessages: 0
   buildSerializationFormat: 0
   editorSerializationFormat: 2
