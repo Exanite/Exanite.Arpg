@@ -1,9 +1,12 @@
 {
     "name": "Prototype",
     "references": [
-        "Zenject"
+        "Zenject",
+        "Exanite.AssetRegistry",
+        "Exanite.Core",
+        "Exanite.TileSystem",
+        "UniRx.Async"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -18,5 +21,6 @@
         "Zenject-usage.dll"
     ],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
