@@ -1,9 +1,11 @@
 {
     "name": "Exanite.Arpg",
     "references": [
-        "Zenject"
+        "Zenject",
+        "Exanite.AssetRegistry",
+        "Exanite.Core",
+        "Exanite.TileSystem"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -18,5 +20,6 @@
         "Zenject-usage.dll"
     ],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
