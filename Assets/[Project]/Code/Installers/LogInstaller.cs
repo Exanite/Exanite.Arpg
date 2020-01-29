@@ -20,7 +20,7 @@ namespace Exanite.Arpg.Installers
     public class LogInstaller : MonoInstaller
     {
         [SerializeField, HideInInspector] private bool logToUnityConsole = true;
-        [SerializeField, HideInInspector] private bool includeTimeStampInUnityConsole = false;
+        [SerializeField, HideInInspector] private bool includeTimestampInUnityConsole = false;
         [SerializeField, HideInInspector] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
         [SerializeField, HideInInspector] private string format = "[{Level}] [{SourceContext}]: {Message:lj}{NewLine}{Exception}";
         [SerializeField, HideInInspector] private LogEventLevel minimumLevel = LogEventLevel.Information;
@@ -47,15 +47,15 @@ namespace Exanite.Arpg.Installers
         /// Usually this should be off because Unity already provides timestamps for logged events
         /// </summary>
         [ShowInInspector, DisableInPlayMode]
-        public bool IncludeTimeStampInUnityConsole
+        public bool IncludeTimestampInUnityConsole
         {
             get
             {
-                return includeTimeStampInUnityConsole;
+                return includeTimestampInUnityConsole;
             }
             set
             {
-                includeTimeStampInUnityConsole = value;
+                includeTimestampInUnityConsole = value;
             }
         }
 
@@ -125,8 +125,8 @@ namespace Exanite.Arpg.Installers
         {
             string path = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Logs", $@"Log-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log"));
 
-            ITextFormatter fileFormatter = new MessageTemplateTextFormatter($"{TimestampFormat} {Format}");
-            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter($"{(IncludeTimeStampInUnityConsole ? TimestampFormat : string.Empty)} {Format}");
+            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
+            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
 
             Logger log = new LoggerConfiguration()
                 .Enrich.WithProperty("SourceContext", "Default")
