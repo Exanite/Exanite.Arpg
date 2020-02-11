@@ -2,9 +2,9 @@
     "name": "Exanite.Arpg",
     "references": [
         "Zenject",
-        "Exanite.AssetRegistry",
         "Exanite.Core",
-        "Exanite.TileSystem"
+        "Exanite.TileSystem",
+        "UniRx.Async"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
