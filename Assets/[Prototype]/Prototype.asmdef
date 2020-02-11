@@ -5,7 +5,9 @@
         "Exanite.AssetRegistry",
         "Exanite.Core",
         "Exanite.TileSystem",
-        "UniRx.Async"
+        "UniRx.Async",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
