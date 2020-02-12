@@ -1,0 +1,28 @@
+{
+    "name": "Exanite.Arpg.Editor",
+    "references": [
+        "Zenject",
+        "Exanite.Arpg",
+        "Exanite.Core",
+        "Exanite.TileSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "Serilog.dll",
+        "Serilog.Enrichers.Thread.dll",
+        "Serilog.Sinks.File.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.OdinInspector.Editor.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Utilities.dll",
+        "Sirenix.Utilities.Editor.dll",
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
