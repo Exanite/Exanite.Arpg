@@ -1,0 +1,112 @@
+{
+  "Entries": [
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_1",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_2",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_3",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_4",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_5",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_6",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Health/Flask_7",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_8",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_9",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_10",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_11",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_12",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_13",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_14",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_15",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_16",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_17",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_18",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_19",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_20",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_21",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_22",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_23",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_24",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_25",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_26",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Key": "ExampleMod/Sprites/Flasks/Other/Flask_27",
+      "AssetType": "UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"
+    }
+  ]
+}

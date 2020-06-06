@@ -1,0 +1,44 @@
+ManifestFileVersion: 0
+CRC: 3110479282
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 72b7845969917462d3fe6aef42f7bdbb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: cb3f6df5cbc4a2990c44c2787bc9553a
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_24.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_11.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_4.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_19.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_20.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_21.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_2.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_22.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_17.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_6.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_14.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_16.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_9.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_15.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_3.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_25.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_27.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_10.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_12.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_8.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_23.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_7.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_18.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_5.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_26.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Health/Flask_1.png
+- Assets/Mods/ExampleMod/Assets/ExampleMod/Sprites/Flasks/Other/Flask_13.png
+Dependencies: []
