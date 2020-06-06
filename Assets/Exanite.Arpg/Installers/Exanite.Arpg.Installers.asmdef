@@ -1,0 +1,19 @@
+{
+    "name": "Exanite.Arpg.Installers",
+    "references": [
+        "GUID:fa8582025f32309469457c1eb539326b",
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Serilog.dll",
+        "Serilog.Enrichers.Thread.dll",
+        "Serilog.Sinks.File.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}
