@@ -1,6 +1,0 @@
-[submodule "Assets/Exanite.Core"]
-	path = Assets/Exanite.Core
-	url = https://Exanite@bitbucket.org/Exanite/exanite.core.git
-[submodule "Assets/Exanite.TileSystem"]
-	path = Assets/Exanite.TileSystem
-	url = https://Exanite@bitbucket.org/Exanite/exanite.tilesystem.git
