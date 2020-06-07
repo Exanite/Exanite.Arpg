@@ -4,8 +4,10 @@ namespace Exanite.Arpg.AssetRegistry
 {
     public class AssetEntry
     {
+        private const string DefaultPackage = "Default";
+
         private string path;
-        private string package;
+        private string package = DefaultPackage;
         private Type type;
 
         public string Path
