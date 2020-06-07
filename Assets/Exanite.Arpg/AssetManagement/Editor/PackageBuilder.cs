@@ -8,9 +8,6 @@ namespace Exanite.Arpg.AssetManagement.Packages
 {
     public class PackageBuilder
     {
-        public const string PackageInfoFileExtension = "packageinfo";
-        public const string AssetBundleFileExtension = "assetbundle";
-
         [MenuItem("PackageBuilder/Test Build")]
         public static void TestBuild()
         {
@@ -36,12 +33,12 @@ namespace Exanite.Arpg.AssetManagement.Packages
 
             BuildPipeline.BuildAssetBundles(buildDirectory, build, buildOptions, BuildTarget.StandaloneWindows64);
 
-            File.Move(Path.Combine(buildDirectory, packageName), Path.Combine(buildDirectory, $"{packageName}.{AssetBundleFileExtension}"));
+            File.Move(Path.Combine(buildDirectory, packageName), Path.Combine(buildDirectory, $"{packageName}.{Constants.AssetBundleFileExtension}"));
 
             // build packageinfo
 
             var json = JsonConvert.SerializeObject(assetBundleInfo, Formatting.Indented);
-            File.WriteAllText(Path.Combine(buildDirectory, $"{packageName}.{PackageInfoFileExtension}"), json);
+            File.WriteAllText(Path.Combine(buildDirectory, $"{packageName}.{Constants.PackageInfoFileExtension}"), json);
 
             AssetDatabase.Refresh();
         }
