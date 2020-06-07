@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Exanite.Arpg.AssetManagement.AssetBundles
+namespace Exanite.Arpg.AssetManagement.Packages
 {
-    public class AssetBundleEntry
+    public class PackageAssetEntry
     {
         private string key;
         private Type assetType;

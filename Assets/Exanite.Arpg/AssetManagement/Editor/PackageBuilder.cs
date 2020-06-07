@@ -4,10 +4,13 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEditor;
 
-namespace Exanite.Arpg.AssetManagement.AssetBundles
+namespace Exanite.Arpg.AssetManagement.Packages
 {
-    public class AssetBundleBuilder
+    public class PackageBuilder
     {
+        public const string PackageInfoFileExtension = "packageinfo";
+        public const string AssetBundleFileExtension = "assetbundle";
+
         [MenuItem("PackageBuilder/Test Build")]
         public static void TestBuild()
         {
@@ -21,18 +24,24 @@ namespace Exanite.Arpg.AssetManagement.AssetBundles
             var addressableNames = FormatAddressableNames(assetFolder, assetNames);
             var assetBundleInfo = BuildAssetBundleInfo(assetNames, addressableNames);
 
+            // build assetbundle
+
             var build = new AssetBundleBuild[1];
             build[0].assetBundleName = packageName;
             build[0].assetNames = assetNames;
             build[0].addressableNames = addressableNames;
-
+            
             var buildOptions = BuildAssetBundleOptions.DisableLoadAssetByFileName
                 | BuildAssetBundleOptions.DisableLoadAssetByFileNameWithExtension;
 
             BuildPipeline.BuildAssetBundles(buildDirectory, build, buildOptions, BuildTarget.StandaloneWindows64);
 
+            File.Move(Path.Combine(buildDirectory, packageName), Path.Combine(buildDirectory, $"{packageName}.{AssetBundleFileExtension}"));
+
+            // build packageinfo
+
             var json = JsonConvert.SerializeObject(assetBundleInfo, Formatting.Indented);
-            File.WriteAllText(Path.Combine(buildDirectory, $"{packageName}.{AssetBundleInfo.FileExtension}"), json);
+            File.WriteAllText(Path.Combine(buildDirectory, $"{packageName}.{PackageInfoFileExtension}"), json);
 
             AssetDatabase.Refresh();
         }
@@ -65,19 +74,19 @@ namespace Exanite.Arpg.AssetManagement.AssetBundles
             return addressableNames;
         }
 
-        private static AssetBundleInfo BuildAssetBundleInfo(string[] assetNames, string[] addressableNames)
+        private static PackageInfo BuildAssetBundleInfo(string[] assetNames, string[] addressableNames)
         {
             if (assetNames.Length != addressableNames.Length)
             {
                 throw new ArgumentException($"'{nameof(assetNames)}' and '{nameof(addressableNames)}' must have the same length");
             }
 
-            var result = new AssetBundleInfo(assetNames.Length);
-            AssetBundleEntry entry;
+            var result = new PackageInfo(assetNames.Length);
+            PackageAssetEntry entry;
 
             for (int i = 0; i < assetNames.Length; i++)
             {
-                entry = new AssetBundleEntry
+                entry = new PackageAssetEntry
                 {
                     Key = addressableNames[i],
                     AssetType = AssetDatabase.GetMainAssetTypeAtPath(assetNames[i]),
