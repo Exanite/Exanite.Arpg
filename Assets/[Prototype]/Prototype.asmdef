@@ -1,13 +1,9 @@
 {
     "name": "Prototype",
     "references": [
-        "Zenject",
-        "Exanite.AssetRegistry",
-        "Exanite.Core",
-        "Exanite.TileSystem",
+        "Exanite.Arpg.AssetManagement",
         "UniRx.Async",
-        "Unity.Addressables",
-        "Unity.ResourceManager"
+        "Zenject"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -18,8 +14,6 @@
         "Serilog.dll",
         "Serilog.Enrichers.Thread.dll",
         "Serilog.Sinks.File.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
         "Zenject-usage.dll"
     ],
     "autoReferenced": true,
