@@ -27,13 +27,21 @@ namespace Exanite.Arpg.AssetManagement.Packages
             build[0].assetBundleName = packageName;
             build[0].assetNames = assetNames;
             build[0].addressableNames = addressableNames;
-            
+
             var buildOptions = BuildAssetBundleOptions.DisableLoadAssetByFileName
                 | BuildAssetBundleOptions.DisableLoadAssetByFileNameWithExtension;
 
             BuildPipeline.BuildAssetBundles(buildDirectory, build, buildOptions, BuildTarget.StandaloneWindows64);
 
-            File.Move(Path.Combine(buildDirectory, packageName), Path.Combine(buildDirectory, $"{packageName}.{Constants.AssetBundleFileExtension}"));
+            string oldPath = Path.Combine(buildDirectory, packageName);
+            string newPath = Path.Combine(buildDirectory, $"{packageName}.{Constants.AssetBundleFileExtension}");
+
+            if (File.Exists(newPath))
+            {
+                File.Delete(newPath);
+            }
+
+            File.Move(oldPath, newPath);
 
             // build packageinfo
 
