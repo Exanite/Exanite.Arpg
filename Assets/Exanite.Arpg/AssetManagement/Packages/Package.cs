@@ -1,13 +1,19 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Exanite.Arpg.AssetManagement.Packages
 {
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Package
     {
         private AssetBundle assetBundle;
-        private PackageInfo info;
+        private string name;
+        private PackageType type;
+        private List<PackageAssetEntry> entries = new List<PackageAssetEntry>();
 
         public AssetBundle AssetBundle
         {
@@ -22,16 +28,45 @@ namespace Exanite.Arpg.AssetManagement.Packages
             }
         }
 
-        public PackageInfo Info
+        [JsonProperty]
+        public string Name
         {
             get
             {
-                return info;
+                return name;
             }
 
             set
             {
-                info = value;
+                name = value;
+            }
+        }
+
+        [JsonProperty]
+        public PackageType Type
+        {
+            get
+            {
+                return type;
+            }
+
+            set
+            {
+                type = value;
+            }
+        }
+
+        [JsonProperty]
+        public List<PackageAssetEntry> Entries
+        {
+            get
+            {
+                return entries;
+            }
+
+            set
+            {
+                entries = value;
             }
         }
 
@@ -41,13 +76,9 @@ namespace Exanite.Arpg.AssetManagement.Packages
             var assetBundle = AssetBundle.LoadFromFile(assetBundlePath);
 
             string packageInfoJson = File.ReadAllText(packageInfoPath);
-            var packageInfo = JsonConvert.DeserializeObject<PackageInfo>(packageInfoJson);
+            var package = JsonConvert.DeserializeObject<Package>(packageInfoJson);
 
-            var package = new Package
-            {
-                AssetBundle = assetBundle,
-                Info = packageInfo,
-            };
+            package.AssetBundle = assetBundle;
 
             return package;
         }
