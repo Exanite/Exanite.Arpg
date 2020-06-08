@@ -1,4 +1,6 @@
 {
+  "Name": "ExampleMod",
+  "Type": "AssetBundle",
   "Entries": [
     {
       "Key": "ExampleMod/Sprites/Flasks/Health/Flask_1",
