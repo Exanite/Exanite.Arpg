@@ -1,27 +1,16 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+using Exanite.Arpg.AssetManagement.Packages;
 
 namespace Exanite.Arpg.AssetRegistry
 {
     public class AssetRegistry
     {
-        private readonly Dictionary<Key, AssetEntry> entries;
-        private readonly Dictionary<Key, AssetBundle> bundles;
+        public Dictionary<Key, AssetEntry> entries;
+        public Dictionary<Key, Package> packages;
 
-        public Dictionary<Key, AssetEntry> Entries
+        public void AddEntry()
         {
-            get
-            {
-                return entries;
-            }
-        }
 
-        public Dictionary<Key, AssetBundle> Bundles
-        {
-            get
-            {
-                return bundles;
-            }
         }
     }
 }
