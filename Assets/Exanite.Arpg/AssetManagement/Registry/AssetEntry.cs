@@ -1,29 +1,28 @@
 ﻿using System;
+using Exanite.Arpg.AssetManagement.Packages;
 
 namespace Exanite.Arpg.AssetRegistry
 {
     public class AssetEntry
     {
-        private const string DefaultPackage = "Default";
-
-        private string path;
-        private string package = DefaultPackage;
+        private Key key;
+        private Package package;
         private Type type;
 
-        public string Path
+        public Key Key
         {
             get
             {
-                return path;
+                return key;
             }
 
             set
             {
-                path = value;
+                key = value;
             }
         }
 
-        public string Package
+        public Package Package
         {
             get
             {
