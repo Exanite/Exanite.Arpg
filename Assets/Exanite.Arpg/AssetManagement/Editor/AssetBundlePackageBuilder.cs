@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Exanite.Arpg.AssetManagement.Packages;
 using Newtonsoft.Json;
@@ -8,35 +9,60 @@ namespace Exanite.Arpg.AssetManagement.Editor
 {
     public class AssetBundlePackageBuilder : PackageBuilder
     {
-        public string assetsFolder;
+        private string assetsFolder;
 
         private string[] assetNames;
         private string[] addressableNames;
 
         private string lowerPackageName;
 
+        public string AssetsFolder
+        {
+            get
+            {
+                return assetsFolder;
+            }
+
+            set
+            {
+                assetsFolder = value;
+            }
+        }
+
         [MenuItem("PackageBuilder/Build AssetBundlePackage (Test)")]
         public static void TestBuild()
         {
             new AssetBundlePackageBuilder
             {
-                packageName = "ExampleMod",
-                assetsFolder = "Assets/Mods/ExampleMod/Assets",
-                buildDirectory = @"D:\Repositories\Exanite.Arpg\Assets\Mods\ExampleMod\Bundles",
+                PackageName = "ExampleMod",
+                AssetsFolder = "Assets/Mods/ExampleMod/Assets",
+                BuildDirectory = @"D:\Repositories\Exanite.Arpg\Assets\Mods\ExampleMod\Bundles",
             }
             .Build();
         }
 
         public override void Build()
         {
+            base.Build();
+
             assetNames = GetAssetNames();
             addressableNames = GetAddressableNames();
-            lowerPackageName = packageName.ToLower();
+            lowerPackageName = PackageName.ToLower();
 
             BuildAssetBundle();
             BuildPackage();
 
             AssetDatabase.Refresh();
+        }
+
+        protected override void ValidateProperties()
+        {
+            base.ValidateProperties();
+
+            if (string.IsNullOrWhiteSpace(AssetsFolder))
+            {
+                throw new ArgumentException(nameof(AssetsFolder));
+            }
         }
 
         private void BuildAssetBundle()
@@ -50,10 +76,10 @@ namespace Exanite.Arpg.AssetManagement.Editor
                 | BuildAssetBundleOptions.DisableLoadAssetByFileNameWithExtension
                 | BuildAssetBundleOptions.ForceRebuildAssetBundle;
 
-            BuildPipeline.BuildAssetBundles(buildDirectory, build, buildOptions, BuildTarget.StandaloneWindows64);
+            BuildPipeline.BuildAssetBundles(BuildDirectory, build, buildOptions, BuildTarget.StandaloneWindows64);
 
-            string oldPath = Path.Combine(buildDirectory, lowerPackageName);
-            string newPath = Path.Combine(buildDirectory, $"{lowerPackageName}.{Constants.AssetBundleFileExtension}");
+            string oldPath = Path.Combine(BuildDirectory, lowerPackageName);
+            string newPath = Path.Combine(BuildDirectory, $"{lowerPackageName}.{Constants.AssetBundleFileExtension}");
 
             if (File.Exists(newPath))
             {
@@ -67,7 +93,7 @@ namespace Exanite.Arpg.AssetManagement.Editor
         {
             var package = new Package()
             {
-                Name = packageName,
+                Name = PackageName,
                 Type = PackageType.AssetBundle,
             };
 
@@ -77,19 +103,19 @@ namespace Exanite.Arpg.AssetManagement.Editor
                 entry = new PackageAssetEntry
                 {
                     Key = addressableNames[i],
-                    AssetType = AssetDatabase.GetMainAssetTypeAtPath(assetNames[i]),
+                    Type = AssetDatabase.GetMainAssetTypeAtPath(assetNames[i]),
                 };
 
                 package.Entries.Add(entry);
             }
 
             var json = JsonConvert.SerializeObject(package, Formatting.Indented);
-            File.WriteAllText(Path.Combine(buildDirectory, $"{lowerPackageName}.{Constants.PackageFileExtension}"), json);
+            File.WriteAllText(Path.Combine(BuildDirectory, $"{lowerPackageName}.{Constants.PackageFileExtension}"), json);
         }
 
         private string[] GetAssetNames()
         {
-            return AssetDatabase.FindAssets("", new[] { assetsFolder })
+            return AssetDatabase.FindAssets("", new[] { AssetsFolder })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Distinct()
                 .Where(x => AssetDatabase.GetMainAssetTypeAtPath(x) != typeof(DefaultAsset))
@@ -98,13 +124,13 @@ namespace Exanite.Arpg.AssetManagement.Editor
 
         private string[] GetAddressableNames()
         {
-            string[] addressableNames = new string[assetsFolder.Trim('/').Length];
+            string[] addressableNames = new string[AssetsFolder.Trim('/').Length];
 
             for (int i = 0; i < assetNames.Length; i++)
             {
                 string current = assetNames[i];
 
-                current = current.Remove(0, assetsFolder.Length + 1);
+                current = current.Remove(0, AssetsFolder.Length + 1);
                 current = Path.ChangeExtension(current, null);
 
                 addressableNames[i] = current;
