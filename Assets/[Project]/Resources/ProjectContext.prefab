@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logToUnityConsole: 1
-  includeTimeStampInUnityConsole: 0
+  includeTimestampInUnityConsole: 0
   timestampFormat: '[{Timestamp:HH:mm:ss}]'
   format: '[{Level}] [{ShortContext}]: {Message:lj}{NewLine}{Exception}'
   minimumLevel: 2
