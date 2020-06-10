@@ -18,11 +18,11 @@ namespace Exanite.Arpg.Installers
     /// </summary>
     public class LogInstaller : MonoInstaller
     {
-        [SerializeField, HideInInspector] private bool logToUnityConsole = true;
-        [SerializeField, HideInInspector] private bool includeTimestampInUnityConsole = false;
-        [SerializeField, HideInInspector] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
-        [SerializeField, HideInInspector] private string format = "[{Level}] [{SourceContext}]: {Message:lj}{NewLine}{Exception}";
-        [SerializeField, HideInInspector] private LogEventLevel minimumLevel = LogEventLevel.Information;
+        [SerializeField] private bool logToUnityConsole = true;
+        [SerializeField] private bool includeTimestampInUnityConsole = false;
+        [SerializeField] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
+        [SerializeField] private string format = "[{Level}] [{SourceContext}]: {Message:lj}{NewLine}{Exception}";
+        [SerializeField] private LogEventLevel minimumLevel = LogEventLevel.Information;
 
         /// <summary>
         /// Should the <see cref="Logger"/> log to the Unity Console?
