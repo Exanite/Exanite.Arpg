@@ -18,11 +18,28 @@ namespace Exanite.Arpg.Installers
     /// </summary>
     public class LogInstaller : MonoInstaller
     {
+        [SerializeField] private bool logToFileInEditor = false;
         [SerializeField] private bool logToUnityConsole = true;
         [SerializeField] private bool includeTimestampInUnityConsole = false;
         [SerializeField] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
-        [SerializeField] private string format = "[{Level}] [{SourceContext}]: {Message:lj}{NewLine}{Exception}";
+        [SerializeField] private string format = "[{Level}] [{ShortContext}]: {Message:lj}{NewLine}{Exception}";
         [SerializeField] private LogEventLevel minimumLevel = LogEventLevel.Information;
+
+        /// <summary>
+        /// Should the <see cref="Logger"/> log to file while in the Unity Editor?
+        /// </summary>
+        public bool LogToFileInEditor
+        {
+            get
+            {
+                return logToFileInEditor;
+            }
+
+            set
+            {
+                logToFileInEditor = value;
+            }
+        }
 
         /// <summary>
         /// Should the <see cref="Logger"/> log to the Unity Console?
@@ -115,30 +132,46 @@ namespace Exanite.Arpg.Installers
         /// <summary>
         /// Creates a new <see cref="Logger"/> based off the provided settings
         /// </summary>
-        protected virtual Logger CreateLogger(InjectContext ctx)
+        private Logger CreateLogger(InjectContext ctx)
         {
-            string path = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Logs", $@"Log-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log"));
-
-            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
-            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
-
-            Logger log = new LoggerConfiguration()
+            var config = new LoggerConfiguration()
                 .Enrich.WithProperty("SourceContext", "Default")
                 .Enrich.With<ShortContextEnricher>()
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
-                .MinimumLevel.Is(MinimumLevel)
-                .WriteTo.File(fileFormatter, path)
-                .WriteTo.File(new JsonFormatter(), $"{path}.json")
-                .WriteTo.Sink(LogToUnityConsole ? new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter) : null)
-                .CreateLogger();
+                .MinimumLevel.Is(MinimumLevel);
 
-            var logContext = log.ForContext<LogInstaller>();
+            if (Application.isEditor && LogToFileInEditor)
+            {
+                string path = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Logs", $@"Log-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log"));
 
-            logContext.Information("Initializing Logger");
-            logContext.Information("Logging events to {Path}", path);
+                WriteToFile(config, path);
+            }
+
+            if (LogToUnityConsole)
+            {
+                WriteToUnityConsole(config);
+            }
+
+            var log = config.CreateLogger();
 
             return log;
         }
+
+        private void WriteToFile(LoggerConfiguration config, string path)
+        {
+            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
+
+            config.WriteTo.File(fileFormatter, path)
+                .WriteTo.File(new JsonFormatter(), $"{path}.json");
+        }
+
+        private void WriteToUnityConsole(LoggerConfiguration config)
+        {
+            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
+
+            config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
+        }
+
     }
 }
