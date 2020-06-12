@@ -25,7 +25,7 @@ namespace Exanite.Arpg.Pathfinding
         [Inject]
         public void Inject(ILogger log)
         {
-            this.log = log.ForContext<NavGridGenerator>();
+            this.log = log.ForContext<NavGridGenerator>() ?? throw new ArgumentNullException(nameof(log));
         }
 
         private void Update()
@@ -96,6 +96,8 @@ namespace Exanite.Arpg.Pathfinding
                     }
                 }
             }
+
+            target.isGenerated = true;
 
             log.Information("Grid generation finished");
         }

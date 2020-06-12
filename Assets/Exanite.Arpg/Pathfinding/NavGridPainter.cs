@@ -12,7 +12,7 @@ namespace Exanite.Arpg.Pathfinding
 
         private void Update()
         {
-            if (target.nodes != null)
+            if (target.isGenerated)
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
@@ -33,7 +33,7 @@ namespace Exanite.Arpg.Pathfinding
             NodeType paintAction = NodeType.Walkable;
             bool firstRun = true;
 
-            while (true)
+            while (target.isGenerated)
             {
                 if (target.RaycastNode(Camera.main.ScreenPointToRay(Input.mousePosition), out Node node))
                 {
