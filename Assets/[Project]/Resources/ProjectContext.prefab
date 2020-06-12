@@ -104,8 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e1e7e5ab6bca540b003782157b980a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logToFileInEditor: 1
   logToUnityConsole: 1
+  interceptUnityDebugLogMessages: 1
   includeTimestampInUnityConsole: 0
   timestampFormat: '[{Timestamp:HH:mm:ss}]'
   format: '[{Level}] [{ShortContext}]: {Message:lj}{NewLine}{Exception}'
-  minimumLevel: 2
+  minimumLevel: 0
