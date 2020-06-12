@@ -9,6 +9,7 @@ namespace Exanite.Arpg.Pathfinding
     {
         public Node[,] nodes;
         public float nodeSize = 1;
+        public bool isGenerated = false;
 
         public Plane Plane
         {
@@ -62,6 +63,7 @@ namespace Exanite.Arpg.Pathfinding
         public void ClearGrid()
         {
             nodes = null;
+            isGenerated = false;
         }
 
         private void DrawNode(Node node)
