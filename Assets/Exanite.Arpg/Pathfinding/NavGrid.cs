@@ -92,12 +92,9 @@ namespace Exanite.Arpg.Pathfinding
 
             if (node.Type == NodeType.Walkable)
             {
-                foreach (var other in node.ConnectedNodes)
+                foreach (var other in node.GetWalkableConnectedNodes())
                 {
-                    if (other.Type == NodeType.Walkable)
-                    {
-                        Gizmos.DrawLine(node.Position, other.Position);
-                    }
+                    Gizmos.DrawLine(node.Position, other.Position);
                 }
             }
         }
