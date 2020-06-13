@@ -11,9 +11,11 @@
     "precompiledReferences": [
         "Serilog.dll",
         "Serilog.Enrichers.Thread.dll",
-        "Serilog.Sinks.File.dll"
+        "Serilog.Sinks.File.dll",
+        "Zenject-usage.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
