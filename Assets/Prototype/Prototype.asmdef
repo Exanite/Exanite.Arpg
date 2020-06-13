@@ -2,6 +2,7 @@
     "name": "Prototype",
     "references": [
         "Exanite.Arpg.AssetManagement",
+        "Exanite.Arpg.Pathfinding",
         "UniRx.Async",
         "Zenject"
     ],
@@ -16,7 +17,8 @@
         "Serilog.Sinks.File.dll",
         "Zenject-usage.dll"
     ],
-    "autoReferenced": true,
+    "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
