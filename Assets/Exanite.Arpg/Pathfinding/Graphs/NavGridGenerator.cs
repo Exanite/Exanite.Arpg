@@ -5,7 +5,7 @@ using Zenject;
 using ILogger = Serilog.ILogger;
 using Random = UnityEngine.Random;
 
-namespace Exanite.Arpg.Pathfinding
+namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGridGenerator : MonoBehaviour
     {
@@ -98,6 +98,9 @@ namespace Exanite.Arpg.Pathfinding
                     }
                 }
             }
+
+            target.nodes[0, 0].Type = NodeType.Walkable;
+            target.nodes[sizeX - 1, sizeY - 1].Type = NodeType.Walkable;
 
             target.isGenerated = true;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Exanite.Arpg.Pathfinding
+namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGrid : MonoBehaviour, IEnumerable<Node>
     {

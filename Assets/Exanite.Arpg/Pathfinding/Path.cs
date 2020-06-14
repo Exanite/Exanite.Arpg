@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Exanite.Arpg.Pathfinding.Graphs;
 using UnityEngine;
 
 namespace Exanite.Arpg.Pathfinding
