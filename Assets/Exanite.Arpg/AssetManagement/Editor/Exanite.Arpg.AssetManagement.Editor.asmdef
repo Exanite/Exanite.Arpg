@@ -1,7 +1,7 @@
 {
     "name": "Exanite.Arpg.AssetManagement.Editor",
     "references": [
-        "GUID:cb2b3aa580518e245b991995fbc21f47"
+        "Exanite.Arpg.AssetManagement"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,5 +14,6 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
