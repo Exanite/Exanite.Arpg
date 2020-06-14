@@ -5,7 +5,7 @@ namespace Exanite.Arpg.AssetManagement.Packages
     public class PackageAssetEntry
     {
         private string key;
-        private Type assetType;
+        private Type type;
 
         public string Key
         {
@@ -20,16 +20,16 @@ namespace Exanite.Arpg.AssetManagement.Packages
             }
         }
 
-        public Type AssetType
+        public Type Type
         {
             get
             {
-                return assetType;
+                return type;
             }
 
             set
             {
-                assetType = value;
+                type = value;
             }
         }
     }

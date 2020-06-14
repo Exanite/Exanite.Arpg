@@ -2,6 +2,7 @@
 using System.IO;
 using Exanite.Arpg.Logging;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
@@ -18,11 +19,29 @@ namespace Exanite.Arpg.Installers
     /// </summary>
     public class LogInstaller : MonoInstaller
     {
-        [SerializeField, HideInInspector] private bool logToUnityConsole = true;
-        [SerializeField, HideInInspector] private bool includeTimestampInUnityConsole = false;
-        [SerializeField, HideInInspector] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
-        [SerializeField, HideInInspector] private string format = "[{Level}] [{SourceContext}]: {Message:lj}{NewLine}{Exception}";
-        [SerializeField, HideInInspector] private LogEventLevel minimumLevel = LogEventLevel.Information;
+        [SerializeField] private bool logToFileInEditor = false;
+        [SerializeField] private bool logToUnityConsole = true;
+        [SerializeField] private bool interceptUnityDebugLogMessages = true;
+        [SerializeField] private bool includeTimestampInUnityConsole = false;
+        [SerializeField] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
+        [SerializeField] private string format = "[{Level}] [{ShortContext}]: {Message:lj}{NewLine}{Exception}";
+        [SerializeField] private LogEventLevel minimumLevel = LogEventLevel.Information;
+
+        /// <summary>
+        /// Should the <see cref="Logger"/> log to file while in the Unity Editor?
+        /// </summary>
+        public bool LogToFileInEditor
+        {
+            get
+            {
+                return logToFileInEditor;
+            }
+
+            set
+            {
+                logToFileInEditor = value;
+            }
+        }
 
         /// <summary>
         /// Should the <see cref="Logger"/> log to the Unity Console?
@@ -37,6 +56,22 @@ namespace Exanite.Arpg.Installers
             set
             {
                 logToUnityConsole = value;
+            }
+        }
+
+        /// <summary>
+        /// Should the <see cref="Logger"/> intercept Unity Debug.Log messages?
+        /// </summary>
+        public bool InterceptUnityDebugLogMessages
+        {
+            get
+            {
+                return interceptUnityDebugLogMessages;
+            }
+
+            set
+            {
+                interceptUnityDebugLogMessages = value;
             }
         }
 
@@ -107,38 +142,91 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         public override void InstallBindings()
         {
+            Container.Bind(typeof(LoggingLevelSwitch)).To<LoggingLevelSwitch>().FromMethod(CreateLevelSwitch).AsSingle();
+
             Container.Bind(typeof(ILogger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
 
-            Container.Bind(typeof(UnityToSerilogLogHandler), typeof(IDisposable)).To<UnityToSerilogLogHandler>().AsSingle().NonLazy();
+            Container.Bind(typeof(UnityToSerilogLogHandler), typeof(IDisposable)).To<UnityToSerilogLogHandler>().FromMethod(CreateUnityToSerilogLogHandler).AsSingle().NonLazy();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="LoggingLevelSwitch"/> for changing the minimum level of logged events
+        /// </summary>
+        private LoggingLevelSwitch CreateLevelSwitch(InjectContext ctx)
+        {
+            var levelSwitch = new LoggingLevelSwitch
+            {
+                MinimumLevel = MinimumLevel
+            };
+
+            return levelSwitch;
         }
 
         /// <summary>
         /// Creates a new <see cref="Logger"/> based off the provided settings
         /// </summary>
-        protected virtual Logger CreateLogger(InjectContext ctx)
+        private Logger CreateLogger(InjectContext ctx)
         {
-            string path = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Logs", $@"Log-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log"));
+            var levelSwitch = ctx.Container.Resolve<LoggingLevelSwitch>();
 
-            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
-            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
-
-            Logger log = new LoggerConfiguration()
+            var config = new LoggerConfiguration()
                 .Enrich.WithProperty("SourceContext", "Default")
                 .Enrich.With<ShortContextEnricher>()
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
-                .MinimumLevel.Is(MinimumLevel)
-                .WriteTo.File(fileFormatter, path)
-                .WriteTo.File(new JsonFormatter(), $"{path}.json")
-                .WriteTo.Sink(LogToUnityConsole ? new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter) : null)
-                .CreateLogger();
+                .MinimumLevel.ControlledBy(levelSwitch);
 
-            var logContext = log.ForContext<LogInstaller>();
+            if (LogToFileInEditor || !Application.isEditor)
+            {
+                string path = Path.GetFullPath(Path.Combine(Application.persistentDataPath, "Logs", $@"Log-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log"));
 
-            logContext.Information("Initializing Logger");
-            logContext.Information("Logging events to {Path}", path);
+                WriteToFile(config, path);
+            }
+
+            if (LogToUnityConsole)
+            {
+                WriteToUnityConsole(config);
+            }
+
+            var log = config.CreateLogger();
 
             return log;
+        }
+
+        /// <summary>
+        /// Configures the logger to write to two files: one formatted as human-readable text, another as json
+        /// </summary>
+        private void WriteToFile(LoggerConfiguration config, string path)
+        {
+            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
+
+            config.WriteTo.File(fileFormatter, path)
+                .WriteTo.File(new JsonFormatter(), $"{path}.json");
+        }
+
+        /// <summary>
+        /// Configures the logger to write to the Unity Console
+        /// </summary>
+        private void WriteToUnityConsole(LoggerConfiguration config)
+        {
+            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
+
+            config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
+        }
+
+        /// <summary>
+        /// Creates a <see cref="UnityToSerilogLogHandler"/> and activates it if <see cref="InterceptUnityDebugLogMessages"/> is <see langword="true"/>
+        /// </summary>
+        private UnityToSerilogLogHandler CreateUnityToSerilogLogHandler(InjectContext ctx)
+        {
+            var handler = ctx.Container.Instantiate<UnityToSerilogLogHandler>();
+
+            if (InterceptUnityDebugLogMessages)
+            {
+                handler.Activate();
+            }
+
+            return handler;
         }
     }
 }
