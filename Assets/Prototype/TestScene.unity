@@ -262,7 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeSize: 1
   isGenerated: 0
-  drawNodes: 1
+  drawNodes: 0
   drawNodeConnections: 0
 --- !u!114 &471186631
 MonoBehaviour:
@@ -462,7 +462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 872658755}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 10}
+  m_LocalPosition: {x: 100, y: 0, z: 100}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_Children: []
   m_Father: {fileID: 0}
