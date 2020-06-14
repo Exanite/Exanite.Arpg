@@ -1,10 +1,54 @@
-﻿namespace Exanite.Arpg.AssetManagement.Editor
+﻿using System;
+
+namespace Exanite.Arpg.AssetManagement.Editor
 {
     public abstract class PackageBuilder
     {
-        public string packageName;
-        public string buildDirectory;
+        private string packageName;
+        private string buildDirectory;
 
-        public abstract void Build();
+        public string PackageName
+        {
+            get
+            {
+                return packageName;
+            }
+
+            set
+            {
+                packageName = value;
+            }
+        }
+
+        public string BuildDirectory
+        {
+            get
+            {
+                return buildDirectory;
+            }
+
+            set
+            {
+                buildDirectory = value;
+            }
+        }
+
+        public virtual void Build()
+        {
+            ValidateProperties();
+        }
+
+        protected virtual void ValidateProperties()
+        {
+            if (string.IsNullOrWhiteSpace(PackageName))
+            {
+                throw new ArgumentException(nameof(PackageName));
+            }
+
+            if (string.IsNullOrWhiteSpace(BuildDirectory))
+            {
+                throw new ArgumentException(nameof(BuildDirectory));
+            }
+        }
     }
 }
