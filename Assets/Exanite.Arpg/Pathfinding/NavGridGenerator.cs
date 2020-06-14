@@ -54,6 +54,8 @@ namespace Exanite.Arpg.Pathfinding
 
             target.nodes = new Node[sizeX, sizeY];
 
+            target.nodeSize = nodeSize;
+
             for (int x = 0; x < sizeX; x++)
             {
                 for (int y = 0; y < sizeY; y++)
