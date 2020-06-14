@@ -1,4 +1,5 @@
 ﻿using Exanite.Arpg.Pathfinding;
+using Exanite.Arpg.Pathfinding.Graphs;
 using UnityEngine;
 
 public class PathfindingTest : MonoBehaviour
