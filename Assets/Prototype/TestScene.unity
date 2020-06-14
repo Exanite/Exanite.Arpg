@@ -222,10 +222,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 471186629}
+  - component: {fileID: 471186632}
   - component: {fileID: 471186630}
   - component: {fileID: 471186631}
   - component: {fileID: 471186633}
-  - component: {fileID: 471186632}
   - component: {fileID: 471186634}
   m_Layer: 0
   m_Name: NavigationGrid
@@ -277,11 +277,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 471186630}
-  sizeX: 11
-  sizeY: 11
-  nodeSize: 1
-  walkableChance: 0.75
-  generationDelay: 0.001
+  sizeX: 101
+  sizeY: 101
+  nodeSize: 0.1
+  walkableChance: 0.6
+  generationDelay: 0
 --- !u!114 &471186632
 MonoBehaviour:
   m_ObjectHideFlags: 0
