@@ -10,6 +10,8 @@ namespace Exanite.Arpg.Pathfinding
         public Node[,] nodes;
         public float nodeSize = 1;
         public bool isGenerated = false;
+        public bool drawNodes = true;
+        public bool drawNodeConnections = false;
 
         public Plane Plane
         {
@@ -33,9 +35,15 @@ namespace Exanite.Arpg.Pathfinding
                     continue;
                 }
 
-                DrawNode(node);
+                if (drawNodes)
+                {
+                    DrawNode(node);
+                }
 
-                DrawNodeConnections(node);
+                if (drawNodeConnections)
+                {
+                    DrawNodeConnections(node);
+                }
             }
         }
 
