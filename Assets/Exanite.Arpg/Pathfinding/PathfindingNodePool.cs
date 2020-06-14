@@ -3,7 +3,7 @@ using Exanite.Arpg.Pathfinding.Graphs;
 
 namespace Exanite.Arpg.Pathfinding
 {
-    public class PathfindingNodeFactory
+    public class PathfindingNodePool
     {
         private readonly Dictionary<Node, PathfindingNode> activeInstances = new Dictionary<Node, PathfindingNode>();
 
