@@ -6,8 +6,18 @@ namespace Exanite.Arpg.Pathfinding
 {
     public class Path
     {
-        private List<Node> nodes = new List<Node>();
+        private readonly List<Node> nodes = new List<Node>();
 
+        private readonly Dictionary<Node, Node> parent = new Dictionary<Node, Node>();
+        private readonly Dictionary<Node, float> fCost = new Dictionary<Node, float>();
+        private readonly Dictionary<Node, float> gCost = new Dictionary<Node, float>();
+
+        private readonly List<Node> open = new List<Node>();
+        private readonly HashSet<Node> closed = new HashSet<Node>();
+
+        /// <summary>
+        /// List of nodes in the path
+        /// </summary>
         public List<Node> Nodes
         {
             get
@@ -16,7 +26,10 @@ namespace Exanite.Arpg.Pathfinding
             }
         }
 
-        public static bool FindPath(NavGrid graph, Node start, Node destination, Path path, Heuristic heuristic = null)
+        /// <summary>
+        /// Attempts to find a path between the start and destination nodes
+        /// </summary>
+        public bool Find(Node start, Node destination, Heuristic heuristic = null)
         {
             if (heuristic == null)
             {
@@ -25,16 +38,18 @@ namespace Exanite.Arpg.Pathfinding
 
             if (destination.Type == NodeType.NonWalkable)
             {
-                path.Nodes.Clear();
+                Nodes.Clear();
 
                 return false;
             }
 
-            List<Node> open = new List<Node>();
-            HashSet<Node> closed = new HashSet<Node>();
-            Node current;
+            CleanupPathfindingData();
 
             open.Add(start);
+            fCost[start] = 0;
+            gCost[start] = 0;
+
+            Node current;
 
             while (open.Count > 0)
             {
@@ -42,46 +57,51 @@ namespace Exanite.Arpg.Pathfinding
 
                 for (int i = 1; i < open.Count; i++)
                 {
-                    if (open[i].FCost.CompareTo(current.FCost) < 0)
+                    if (fCost[open[i]] < fCost[current])
                     {
                         current = open[i];
                     }
                 }
 
-                open.Remove(current);
+                open.RemoveAt(0);
                 closed.Add(current);
 
                 if (current == destination)
                 {
-                    RetraceFrom(start, destination, path);
+                    RetraceFrom(start, destination);
+
+                    CleanupPathfindingData();
 
                     return true;
                 }
 
-                foreach (var neighbor in current.GetWalkableConnectedNodes())
+                foreach (var neighbor in current.GetConnectedNodes())
                 {
-                    if (closed.Contains(neighbor))
+                    if (neighbor.Type == NodeType.NonWalkable || closed.Contains(neighbor))
                     {
                         continue;
                     }
 
-                    float newGCost = current.GCost + heuristic(current, neighbor);
+                    float newGCost = gCost[current] + heuristic(current, neighbor);
 
-                    if (newGCost < neighbor.GCost || !open.Contains(neighbor))
+                    if (!gCost.ContainsKey(neighbor) || newGCost < gCost[neighbor])
                     {
-                        neighbor.GCost = newGCost;
-                        neighbor.HCost = heuristic(neighbor, destination);
-                        neighbor.Parent = current;
+                        gCost[neighbor] = newGCost;
+                        parent[neighbor] = current;
 
                         if (!open.Contains(neighbor) && !closed.Contains(neighbor))
                         {
+                            fCost[neighbor] = newGCost + heuristic(neighbor, destination);
+
                             open.Add(neighbor);
                         }
                     }
                 }
             }
 
-            path.Nodes.Clear();
+            Nodes.Clear();
+
+            CleanupPathfindingData();
 
             return false;
         }
@@ -89,26 +109,39 @@ namespace Exanite.Arpg.Pathfinding
         /// <summary>
         /// Retraces the path from <paramref name="destination"/> to <paramref name="start"/> <para/>
         /// </summary>
-        private static Path RetraceFrom(Node start, Node destination, Path path)
+        private void RetraceFrom(Node start, Node destination)
         {
-            path.Nodes.Clear();
+            Nodes.Clear();
 
             var current = destination;
 
             while (current != start)
             {
-                path.Nodes.Add(current);
+                Nodes.Add(current);
 
-                current = current.Parent;
+                current = parent[current];
             }
 
-            path.Nodes.Add(start);
-
-            path.Nodes.Reverse();
-
-            return path;
+            Nodes.Reverse();
         }
 
+        /// <summary>
+        /// Cleans up pathfinding data for the next use
+        /// </summary>
+        private void CleanupPathfindingData()
+        {
+            parent.Clear();
+            fCost.Clear();
+            gCost.Clear();
+
+            open.Clear();
+            closed.Clear();
+        }
+
+        /// <summary>
+        /// Calculates the distance between <see cref="Node"/> a and <see cref="Node"/> b<para/>
+        /// By default the Heuristic returns the Euclidean distance between the two nodes
+        /// </summary>
         public static float DefaultHeuristic(Node a, Node b)
         {
             return Vector3.Distance(a.Position, b.Position);
