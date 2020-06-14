@@ -10,10 +10,25 @@ namespace Exanite.Arpg.Logging
     /// </summary>
     public class UnityToSerilogLogHandler : ILogHandler, IDisposable
     {
+        private bool isActivated = false;
         private bool hasDisposed = false;
 
+        private ILogHandler inner;
+
         private readonly ILogger log;
-        private readonly ILogHandler inner;
+
+        public bool IsActivated
+        {
+            get
+            {
+                return isActivated;
+            }
+
+            set
+            {
+                isActivated = value;
+            }
+        }
 
         /// <summary>
         /// Creates a new <see cref="UnityToSerilogLogHandler"/>
@@ -21,12 +36,8 @@ namespace Exanite.Arpg.Logging
         /// <param name="log"><see cref="Serilog.ILogger"/> to log to</param>
         public UnityToSerilogLogHandler(ILogger log)
         {
+            // Not ForContext<UnityToSerilogLogHandler> because this is so log messages from Unity have their context set properly
             this.log = log?.ForContext("SourceContext", "Unity") ?? throw new ArgumentNullException(nameof(log));
-
-            inner = Debug.unityLogger.logHandler;
-            Debug.unityLogger.logHandler = this;
-
-            log.ForContext<UnityToSerilogLogHandler>().Debug("Intercepting Debug.Log messages");
         }
 
         /// <summary>
@@ -51,6 +62,39 @@ namespace Exanite.Arpg.Logging
 #pragma warning restore Serilog004 // Constant MessageTemplate verifier
 
         /// <summary>
+        /// Starts the interception of Unity Debug.Log messages<para/>
+        /// </summary>
+        public void Activate()
+        {
+            if (!IsActivated)
+            {
+                inner = Debug.unityLogger.logHandler;
+                Debug.unityLogger.logHandler = this;
+
+                IsActivated = true;
+
+                log.ForContext<UnityToSerilogLogHandler>().Debug("Starting interception of Unity Debug.Log messages");
+            }
+        }
+
+        /// <summary>
+        /// Stops the interception of Unity Debug.Log messages<para/>
+        /// Note: This is also called when this <see cref="UnityToSerilogLogHandler"/> is disposed or goes out of scope
+        /// </summary>
+        public void Deactivate()
+        {
+            if (IsActivated)
+            {
+                Debug.unityLogger.logHandler = inner;
+                inner = null;
+
+                IsActivated = false;
+
+                log.ForContext<UnityToSerilogLogHandler>().Debug("Stopping interception of Unity Debug.Log messages");
+            }
+        }
+
+        /// <summary>
         /// Stops the interception of Unity's log messages
         /// </summary>
         public void Dispose()
@@ -64,7 +108,7 @@ namespace Exanite.Arpg.Logging
             {
                 if (dispose)
                 {
-                    Debug.unityLogger.logHandler = inner;
+                    Deactivate();
                 }
 
                 hasDisposed = true;
