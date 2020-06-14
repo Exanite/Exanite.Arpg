@@ -262,6 +262,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeSize: 1
   isGenerated: 0
+  drawNodes: 1
+  drawNodeConnections: 0
 --- !u!114 &471186631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,7 +281,7 @@ MonoBehaviour:
   sizeY: 11
   nodeSize: 1
   walkableChance: 0.75
-  generationDelay: 0.01
+  generationDelay: 0.001
 --- !u!114 &471186632
 MonoBehaviour:
   m_ObjectHideFlags: 0
