@@ -25,6 +25,8 @@ namespace Exanite.Arpg.Pathfinding
             if (destination.Type == NodeType.NonWalkable)
             {
                 path.Nodes.Clear();
+
+                return false;
             }
 
             List<Node> open = new List<Node>();
@@ -57,18 +59,23 @@ namespace Exanite.Arpg.Pathfinding
 
                 foreach (var neighbor in current.GetWalkableConnectedNodes())
                 {
-                    float newFCost = heuristic(current, neighbor) + current.GCost + heuristic(neighbor, destination);
-
-                    if (neighbor.Parent == null || newFCost < neighbor.FCost)
+                    if (closed.Contains(neighbor))
                     {
-                        neighbor.Parent = current;
-                        neighbor.GCost = heuristic(current, neighbor) + current.GCost;
-                        neighbor.HCost = heuristic(neighbor, destination);
+                        continue;
                     }
 
-                    if (!open.Contains(neighbor) && !closed.Contains(neighbor))
+                    float newGCost = current.GCost + heuristic(current, neighbor);
+
+                    if (newGCost < neighbor.GCost || !open.Contains(neighbor))
                     {
-                        open.Add(neighbor);
+                        neighbor.GCost = newGCost;
+                        neighbor.HCost = heuristic(neighbor, destination);
+                        neighbor.Parent = current;
+
+                        if (!open.Contains(neighbor) && !closed.Contains(neighbor))
+                        {
+                            open.Add(neighbor);
+                        }
                     }
                 }
             }
