@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-namespace Exanite.Arpg.Pathfinding
+namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class Node
     {
@@ -36,74 +36,6 @@ namespace Exanite.Arpg.Pathfinding
                 type = value;
             }
         }
-
-        // temp
-
-        private Node parent;
-
-        private float gCost;
-        private float hCost;
-
-        /// <summary>
-        /// Parent of this node. The node that led to this node being opened
-        /// </summary>
-        public Node Parent
-        {
-            get
-            {
-                return parent;
-            }
-
-            set
-            {
-                parent = value;
-            }
-        }
-
-        /// <summary>
-        /// The sum of GCost and HCost
-        /// </summary>
-        public float FCost
-        {
-            get
-            {
-                return GCost + HCost;
-            }
-        }
-
-        /// <summary>
-        /// The accurate distance from the start to this node
-        /// </summary>
-        public float GCost
-        {
-            get
-            {
-                return gCost;
-            }
-
-            set
-            {
-                gCost = value;
-            }
-        }
-
-        /// <summary>
-        /// The estimated distance from this node to the destination
-        /// </summary>
-        public float HCost
-        {
-            get
-            {
-                return hCost;
-            }
-
-            set
-            {
-                hCost = value;
-            }
-        }
-
-        // end temp
 
         public void AddConnection(Node node)
         {
