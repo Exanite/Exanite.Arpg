@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Exanite.Arpg.Pathfinding
+namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGridPainter : MonoBehaviour
     {
