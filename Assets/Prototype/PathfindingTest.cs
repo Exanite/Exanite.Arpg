@@ -1,4 +1,6 @@
 ﻿using Exanite.Arpg.Pathfinding;
+using Exanite.Arpg.Pathfinding.Graphs;
+using UniRx.Async;
 using UnityEngine;
 
 public class PathfindingTest : MonoBehaviour
@@ -10,16 +12,23 @@ public class PathfindingTest : MonoBehaviour
 
     private Node startNode;
     private Node destinationNode;
-    private Path path = new Path();
+    private Pathfinder pathfinder = new Pathfinder();
 
-    private void Update()
+    private async UniTask Start()
     {
-        if (grid.isGenerated)
-        {
-            startNode = grid.GetClosestNode(start.position);
-            destinationNode = grid.GetClosestNode(destination.position);
+        Debug.Log("active!");
 
-            Path.FindPath(grid, startNode, destinationNode, path);
+        while (true)
+        {
+            if (grid.isGenerated)
+            {
+                startNode = grid.GetClosestNode(start.position);
+                destinationNode = grid.GetClosestNode(destination.position);
+
+                await pathfinder.FindPathAsync(startNode, destinationNode);
+            }
+
+            await UniTask.Yield();
         }
     }
 
@@ -38,11 +47,14 @@ public class PathfindingTest : MonoBehaviour
             Gizmos.DrawCube(destinationNode.Position, new Vector3(0.9f, 0f, 0.9f) * grid.nodeSize);
         }
 
-        for (int i = 1; i < path.Nodes.Count; i++)
+        if (pathfinder.IsPathValid)
         {
-            Gizmos.color = Color.red;
+            for (int i = 1; i < pathfinder.Path.Count; i++)
+            {
+                Gizmos.color = Color.red;
 
-            Gizmos.DrawLine(path.Nodes[i].Position, path.Nodes[i - 1].Position);
+                Gizmos.DrawLine(pathfinder.Path[i].Position, pathfinder.Path[i - 1].Position);
+            }
         }
     }
 }
