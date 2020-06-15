@@ -1,4 +1,6 @@
-﻿namespace Exanite.Arpg.Pathfinding
+﻿using Exanite.Arpg.Pathfinding.Graphs;
+
+namespace Exanite.Arpg.Pathfinding
 {
     /// <summary>
     /// Calculates the distance between <see cref="Node"/> a and <see cref="Node"/> b
