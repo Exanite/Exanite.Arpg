@@ -108,7 +108,7 @@ namespace Exanite.Arpg.Pathfinding
                     }
                 }
 
-                open.RemoveAt(0);
+                open.Remove(current);
                 closed.Add(current);
 
                 if (current == destination)
@@ -188,12 +188,32 @@ namespace Exanite.Arpg.Pathfinding
         }
 
         /// <summary>
-        /// Calculates the distance between <see cref="Node"/> a and <see cref="Node"/> b<para/>
+        /// Calculates the distance between two <see cref="Node"/>s
         /// By default the Heuristic returns the Euclidean distance between the two nodes
         /// </summary>
         public static float DefaultHeuristic(Node a, Node b)
         {
+            return EuclideanHeuristic(a, b);
+        }
+
+        /// <summary>
+        /// Returns the Euclidean Distance between two <see cref="Node"/>s
+        /// </summary>
+        public static float EuclideanHeuristic(Node a, Node b)
+        {
             return Vector3.Distance(a.Position, b.Position);
+        }
+
+        /// <summary>
+        /// Returns the Manhattan Distance between two <see cref="Node"/>s
+        /// </summary>
+        public static float ManhattanHeuristic(Node a, Node b)
+        {
+            float deltaX = Mathf.Abs(a.Position.x - b.Position.x);
+            float deltaY = Mathf.Abs(a.Position.y - b.Position.y);
+            float deltaZ = Mathf.Abs(a.Position.z - b.Position.z);
+
+            return deltaX + deltaY + deltaZ;
         }
     }
 }
