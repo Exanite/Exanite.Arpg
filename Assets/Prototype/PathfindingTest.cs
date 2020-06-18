@@ -16,8 +16,6 @@ public class PathfindingTest : MonoBehaviour
 
     private async UniTask Start()
     {
-        Debug.Log("active!");
-
         while (true)
         {
             if (grid.isGenerated)

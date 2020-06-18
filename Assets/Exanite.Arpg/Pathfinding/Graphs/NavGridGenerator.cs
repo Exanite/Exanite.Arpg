@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using Zenject;
 using ILogger = Serilog.ILogger;
-using Random = UnityEngine.Random;
 
 namespace Exanite.Arpg.Pathfinding.Graphs
 {
@@ -15,7 +14,6 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         public int sizeY = 10;
 
         public float nodeSize = 1f;
-        public float walkableChance = 0.75f;
         public float generationDelay = 0.05f;
 
         private Coroutine currentTask;
@@ -85,7 +83,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                         node.AddConnection(target.nodes[x - 1, y + 1]);
                     }
 
-                    if (Random.value > walkableChance)
+                    if (Physics.OverlapSphere(new Vector3(x * nodeSize, 0, y * nodeSize), 0).Length > 0 
+                        || !Physics.Raycast(new Vector3(x * nodeSize, 1, y * nodeSize), Vector3.down, 2f))
                     {
                         node.Type = NodeType.NonWalkable;
                     }
@@ -98,9 +97,6 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                     }
                 }
             }
-
-            target.nodes[0, 0].Type = NodeType.Walkable;
-            target.nodes[sizeX - 1, sizeY - 1].Type = NodeType.Walkable;
 
             target.isGenerated = true;
 
