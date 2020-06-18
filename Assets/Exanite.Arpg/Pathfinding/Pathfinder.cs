@@ -209,11 +209,11 @@ namespace Exanite.Arpg.Pathfinding
         /// </summary>
         public static float ManhattanHeuristic(Node a, Node b)
         {
-            float deltaX = Mathf.Abs(a.Position.x - b.Position.x);
-            float deltaY = Mathf.Abs(a.Position.y - b.Position.y);
-            float deltaZ = Mathf.Abs(a.Position.z - b.Position.z);
+            float dx = Mathf.Abs(a.Position.x - b.Position.x);
+            float dy = Mathf.Abs(a.Position.y - b.Position.y);
+            float dz = Mathf.Abs(a.Position.z - b.Position.z);
 
-            return deltaX + deltaY + deltaZ;
+            return dx + dy + dz;
         }
     }
 }
