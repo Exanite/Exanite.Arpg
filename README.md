@@ -1,3 +1,5 @@
+![Continuous Integration](https://github.com/Exanite/Exanite.Arpg/workflows/Continuous%20Integration/badge.svg?branch=master)
+
 # Exanite.Arpg
 Exanite.Arpg is a work-in-progress action RPG that is built in the Unity game engine. It is inspired by Path of Exile and a wide variety of other games.
 
