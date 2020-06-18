@@ -1,6 +1,6 @@
 name: Acquire activation file
 
-on: []
+on: [push]
 
 jobs:
   activation:
