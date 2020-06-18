@@ -1,0 +1,45 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  build:
+    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+       unityVersion: 
+        - 2019.4.0f1
+       targetPlatform:
+        - StandaloneWindows
+    steps:
+    # Checkout
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
+    # Cache
+    - uses: actions/cache@v1.1.0
+      with:
+        key: Library-${{ matrix.targetPlatform }}
+        restore-keys: |
+          Library-
+    # Build
+    - uses: webbertakken/unity-builder@v0.10
+      with:
+        unityVersion: ${{ matrix.unityVersion }}
+        targetPlatform: ${{ matrix.targetPlatform }}
+    # Upload
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Build
+        path: build
