@@ -1,11 +1,16 @@
 {
     "name": "Exanite.Arpg.Gameplay",
-    "references": [],
+    "references": [
+        "Exanite.Arpg.Pathfinding"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        "Serilog.dll",
+        "Zenject-usage.dll"
+    ],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],
