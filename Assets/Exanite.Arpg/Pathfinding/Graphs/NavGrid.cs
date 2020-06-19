@@ -12,12 +12,21 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         public bool isGenerated = false;
         public bool drawNodes = true;
         public bool drawNodeConnections = false;
+        public float nodeDrawHeightOffsetamount = 0.1f;
 
         public Plane Plane
         {
             get
             {
                 return new Plane(transform.up, transform.position);
+            }
+        }
+
+        public Vector3 NodeDrawHeightOffset
+        {
+            get
+            {
+                return nodeDrawHeightOffsetamount * Vector3.up;
             }
         }
 
@@ -91,7 +100,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                 }
             }
 
-            Gizmos.DrawCube(node.Position, new Vector3(0.9f, 0, 0.9f) * nodeSize);
+            Gizmos.DrawCube(node.Position + NodeDrawHeightOffset, new Vector3(0.9f, 0, 0.9f) * nodeSize);
         }
 
         private void DrawNodeConnections(Node node)
@@ -102,7 +111,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             {
                 foreach (var other in node.GetWalkableConnectedNodes())
                 {
-                    Gizmos.DrawLine(node.Position, other.Position);
+                    Gizmos.DrawLine(node.Position + NodeDrawHeightOffset, other.Position + NodeDrawHeightOffset);
                 }
             }
         }
