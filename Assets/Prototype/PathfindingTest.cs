@@ -41,8 +41,8 @@ public class PathfindingTest : MonoBehaviour
         {
             Gizmos.color = Color.yellow * 0.75f;
 
-            Gizmos.DrawCube(startNode.Position, new Vector3(0.9f, 0f, 0.9f) * grid.nodeSize);
-            Gizmos.DrawCube(destinationNode.Position, new Vector3(0.9f, 0f, 0.9f) * grid.nodeSize);
+            Gizmos.DrawCube(startNode.Position + grid.NodeDrawHeightOffset, new Vector3(0.9f, 0f, 0.9f) * grid.nodeSize);
+            Gizmos.DrawCube(destinationNode.Position + grid.NodeDrawHeightOffset, new Vector3(0.9f, 0f, 0.9f) * grid.nodeSize);
         }
 
         if (pathfinder.IsPathValid)
@@ -51,7 +51,7 @@ public class PathfindingTest : MonoBehaviour
             {
                 Gizmos.color = Color.red;
 
-                Gizmos.DrawLine(pathfinder.Path[i].Position, pathfinder.Path[i - 1].Position);
+                Gizmos.DrawLine(pathfinder.Path[i] + grid.NodeDrawHeightOffset, pathfinder.Path[i - 1] + grid.NodeDrawHeightOffset);
             }
         }
     }
