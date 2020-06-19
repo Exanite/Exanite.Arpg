@@ -279,6 +279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 471186630}
+  generateOnStart: 1
   sizeX: 28
   sizeY: 24
   nodeSize: 1
