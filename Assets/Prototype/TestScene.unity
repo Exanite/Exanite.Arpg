@@ -264,7 +264,7 @@ MonoBehaviour:
   nodeSize: 1
   isGenerated: 0
   drawNodes: 1
-  drawNodeConnections: 1
+  drawNodeConnections: 0
   nodeDrawHeightOffsetamount: 0.1
 --- !u!114 &471186631
 MonoBehaviour:
@@ -282,7 +282,7 @@ MonoBehaviour:
   sizeX: 28
   sizeY: 24
   nodeSize: 1
-  generationDelay: 0.0001
+  generationDelay: 0
 --- !u!114 &471186632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -483,7 +483,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1269749673}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -544,6 +544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1287487600}
+  - component: {fileID: 1287487601}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -566,6 +567,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1287487601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1287487599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9cadd4705c79ee4e834401c329215e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graph: {fileID: 471186630}
+  moveSpeed: 5
+  moveKey: 323
 --- !u!1 &1616682564 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8a78fc36f0ed8ee49bf818a8d0c388f0,

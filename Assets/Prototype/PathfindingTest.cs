@@ -51,7 +51,7 @@ public class PathfindingTest : MonoBehaviour
             {
                 Gizmos.color = Color.red;
 
-                Gizmos.DrawLine(pathfinder.Path[i].Position + grid.NodeDrawHeightOffset, pathfinder.Path[i - 1].Position + grid.NodeDrawHeightOffset);
+                Gizmos.DrawLine(pathfinder.Path[i] + grid.NodeDrawHeightOffset, pathfinder.Path[i - 1] + grid.NodeDrawHeightOffset);
             }
         }
     }
