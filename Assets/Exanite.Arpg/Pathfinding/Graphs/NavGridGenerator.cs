@@ -10,6 +10,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
     {
         public NavGrid target;
 
+        public bool generateOnStart = false;
+
         public int sizeX = 10;
         public int sizeY = 10;
 
@@ -24,6 +26,21 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         public void Inject(ILogger log)
         {
             this.log = log?.ForContext<NavGridGenerator>() ?? throw new ArgumentNullException(nameof(log));
+        }
+
+        private void Start()
+        {
+            if (generateOnStart)
+            {
+                if (currentTask != null)
+                {
+                    StopCoroutine(currentTask);
+
+                    log.Information("Grid generation interrupted");
+                }
+
+                currentTask = StartCoroutine(GenerateGrid(() => currentTask = null));
+            }
         }
 
         private void Update()
@@ -83,8 +100,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                         node.AddConnection(target.nodes[x - 1, y + 1]);
                     }
 
-                    if (Physics.OverlapSphere(new Vector3(x * nodeSize, 0, y * nodeSize), 0).Length > 0 
-                        || !Physics.Raycast(new Vector3(x * nodeSize, 1, y * nodeSize), Vector3.down, 2f))
+                    if (Physics.OverlapSphere(new Vector3(x * nodeSize, transform.position.y + 0.1f, y * nodeSize), 0).Length > 0
+                        || !Physics.Raycast(new Vector3(x * nodeSize, transform.position.y + 1, y * nodeSize), Vector3.down, 2f))
                     {
                         node.Type = NodeType.NonWalkable;
                     }
