@@ -83,8 +83,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                         node.AddConnection(target.nodes[x - 1, y + 1]);
                     }
 
-                    if (Physics.OverlapSphere(new Vector3(x * nodeSize, 0, y * nodeSize), 0).Length > 0 
-                        || !Physics.Raycast(new Vector3(x * nodeSize, 1, y * nodeSize), Vector3.down, 2f))
+                    if (Physics.OverlapSphere(new Vector3(x * nodeSize, transform.position.y + 0.1f, y * nodeSize), 0).Length > 0 
+                        || !Physics.Raycast(new Vector3(x * nodeSize, transform.position.y + 1, y * nodeSize), Vector3.down, 2f))
                     {
                         node.Type = NodeType.NonWalkable;
                     }
