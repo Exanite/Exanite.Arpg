@@ -17,7 +17,7 @@ Any Git client can work, but I recommend either using [Github Desktop](https://d
 
 1. Install Unity 2019.4.0 from the [Unity Download Archive](https://unity3d.com/get-unity/download/archive)
 
-2. Create a [Fork](https://github.com/Exanite/Exanite.Arpg) of the project
+2. Create a [Fork](https://github.com/Exanite/Exanite.Arpg/fork) of the project
 
 3. Clone your fork
 ```
