@@ -7,11 +7,12 @@ namespace Exanite.Arpg.Gameplay.Player
     public class PlayerController : MonoBehaviour
     {
         public NavGrid grid;
-        public Pathfinder pathfinder = new Pathfinder();
 
         public float moveSpeed = 1;
 
         public KeyCode moveKey = KeyCode.Mouse0;
+
+        private Pathfinder pathfinder = new Pathfinder();
 
         private void Update()
         {
