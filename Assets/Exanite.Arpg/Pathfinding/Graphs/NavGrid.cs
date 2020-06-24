@@ -6,9 +6,11 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGrid : MonoBehaviour, IEnumerable<Node>
     {
+        public bool isGenerated = false;
+
         public Node[,] nodes;
         public float nodeSize = 1;
-        public bool isGenerated = false;
+
         public bool drawNodes = true;
         public bool drawNodeConnections = false;
         public float nodeDrawHeightOffsetAmount = 0.1f;
