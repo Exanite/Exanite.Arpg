@@ -16,3 +16,16 @@ The project is currently built with Unity 2019.4.0.
 git clone https://github.com/Exanite/Exanite.Arpg.git
 ```
 3. Use Unity to open the project
+
+# Contributing
+If you really want to contribute, here is how to do so.
+
+1. Create a fork of the project
+
+2. Clone your fork
+
+3. Make and commit your changes
+
+4. Open a pull request
+
+Please make sure commit messages, code, and other changes follow this project's existing conventions.
