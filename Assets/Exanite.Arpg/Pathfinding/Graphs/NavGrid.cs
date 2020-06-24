@@ -1,18 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGrid : MonoBehaviour, IEnumerable<Node>
     {
+        public bool isGenerated = false;
+
         public Node[,] nodes;
         public float nodeSize = 1;
-        public bool isGenerated = false;
+
         public bool drawNodes = true;
         public bool drawNodeConnections = false;
-        public float nodeDrawHeightOffsetamount = 0.1f;
+        public float nodeDrawHeightOffsetAmount = 0.1f;
 
         public Plane Plane
         {
@@ -26,7 +27,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         {
             get
             {
-                return nodeDrawHeightOffsetamount * Vector3.up;
+                return nodeDrawHeightOffsetAmount * Vector3.up;
             }
         }
 
@@ -56,6 +57,20 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             }
         }
 
+        public bool Raycast(Ray ray, out Vector3 hitPosition)
+        {
+            hitPosition = Vector3.zero;
+
+            if (Plane.Raycast(ray, out float enter))
+            {
+                hitPosition = ray.GetPoint(enter);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public bool RaycastNode(Ray ray, out Node node)
         {
             node = null;
@@ -74,7 +89,54 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 
         public Node GetClosestNode(Vector3 position)
         {
-            return this.Aggregate((x, y) => ((position - x.Position).sqrMagnitude < (position - y.Position).sqrMagnitude) ? x : y);
+            Node closest = null;
+            float closestDistance = float.PositiveInfinity;
+
+            float currentDistance;
+
+            foreach (var node in this)
+            {
+                currentDistance = (node.Position - position).sqrMagnitude;
+
+                if (currentDistance < closestDistance)
+                {
+                    closest = node;
+                    closestDistance = currentDistance;
+                }
+            }
+
+            return closest;
+        }
+
+        public Node GetClosestWalkableNode(Vector3 position, float maxDistance = float.PositiveInfinity)
+        {
+            Node closest = null;
+            float closestDistance = float.PositiveInfinity;
+
+            float currentDistance;
+
+            foreach (var node in this)
+            {
+                if (node.Type == NodeType.NonWalkable)
+                {
+                    continue;
+                }
+
+                currentDistance = (node.Position - position).sqrMagnitude;
+
+                if (currentDistance < closestDistance)
+                {
+                    closest = node;
+                    closestDistance = currentDistance;
+                }
+            }
+
+            if (closestDistance < maxDistance * maxDistance)
+            {
+                return closest;
+            }
+
+            return null;
         }
 
         public void ClearGrid()

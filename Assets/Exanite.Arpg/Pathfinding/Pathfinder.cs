@@ -80,7 +80,9 @@ namespace Exanite.Arpg.Pathfinding
                 heuristic = DefaultHeuristic;
             }
 
-            if (destination.Type == NodeType.NonWalkable)
+            if (start == null
+                || destination == null
+                || destination.Type == NodeType.NonWalkable)
             {
                 IsPathValid = false;
 
