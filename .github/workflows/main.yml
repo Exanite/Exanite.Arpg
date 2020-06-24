@@ -39,7 +39,7 @@ jobs:
         restore-keys: |
           Library-
     # Build
-    - uses: webbertakken/unity-builder@v1.0
+    - uses: webbertakken/unity-builder@v0.10
       with:
         unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
