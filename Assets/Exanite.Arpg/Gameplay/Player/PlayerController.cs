@@ -6,7 +6,7 @@ namespace Exanite.Arpg.Gameplay.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        public NavGrid graph;
+        public NavGrid grid;
         public Pathfinder pathfinder = new Pathfinder();
 
         public float moveSpeed = 1;
@@ -15,11 +15,16 @@ namespace Exanite.Arpg.Gameplay.Player
 
         private void Update()
         {
-            if (Input.GetKey(moveKey) && graph.isGenerated)
+            if (Input.GetKey(moveKey) && grid.isGenerated)
             {
-                if (graph.RaycastNode(Camera.main.ScreenPointToRay(Input.mousePosition), out Node targetNode))
+                if (grid.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out Vector3 hitPosition))
                 {
-                    pathfinder.FindPath(graph.GetClosestNode(transform.position), targetNode);
+                    Node destination = grid.GetClosestWalkableNode(hitPosition, 3);
+
+                    if (destination != null)
+                    {
+                        pathfinder.FindPath(grid.GetClosestNode(transform.position), destination);
+                    }
                 }
             }
 
@@ -45,7 +50,7 @@ namespace Exanite.Arpg.Gameplay.Player
                 {
                     Gizmos.color = Color.red;
 
-                    Gizmos.DrawLine(pathfinder.Path[i] + graph.NodeDrawHeightOffset, pathfinder.Path[i - 1] + graph.NodeDrawHeightOffset);
+                    Gizmos.DrawLine(pathfinder.Path[i] + grid.NodeDrawHeightOffset, pathfinder.Path[i - 1] + grid.NodeDrawHeightOffset);
                 }
             }
         }
