@@ -25,12 +25,12 @@ git clone https://github.com/<YourUsername>/Exanite.Arpg.git
 ```
 4. Use Unity to open the project
 
-5. Create a new branch `dev/<YourUsername>`
+5. Create a new branch (`dev/<YourUsername>` or `feature/<YourFeature>`)
 
-5. Make and commit your changes
+6. Make and commit your changes
 
-6. Open a pull request
+7. Open a pull request
 
-7. Wait until your pull request is reviewed
+8. Wait until your pull request is reviewed
 
 Please make sure commit messages, code, and other changes follow this project's existing conventions. (Commits, assets, code, etc)
