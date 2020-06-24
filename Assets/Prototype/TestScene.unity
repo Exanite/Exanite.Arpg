@@ -261,9 +261,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeSize: 1
   isGenerated: 0
-  drawNodes: 1
+  drawNodes: 0
   drawNodeConnections: 0
-  nodeDrawHeightOffsetamount: 0.1
+  nodeDrawHeightOffsetAmount: 0.1
 --- !u!114 &471186631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9cadd4705c79ee4e834401c329215e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graph: {fileID: 471186630}
+  grid: {fileID: 471186630}
   moveSpeed: 5
   moveKey: 323
 --- !u!64 &1616682565
