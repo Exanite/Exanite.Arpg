@@ -225,7 +225,6 @@ GameObject:
   - component: {fileID: 471186629}
   - component: {fileID: 471186632}
   - component: {fileID: 471186630}
-  - component: {fileID: 471186631}
   m_Layer: 0
   m_Name: NavigationGrid
   m_TagString: Untagged
@@ -259,29 +258,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b553a9d8f7f076746bb2cc4d019dedc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeSize: 1
-  isGenerated: 0
-  drawNodes: 0
-  drawNodeConnections: 0
-  nodeDrawHeightOffsetAmount: 0.1
---- !u!114 &471186631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 471186628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1ab496d06c6c942b2797b462fd285f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 471186630}
   generateOnStart: 1
   sizeX: 28
   sizeY: 24
-  nodeSize: 1
-  generationDelay: 0
+  distanceBetweenNodes: 1
+  generateDiagonals: 0
+  enableNodeDrawing: 1
+  enableNodeConnectionDrawing: 0
+  nodeDrawHeightOffsetAmount: 0.1
 --- !u!114 &471186632
 MonoBehaviour:
   m_ObjectHideFlags: 0
