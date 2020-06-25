@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Assets.Exanite.Arpg.Pathfinding;
 using Exanite.Arpg.Pathfinding.Graphs;
 using UniRx.Async;
 
