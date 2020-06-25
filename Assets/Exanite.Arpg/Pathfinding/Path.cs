@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Exanite.Arpg.Pathfinding
+namespace Exanite.Arpg.Pathfinding
 {
     public class Path
     {
