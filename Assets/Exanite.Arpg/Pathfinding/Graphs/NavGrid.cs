@@ -209,7 +209,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                 }
             }
 
-            Gizmos.DrawCube(node.Position + NodeDrawHeightOffset, new Vector3(0.9f, 0, 0.9f));
+            Gizmos.DrawCube(node.Position + NodeDrawHeightOffset, new Vector3(0.9f, 0, 0.9f) * DistanceBetweenNodes);
         }
 
         private void DrawNodeConnections(Node node)
