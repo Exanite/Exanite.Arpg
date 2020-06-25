@@ -16,7 +16,7 @@ namespace Exanite.Arpg.Gameplay.Player
 
         private void Update()
         {
-            if (Input.GetKey(moveKey) && grid.isGenerated)
+            if (Input.GetKey(moveKey) && grid.Nodes != null)
             {
                 if (grid.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out Vector3 hitPosition))
                 {
