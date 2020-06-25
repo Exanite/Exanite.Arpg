@@ -1,4 +1,5 @@
-﻿using Exanite.Arpg.Pathfinding;
+﻿using Assets.Exanite.Arpg.Pathfinding;
+using Exanite.Arpg.Pathfinding;
 using Exanite.Arpg.Pathfinding.Graphs;
 using UnityEngine;
 
@@ -8,9 +9,11 @@ namespace Exanite.Arpg.Gameplay.Player
     {
         public NavGrid grid;
 
+        public KeyCode moveKey = KeyCode.Mouse0;
+
         public float moveSpeed = 1;
 
-        public KeyCode moveKey = KeyCode.Mouse0;
+        private Path path;
 
         private Pathfinder pathfinder = new Pathfinder();
 
@@ -24,20 +27,29 @@ namespace Exanite.Arpg.Gameplay.Player
 
                     if (destination != null)
                     {
-                        pathfinder.FindPath(grid.GetClosestNode(transform.position), destination);
+                        var result = pathfinder.FindPath(grid.GetClosestNode(transform.position), destination);
+
+                        if (result.isSuccess)
+                        {
+                            path = result.path;
+                        }
+                        else
+                        {
+                            path = null;
+                        }
                     }
                 }
             }
 
-            if (pathfinder.IsPathValid)
+            if (path != null)
             {
-                if (pathfinder.Path.Count > 0)
+                if (path.Waypoints.Count > 0)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, pathfinder.Path[0], moveSpeed * Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, path.Waypoints[0], moveSpeed * Time.deltaTime);
 
-                    if (Vector3.Distance(transform.position, pathfinder.Path[0]) < 0.1f)
+                    if (Vector3.Distance(transform.position, path.Waypoints[0]) < 0.1f)
                     {
-                        pathfinder.Path.RemoveAt(0);
+                        path.Waypoints.RemoveAt(0);
                     }
                 }
             }
@@ -45,13 +57,13 @@ namespace Exanite.Arpg.Gameplay.Player
 
         private void OnDrawGizmos()
         {
-            if (pathfinder.IsPathValid)
+            if (path != null)
             {
-                for (int i = 1; i < pathfinder.Path.Count; i++)
+                for (int i = 1; i < path.Waypoints.Count; i++)
                 {
                     Gizmos.color = Color.red;
 
-                    Gizmos.DrawLine(pathfinder.Path[i] + grid.NodeDrawHeightOffset, pathfinder.Path[i - 1] + grid.NodeDrawHeightOffset);
+                    Gizmos.DrawLine(path.Waypoints[i] + grid.NodeDrawHeightOffset, path.Waypoints[i - 1] + grid.NodeDrawHeightOffset);
                 }
             }
         }
