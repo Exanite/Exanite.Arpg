@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Exanite.Arpg.Pathfinding;
 using Exanite.Arpg.Pathfinding.Graphs;
 using UniRx.Async;
 using UnityEngine;
@@ -77,7 +78,7 @@ namespace Exanite.Arpg.Pathfinding
         {
             if (heuristic == null)
             {
-                heuristic = DefaultHeuristic;
+                heuristic = Heuristics.Default;
             }
 
             if (start == null
@@ -187,35 +188,6 @@ namespace Exanite.Arpg.Pathfinding
 
             open.Clear();
             closed.Clear();
-        }
-
-        /// <summary>
-        /// Calculates the distance between two <see cref="Node"/>s
-        /// By default the Heuristic returns the Euclidean distance between the two nodes
-        /// </summary>
-        public static float DefaultHeuristic(Node a, Node b)
-        {
-            return EuclideanHeuristic(a, b);
-        }
-
-        /// <summary>
-        /// Returns the Euclidean Distance between two <see cref="Node"/>s
-        /// </summary>
-        public static float EuclideanHeuristic(Node a, Node b)
-        {
-            return Vector3.Distance(a.Position, b.Position);
-        }
-
-        /// <summary>
-        /// Returns the Manhattan Distance between two <see cref="Node"/>s
-        /// </summary>
-        public static float ManhattanHeuristic(Node a, Node b)
-        {
-            float dx = Mathf.Abs(a.Position.x - b.Position.x);
-            float dy = Mathf.Abs(a.Position.y - b.Position.y);
-            float dz = Mathf.Abs(a.Position.z - b.Position.z);
-
-            return dx + dy + dz;
         }
     }
 }
