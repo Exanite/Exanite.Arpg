@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Exanite.Arpg.Pathfinding.Graphs;
 using UniRx.Async;
 using UnityEngine;
@@ -112,9 +111,11 @@ namespace Exanite.Arpg.Pathfinding
 
             if (success)
             {
-                List<Node> nodes = SimplifyPath(RetracePath(start, destination));
+                List<Node> nodes = RetracePath(start, destination);
 
-                path = new Path(nodes.Select(x => x.Position).ToList()); // ! hack to get things working again
+                nodes = SimplifyPath(nodes);
+
+                path = new Path(nodes);
             }
 
             CleanupPathfindingData();
