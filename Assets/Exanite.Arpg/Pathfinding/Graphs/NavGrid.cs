@@ -1,19 +1,154 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Zenject;
+using ILogger = Serilog.ILogger;
 
 namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGrid : MonoBehaviour, IEnumerable<Node>
     {
-        public bool isGenerated = false;
+        private Node[,] nodes;
 
-        public Node[,] nodes;
-        public float nodeSize = 1;
+        [SerializeField] private bool generateOnStart = false;
 
-        public bool drawNodes = true;
-        public bool drawNodeConnections = false;
-        public float nodeDrawHeightOffsetAmount = 0.1f;
+        [SerializeField] private int sizeX = 10;
+        [SerializeField] private int sizeY = 10;
+        [SerializeField] private float distanceBetweenNodes = 1;
+        [SerializeField] private bool generateDiagonals = false;
+
+        [SerializeField] private bool enableNodeDrawing = false;
+        [SerializeField] private bool enableNodeConnectionDrawing = false;
+        [SerializeField] private float nodeDrawHeightOffsetAmount = 0.1f;
+
+        private ILogger log;
+
+        [Inject]
+        public void Inject(ILogger log)
+        {
+            this.log = log.ForContext<NavGrid>();
+        }
+
+        public Node[,] Nodes
+        {
+            get
+            {
+                return nodes;
+            }
+        }
+
+        public bool GenerateOnStart
+        {
+            get
+            {
+                return generateOnStart;
+            }
+
+            set
+            {
+                generateOnStart = value;
+            }
+        }
+
+        public int SizeX
+        {
+            get
+            {
+                return sizeX;
+            }
+
+            set
+            {
+                sizeX = value;
+            }
+        }
+
+        public int SizeY
+        {
+            get
+            {
+                return sizeY;
+            }
+
+            set
+            {
+                sizeY = value;
+            }
+        }
+
+        public float DistanceBetweenNodes
+        {
+            get
+            {
+                return distanceBetweenNodes;
+            }
+
+            set
+            {
+                distanceBetweenNodes = value;
+            }
+        }
+
+        public bool GenerateDiagonals
+        {
+            get
+            {
+                return generateDiagonals;
+            }
+
+            set
+            {
+                generateDiagonals = value;
+            }
+        }
+
+        public bool EnableNodeDrawing
+        {
+            get
+            {
+                return enableNodeDrawing;
+            }
+
+            set
+            {
+                enableNodeDrawing = value;
+            }
+        }
+
+        public bool EnableNodeConnectionDrawing
+        {
+            get
+            {
+                return enableNodeConnectionDrawing;
+            }
+
+            set
+            {
+                enableNodeConnectionDrawing = value;
+            }
+        }
+
+        public float NodeDrawHeightOffsetAmount
+        {
+            get
+            {
+                return nodeDrawHeightOffsetAmount;
+            }
+
+            set
+            {
+                nodeDrawHeightOffsetAmount = value;
+            }
+        }
+
+        public Vector3 NodeDrawHeightOffset
+        {
+            get
+            {
+                return NodeDrawHeightOffsetAmount * Vector3.up;
+            }
+        }
 
         public Plane Plane
         {
@@ -23,36 +158,69 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             }
         }
 
-        public Vector3 NodeDrawHeightOffset
+        private void Start()
         {
-            get
+            if (GenerateOnStart)
             {
-                return nodeDrawHeightOffsetAmount * Vector3.up;
+                Generate();
             }
         }
 
         private void OnDrawGizmos()
         {
-            if (nodes == null)
+            if (Nodes == null)
             {
                 return;
             }
 
-            foreach (var node in nodes)
+            foreach (var node in Nodes)
             {
                 if (node == null)
                 {
                     continue;
                 }
 
-                if (drawNodes)
+                if (EnableNodeDrawing)
                 {
                     DrawNode(node);
                 }
 
-                if (drawNodeConnections)
+                if (EnableNodeConnectionDrawing)
                 {
                     DrawNodeConnections(node);
+                }
+            }
+        }
+
+        private void DrawNode(Node node)
+        {
+            switch (node.Type)
+            {
+                case NodeType.Walkable:
+                {
+                    Gizmos.color = Color.green * 0.5f;
+                    break;
+                }
+
+                case NodeType.NonWalkable:
+                {
+                    Gizmos.color = Color.red * 0.5f;
+                    break;
+                }
+            }
+
+            Gizmos.DrawCube(node.Position + NodeDrawHeightOffset, new Vector3(0.9f, 0, 0.9f) * DistanceBetweenNodes);
+        }
+
+        private void DrawNodeConnections(Node node)
+        {
+            Gizmos.color = Color.white;
+
+            if (node.Type == NodeType.Walkable)
+            {
+                foreach (var other in node.GetWalkableConnectedNodes())
+                {
+                    Gizmos.DrawLine(node.Position + NodeDrawHeightOffset, other.Position + NodeDrawHeightOffset);
                 }
             }
         }
@@ -139,52 +307,76 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             return null;
         }
 
+        public void Generate()
+        {
+            log.Information("Creating grid of size ({SizeX}, {SizeY})", SizeX, SizeY);
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            ClearGrid();
+
+            nodes = new Node[SizeX, SizeY];
+
+            for (int x = 0; x < SizeX; x++)
+            {
+                for (int y = 0; y < SizeY; y++)
+                {
+                    var node = new Node
+                    {
+                        Position = new Vector3(x * DistanceBetweenNodes, 0, y * DistanceBetweenNodes)
+                    };
+
+                    if (x > 0)
+                    {
+                        node.AddConnection(Nodes[x - 1, y]);
+                    }
+
+                    if (y > 0)
+                    {
+                        node.AddConnection(Nodes[x, y - 1]);
+                    }
+
+                    if (GenerateDiagonals)
+                    {
+                        if (x > 0 && y > 0)
+                        {
+                            node.AddConnection(Nodes[x - 1, y - 1]);
+                        }
+
+                        if (x > 0 && y < SizeY - 1)
+                        {
+                            node.AddConnection(Nodes[x - 1, y + 1]);
+                        }
+                    }
+
+                    if (Physics.OverlapSphere(node.Position + Vector3.up * 0.1f, 0).Length > 0
+                    || !Physics.Raycast(node.Position + Vector3.up * 1f, Vector3.down, 2f))
+                    {
+                        node.Type = NodeType.NonWalkable;
+                    }
+
+                    Nodes[x, y] = node;
+                }
+            }
+
+            watch.Stop();
+
+            log.Information("Finished grid creation, took {Milliseconds} milliseconds", watch.ElapsedMilliseconds);
+        }
+
         public void ClearGrid()
         {
             nodes = null;
-            isGenerated = false;
-        }
-
-        private void DrawNode(Node node)
-        {
-            switch (node.Type)
-            {
-                case NodeType.Walkable:
-                {
-                    Gizmos.color = Color.green * 0.5f;
-                    break;
-                }
-
-                case NodeType.NonWalkable:
-                {
-                    Gizmos.color = Color.red * 0.5f;
-                    break;
-                }
-            }
-
-            Gizmos.DrawCube(node.Position + NodeDrawHeightOffset, new Vector3(0.9f, 0, 0.9f) * nodeSize);
-        }
-
-        private void DrawNodeConnections(Node node)
-        {
-            Gizmos.color = Color.white;
-
-            if (node.Type == NodeType.Walkable)
-            {
-                foreach (var other in node.GetWalkableConnectedNodes())
-                {
-                    Gizmos.DrawLine(node.Position + NodeDrawHeightOffset, other.Position + NodeDrawHeightOffset);
-                }
-            }
         }
 
         public IEnumerator<Node> GetEnumerator()
         {
-            for (int x = 0; x < nodes.GetLength(0); x++)
+            for (int x = 0; x < Nodes.GetLength(0); x++)
             {
-                for (int y = 0; y < nodes.GetLength(1); y++)
+                for (int y = 0; y < Nodes.GetLength(1); y++)
                 {
-                    yield return nodes[x, y];
+                    yield return Nodes[x, y];
                 }
             }
         }
