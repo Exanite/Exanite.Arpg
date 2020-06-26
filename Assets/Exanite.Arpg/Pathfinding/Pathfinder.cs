@@ -160,13 +160,11 @@ namespace Exanite.Arpg.Pathfinding
             Vector3 currentDirection = Vector3.zero;
             Vector3 newDirection;
 
-            result.Add(nodes[0]);
-
             for (int i = 1; i < nodes.Count; i++)
             {
-                newDirection = nodes[i].Position - nodes[i - 1].Position;
+                newDirection = (nodes[i].Position - nodes[i - 1].Position).normalized;
 
-                if (Vector3.Dot(currentDirection, newDirection) != 1)
+                if (currentDirection != newDirection)
                 {
                     result.Add(nodes[i - 1]);
 
