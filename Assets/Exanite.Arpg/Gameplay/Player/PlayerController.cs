@@ -60,7 +60,7 @@ namespace Exanite.Arpg.Gameplay.Player
             {
                 for (int i = 1; i < path.Waypoints.Count; i++)
                 {
-                    Gizmos.color = Color.red;
+                    Gizmos.color = (i + path.Waypoints.Count) % 2 == 0 ? Color.red : Color.blue;
 
                     Gizmos.DrawLine(path.Waypoints[i] + grid.NodeDrawHeightOffset, path.Waypoints[i - 1] + grid.NodeDrawHeightOffset);
                 }
