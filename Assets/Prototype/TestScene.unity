@@ -484,8 +484,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 471186630}
-  moveSpeed: 5
   moveKey: 323
+  moveSpeed: 5
 --- !u!64 &1616682565
 MeshCollider:
   m_ObjectHideFlags: 0

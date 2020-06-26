@@ -2,6 +2,7 @@
 using System.Linq;
 using Exanite.Arpg.Pathfinding.Graphs;
 using UniRx.Async;
+using UnityEngine;
 
 namespace Exanite.Arpg.Pathfinding
 {
@@ -35,6 +36,9 @@ namespace Exanite.Arpg.Pathfinding
             return result;
         }
 
+        /// <summary>
+        /// Attempts to find a path between the start and destination nodes
+        /// </summary>
         public (bool isSuccess, Path path) FindPath(Node start, Node destination, Heuristic heuristic = null)
         {
             if (heuristic == null)
@@ -108,7 +112,7 @@ namespace Exanite.Arpg.Pathfinding
 
             if (success)
             {
-                List<Node> nodes = RetracePath(start, destination);
+                List<Node> nodes = SimplifyPath(RetracePath(start, destination));
 
                 path = new Path(nodes.Select(x => x.Position).ToList()); // ! hack to get things working again
             }
@@ -119,23 +123,59 @@ namespace Exanite.Arpg.Pathfinding
         }
 
         /// <summary>
-        /// Retraces the path from <paramref name="destination"/> to <paramref name="start"/> <para/>
+        /// Retraces the path from <paramref name="destination"/> to <paramref name="start"/>
         /// </summary>
         private List<Node> RetracePath(Node start, Node destination)
         {
-            var list = new List<Node>();
+            var result = new List<Node>();
             var current = destination;
 
             while (current != start)
             {
-                list.Add(current);
+                result.Add(current);
 
                 current = parent[current];
             }
 
-            list.Reverse();
+            result.Reverse();
 
-            return list;
+            return result;
+        }
+
+        /// <summary>
+        /// Removes unneeded, same directional, waypoints from the path
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <returns></returns>
+        private List<Node> SimplifyPath(List<Node> nodes)
+        {
+            if (nodes.Count <= 2)
+            {
+                return new List<Node>(nodes);
+            }
+
+            var result = new List<Node>();
+
+            Vector3 currentDirection = Vector3.zero;
+            Vector3 newDirection;
+
+            result.Add(nodes[0]);
+
+            for (int i = 1; i < nodes.Count; i++)
+            {
+                newDirection = nodes[i].Position - nodes[i - 1].Position;
+
+                if (Vector3.Dot(currentDirection, newDirection) != 1)
+                {
+                    result.Add(nodes[i - 1]);
+
+                    currentDirection = newDirection;
+                }
+            }
+
+            result.Add(nodes[nodes.Count - 1]);
+
+            return result;
         }
 
         /// <summary>
