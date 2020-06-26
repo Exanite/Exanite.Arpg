@@ -8,17 +8,19 @@ namespace Exanite.Arpg.Pathfinding.Graphs
     {
         public NavGrid target;
 
+        public KeyCode paintKey = KeyCode.Mouse1;
+
         private Coroutine currentTask;
 
         private void Update()
         {
             if (target.Nodes != null)
             {
-                if (Input.GetKeyDown(KeyCode.Mouse0))
+                if (Input.GetKeyDown(paintKey))
                 {
                     currentTask = StartCoroutine(PaintGrid());
                 }
-                else if (Input.GetKeyUp(KeyCode.Mouse0))
+                else if (Input.GetKeyUp(paintKey))
                 {
                     StopCoroutine(currentTask);
 
