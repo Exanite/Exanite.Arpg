@@ -37,7 +37,7 @@ namespace Exanite.Arpg.Logging
         public UnityToSerilogLogHandler(ILogger log)
         {
             // Not ForContext<UnityToSerilogLogHandler> because this is so log messages from Unity have their context set properly
-            this.log = log?.ForContext("SourceContext", "Unity") ?? throw new ArgumentNullException(nameof(log));
+            this.log = log.ForContext("SourceContext", "Unity");
         }
 
         /// <summary>
