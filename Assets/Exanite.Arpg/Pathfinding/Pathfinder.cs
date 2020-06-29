@@ -7,8 +7,18 @@ namespace Exanite.Arpg.Pathfinding
 {
     public class Pathfinder
     {
+        /// <summary>
+        /// Stores the parents of Nodes: the preceding node in the path
+        /// </summary>
         private readonly Dictionary<Node, Node> parent = new Dictionary<Node, Node>();
+        /// <summary>
+        /// Stores the fCost of Nodes: the total cost of the node<para/>
+        /// This is equal to gCost + heuristic(current, end)
+        /// </summary>
         private readonly Dictionary<Node, float> fCost = new Dictionary<Node, float>();
+        /// <summary>
+        /// Stores the gCost of Nodes: the accurate, accumulated cost to the node
+        /// </summary>
         private readonly Dictionary<Node, float> gCost = new Dictionary<Node, float>();
 
         private readonly List<Node> open = new List<Node>();
@@ -19,7 +29,7 @@ namespace Exanite.Arpg.Pathfinding
         /// <summary>
         /// Attempts to find a path between the start and destination nodes
         /// </summary>
-        public async UniTask<(bool isSuccess, Path path)> FindPathAsync(Node start, Node destination, Heuristic heuristic = null)
+        public async UniTask<(bool isSuccess, Path path)> FindPathAsync(NavGrid grid, Node start, Node destination, Heuristic heuristic = null)
         {
             await UniTask.SwitchToThreadPool();
 
@@ -27,7 +37,7 @@ namespace Exanite.Arpg.Pathfinding
 
             lock (syncRoot)
             {
-                result = FindPath(start, destination, heuristic);
+                result = FindPath(grid, start, destination, heuristic);
             }
 
             await UniTask.SwitchToMainThread();
@@ -38,7 +48,7 @@ namespace Exanite.Arpg.Pathfinding
         /// <summary>
         /// Attempts to find a path between the start and destination nodes
         /// </summary>
-        public (bool isSuccess, Path path) FindPath(Node start, Node destination, Heuristic heuristic = null)
+        public (bool isSuccess, Path path) FindPath(NavGrid grid, Node start, Node destination, Heuristic heuristic = null)
         {
             if (heuristic == null)
             {
@@ -90,19 +100,38 @@ namespace Exanite.Arpg.Pathfinding
                         continue;
                     }
 
-                    float newGCost = gCost[current] + heuristic(current, neighbor);
-
-                    if (!gCost.ContainsKey(neighbor) || newGCost < gCost[neighbor])
+                    if (!closed.Contains(neighbor))
                     {
-                        gCost[neighbor] = newGCost;
-                        parent[neighbor] = current;
-
-                        if (!open.Contains(neighbor) && !closed.Contains(neighbor))
+                        if (!open.Contains(neighbor))
                         {
-                            fCost[neighbor] = newGCost + heuristic(neighbor, destination);
-
                             open.Add(neighbor);
+
+                            gCost[neighbor] = float.PositiveInfinity;
+                            parent[neighbor] = current;
                         }
+
+                        if (parent.ContainsKey(current) && grid.IsDirectlyWalkable(parent[current], neighbor))
+                        {
+                            float newGCost = gCost[parent[current]] + heuristic(parent[current], neighbor);
+
+                            if (newGCost < gCost[neighbor])
+                            {
+                                gCost[neighbor] = newGCost;
+                                parent[neighbor] = parent[current];
+                            }
+                        }
+                        else
+                        {
+                            float newGCost = gCost[current] + heuristic(current, neighbor);
+
+                            if (newGCost < gCost[neighbor])
+                            {
+                                gCost[neighbor] = newGCost;
+                                parent[neighbor] = current;
+                            }
+                        }
+
+                        fCost[neighbor] = gCost[neighbor] + heuristic(neighbor, destination);
                     }
                 }
             }
@@ -112,8 +141,6 @@ namespace Exanite.Arpg.Pathfinding
             if (success)
             {
                 List<Node> nodes = RetracePath(start, destination);
-
-                nodes = SimplifyPath(nodes);
 
                 path = new Path(nodes);
             }
@@ -139,40 +166,6 @@ namespace Exanite.Arpg.Pathfinding
             }
 
             result.Reverse();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Removes unneeded, same directional, waypoints from the path
-        /// </summary>
-        /// <param name="nodes"></param>
-        /// <returns></returns>
-        private List<Node> SimplifyPath(List<Node> nodes)
-        {
-            if (nodes.Count <= 2)
-            {
-                return new List<Node>(nodes);
-            }
-
-            var result = new List<Node>();
-
-            Vector3 currentDirection = Vector3.zero;
-            Vector3 newDirection;
-
-            for (int i = 1; i < nodes.Count; i++)
-            {
-                newDirection = (nodes[i].Position - nodes[i - 1].Position).normalized;
-
-                if (currentDirection != newDirection)
-                {
-                    result.Add(nodes[i - 1]);
-
-                    currentDirection = newDirection;
-                }
-            }
-
-            result.Add(nodes[nodes.Count - 1]);
 
             return result;
         }
