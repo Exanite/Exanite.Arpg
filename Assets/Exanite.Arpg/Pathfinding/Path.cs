@@ -48,5 +48,27 @@ namespace Exanite.Arpg.Pathfinding
                 waypoints = value;
             }
         }
+
+        public void DrawWithGizmos(NavGrid grid)
+        {
+            Gizmos.color = Color.red;
+
+            for (int i = 1; i < Waypoints.Count; i++)
+            {
+                Gizmos.DrawLine(Waypoints[i] + grid.NodeDrawHeightOffset, Waypoints[i - 1] + grid.NodeDrawHeightOffset);
+            }
+        }
+
+        public void DrawWithGizmos(NavGrid grid, Vector3 currentPosition)
+        {
+            if (Waypoints.Count == 0)
+            {
+                return;
+            }
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(currentPosition + grid.NodeDrawHeightOffset, Waypoints[0]);
+            DrawWithGizmos(grid);
+        }
     }
 }
