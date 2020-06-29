@@ -56,15 +56,7 @@ namespace Exanite.Arpg.Gameplay.Player
 
         private void OnDrawGizmos()
         {
-            if (path != null)
-            {
-                for (int i = 1; i < path.Waypoints.Count; i++)
-                {
-                    Gizmos.color = (i + path.Waypoints.Count) % 2 == 0 ? Color.red : Color.blue;
-
-                    Gizmos.DrawLine(path.Waypoints[i] + grid.NodeDrawHeightOffset, path.Waypoints[i - 1] + grid.NodeDrawHeightOffset);
-                }
-            }
+            path?.DrawWithGizmos(grid, transform.position);
         }
     }
 }
