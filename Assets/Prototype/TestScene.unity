@@ -353,8 +353,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generateOnStart: 1
-  sizeX: 84
-  sizeY: 72
+  sizeX: 28
+  sizeY: 24
   distanceBetweenNodes: 1
   generateDiagonals: 1
   enableNodeDrawing: 1
@@ -592,6 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 471186630}
+  glMaterial: {fileID: 2100000, guid: 9096646fd4e45eb4fb844b230315187d, type: 2}
   moveKey: 323
   moveSpeed: 5
 --- !u!64 &1616682565

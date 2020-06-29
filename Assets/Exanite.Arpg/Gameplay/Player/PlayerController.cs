@@ -7,6 +7,7 @@ namespace Exanite.Arpg.Gameplay.Player
     public class PlayerController : MonoBehaviour
     {
         public NavGrid grid;
+        public Material glMaterial;
 
         public KeyCode moveKey = KeyCode.Mouse0;
 
@@ -15,6 +16,16 @@ namespace Exanite.Arpg.Gameplay.Player
         private Path path;
 
         private Pathfinder pathfinder = new Pathfinder();
+
+        private void Start()
+        {
+            Camera.onPostRender += DrawPathGL;
+        }
+
+        private void OnDestroy()
+        {
+            Camera.onPostRender -= DrawPathGL;
+        }
 
         private void Update()
         {
@@ -54,9 +65,14 @@ namespace Exanite.Arpg.Gameplay.Player
             }
         }
 
-        private void OnDrawGizmos()
+        private void DrawPathGL(Camera camera)
         {
-            path?.DrawWithGizmos(grid, transform.position);
+            path?.DrawWithGL(glMaterial, grid, transform.position);
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    path?.DrawWithGizmos(grid, transform.position);
+        //}
     }
 }
