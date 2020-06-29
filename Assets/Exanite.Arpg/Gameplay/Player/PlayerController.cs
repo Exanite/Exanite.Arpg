@@ -26,7 +26,7 @@ namespace Exanite.Arpg.Gameplay.Player
 
                     if (destination != null)
                     {
-                        var result = pathfinder.FindPath(grid.GetClosestNode(transform.position), destination);
+                        var result = pathfinder.FindPath(grid, grid.GetClosestNode(transform.position), destination);
 
                         if (result.isSuccess)
                         {
