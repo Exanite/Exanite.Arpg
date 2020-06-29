@@ -276,6 +276,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             return closest;
         }
 
+        // Crude method of testing walkability for now, does not support height differences in the path
         public Node GetClosestWalkableNode(Vector3 position, float maxDistance = float.PositiveInfinity)
         {
             Node closest = null;
@@ -305,6 +306,31 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             }
 
             return null;
+        }
+
+        public bool IsDirectlyWalkable(Node a, Node b, float searchRadius)
+        {
+            if (a.Type != NodeType.Walkable || b.Type != NodeType.Walkable)
+            {
+                return false;
+            }
+
+            float searchIncrement = searchRadius * 2;
+
+            Vector3 direction = (b.Position - a.Position).normalized;
+            Vector3 currentPosition = a.Position;
+
+            while (currentPosition != b.Position)
+            {
+                if (GetClosestNode(currentPosition).Type != NodeType.Walkable)
+                {
+                    return false;
+                }
+
+                currentPosition = Vector3.MoveTowards(currentPosition, b.Position, searchIncrement);
+            }
+
+            return true;
         }
 
         public void Generate()
