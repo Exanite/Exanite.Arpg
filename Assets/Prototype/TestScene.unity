@@ -318,6 +318,8 @@ GameObject:
   - component: {fileID: 471186629}
   - component: {fileID: 471186632}
   - component: {fileID: 471186630}
+  - component: {fileID: 471186631}
+  - component: {fileID: 471186633}
   m_Layer: 0
   m_Name: NavigationGrid
   m_TagString: Untagged
@@ -354,11 +356,26 @@ MonoBehaviour:
   generateOnStart: 1
   sizeX: 84
   sizeY: 72
-  distanceBetweenNodes: 0.33333334
-  generateDiagonals: 1
+  distanceBetweenNodes: 1
+  generateDiagonals: 0
   enableNodeDrawing: 1
   enableNodeConnectionDrawing: 0
   nodeDrawHeightOffsetAmount: 0.1
+--- !u!114 &471186631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471186628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f937fa59d67b664783cfcbe03f8e8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 471186630}
+  setAKey: 97
+  setBKey: 98
 --- !u!114 &471186632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,6 +393,20 @@ MonoBehaviour:
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
+--- !u!114 &471186633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471186628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d61c147935c9cf4bbf826d753b5c64b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 471186630}
+  paintKey: 324
 --- !u!1 &738153570
 GameObject:
   m_ObjectHideFlags: 0
