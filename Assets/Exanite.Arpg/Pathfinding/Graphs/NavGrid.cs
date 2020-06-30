@@ -306,9 +306,13 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             Vector3 direction = (b.Position - a.Position).normalized;
             Vector3 currentPosition = a.Position;
 
+            Node closestNode;
+
             while (currentPosition != b.Position)
             {
-                if (GetClosestNode(currentPosition).Type != NodeType.Walkable)
+                closestNode = GetClosestNode(currentPosition);
+
+                if (closestNode == null || closestNode.Type != NodeType.Walkable)
                 {
                     return false;
                 }
