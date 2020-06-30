@@ -33,7 +33,7 @@ namespace Exanite.Arpg.Gameplay.Player
             {
                 if (grid.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out Vector3 hitPosition))
                 {
-                    Node destination = grid.GetClosestWalkableNode(hitPosition, 3);
+                    Node destination = grid.GetWalkableNodeAlongLine(hitPosition, transform.position);
 
                     if (destination != null)
                     {
