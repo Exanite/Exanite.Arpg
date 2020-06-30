@@ -348,10 +348,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             {
                 for (int y = 0; y < SizeY; y++)
                 {
-                    var node = new Node
-                    {
-                        Position = new Vector3(x * DistanceBetweenNodes, 0, y * DistanceBetweenNodes)
-                    };
+                    var node = new Node(this, new Vector2Int(x, y));
 
                     if (x > 0)
                     {
