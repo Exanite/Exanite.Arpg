@@ -257,54 +257,71 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 
         public Node GetClosestNode(Vector3 position)
         {
-            Node closest = null;
-            float closestDistance = float.PositiveInfinity;
+            int x = Mathf.RoundToInt(position.x / DistanceBetweenNodes);
+            int y = Mathf.RoundToInt(position.z / DistanceBetweenNodes);
 
-            float currentDistance;
-
-            foreach (var node in this)
+            if (x < 0 || x >= SizeX || y < 0 || y >= sizeY)
             {
-                currentDistance = (node.Position - position).sqrMagnitude;
-
-                if (currentDistance < closestDistance)
-                {
-                    closest = node;
-                    closestDistance = currentDistance;
-                }
+                return null;
             }
-
-            return closest;
+            else
+            {
+                return nodes[x, y];
+            }
         }
 
-        public Node GetClosestWalkableNode(Vector3 position, float maxDistance = float.PositiveInfinity)
+        public Node GetWalkableNodeAlongLine(Vector3 lineEnd, Vector3 lineStart)
         {
-            Node closest = null;
-            float closestDistance = float.PositiveInfinity;
+            float searchIncrement = DistanceBetweenNodes / 2;
 
-            float currentDistance;
+            Vector3 direction = (lineStart - lineEnd).normalized;
+            Vector3 currentPosition = lineEnd;
 
-            foreach (var node in this)
+            Node closestNode;
+
+            while (currentPosition != lineStart)
             {
-                if (node.Type == NodeType.NonWalkable)
+                closestNode = GetClosestNode(currentPosition);
+
+                if (closestNode != null && closestNode.Type == NodeType.Walkable)
                 {
-                    continue;
+                    return closestNode;
                 }
 
-                currentDistance = (node.Position - position).sqrMagnitude;
-
-                if (currentDistance < closestDistance)
-                {
-                    closest = node;
-                    closestDistance = currentDistance;
-                }
-            }
-
-            if (closestDistance < maxDistance * maxDistance)
-            {
-                return closest;
+                currentPosition = Vector3.MoveTowards(currentPosition, lineStart, searchIncrement);
             }
 
             return null;
+        }
+
+        // Crude method of testing walkability for now, does not support height differences in the path
+        public bool IsDirectlyWalkable(Node a, Node b)
+        {
+            if (a.Type != NodeType.Walkable || b.Type != NodeType.Walkable)
+            {
+                return false;
+            }
+
+            float searchIncrement = DistanceBetweenNodes / 2;
+
+            Vector3 direction = (b.Position - a.Position).normalized;
+            Vector3 currentPosition = a.Position;
+
+            Node closestNode;
+
+            while (currentPosition != b.Position)
+            {
+                closestNode = GetClosestNode(currentPosition);
+
+                if (closestNode == null || closestNode.Type != NodeType.Walkable)
+                {
+                    return false;
+                }
+
+                currentPosition = Vector3.MoveTowards(currentPosition, b.Position, searchIncrement);
+            }
+
+            return true;
         }
 
         public void Generate()
@@ -322,10 +339,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             {
                 for (int y = 0; y < SizeY; y++)
                 {
-                    var node = new Node
-                    {
-                        Position = new Vector3(x * DistanceBetweenNodes, 0, y * DistanceBetweenNodes)
-                    };
+                    var node = new Node(this, new Vector2Int(x, y));
 
                     if (x > 0)
                     {

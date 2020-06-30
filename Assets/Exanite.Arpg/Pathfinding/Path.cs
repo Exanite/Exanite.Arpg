@@ -25,11 +25,11 @@ namespace Exanite.Arpg.Pathfinding
         /// </summary>
         public Path(List<Node> nodes)
         {
-            waypoints = new List<Vector3>(nodes.Count);
+            Waypoints = new List<Vector3>(nodes.Count);
 
             foreach (var node in nodes)
             {
-                waypoints.Add(node.Position);
+                Waypoints.Add(node.Position);
             }
         }
 
@@ -47,6 +47,82 @@ namespace Exanite.Arpg.Pathfinding
             {
                 waypoints = value;
             }
+        }
+
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="Gizmos"/> by drawing a line between each waypoint
+        /// </summary>
+        public void DrawWithGizmos(NavGrid grid)
+        {
+            Gizmos.color = Color.red;
+
+            for (int i = 1; i < Waypoints.Count; i++)
+            {
+                Gizmos.DrawLine(Waypoints[i] + grid.NodeDrawHeightOffset, Waypoints[i - 1] + grid.NodeDrawHeightOffset);
+            }
+        }
+
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="Gizmos"/> by drawing a line between each waypoint including the <paramref name="currentPosition"/>
+        /// </summary>
+        public void DrawWithGizmos(NavGrid grid, Vector3 currentPosition)
+        {
+            if (Waypoints.Count == 0)
+            {
+                return;
+            }
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(currentPosition + grid.NodeDrawHeightOffset, Waypoints[0]);
+            DrawWithGizmos(grid);
+        }
+
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="GL"/> by drawing a line between each waypoint
+        /// </summary>
+        public void DrawWithGL(Material material, NavGrid grid)
+        {
+            if (Waypoints.Count < 2)
+            {
+                return;
+            }
+
+            material.SetPass(0);
+
+            GL.Begin(GL.LINE_STRIP);
+            {
+                GL.Color(Color.red);
+
+                for (int i = 0; i < Waypoints.Count; i++)
+                {
+                    GL.Vertex(Waypoints[i] + grid.NodeDrawHeightOffset);
+                }
+            }
+            GL.End();
+        }
+
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="GL"/> by drawing a line between each waypoint including the <paramref name="currentPosition"/>
+        /// </summary>
+        public void DrawWithGL(Material material, NavGrid grid, Vector3 currentPosition)
+        {
+            if (Waypoints.Count == 0)
+            {
+                return;
+            }
+
+            material.SetPass(0);
+
+            GL.Begin(GL.LINES);
+            {
+                GL.Color(Color.red);
+
+                GL.Vertex(currentPosition + grid.NodeDrawHeightOffset);
+                GL.Vertex(Waypoints[0] + grid.NodeDrawHeightOffset);
+            }
+            GL.End();
+
+            DrawWithGL(material, grid);
         }
     }
 }
