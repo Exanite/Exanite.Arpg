@@ -257,9 +257,17 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 
         public Node GetClosestNode(Vector3 position)
         {
-            Node closest = nodes[Mathf.RoundToInt(position.x / DistanceBetweenNodes), Mathf.RoundToInt(position.z / DistanceBetweenNodes)];
+            int x = Mathf.RoundToInt(position.x / DistanceBetweenNodes);
+            int y = Mathf.RoundToInt(position.z / DistanceBetweenNodes);
 
-            return closest;
+            if (x < 0 || x >= SizeX || y < 0 || y >= sizeY)
+            {
+                return null;
+            }
+            else
+            {
+                return nodes[x, y];
+            }
         }
 
         public Node GetClosestWalkableNode(Vector3 position, float maxDistance = float.PositiveInfinity)
