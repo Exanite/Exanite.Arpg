@@ -318,6 +318,7 @@ GameObject:
   - component: {fileID: 471186629}
   - component: {fileID: 471186632}
   - component: {fileID: 471186630}
+  - component: {fileID: 471186633}
   m_Layer: 0
   m_Name: NavigationGrid
   m_TagString: Untagged
@@ -376,6 +377,20 @@ MonoBehaviour:
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
+--- !u!114 &471186633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471186628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d61c147935c9cf4bbf826d753b5c64b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 471186630}
+  paintKey: 324
 --- !u!1 &738153570
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,6 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 471186630}
+  glMaterial: {fileID: 2100000, guid: 9096646fd4e45eb4fb844b230315187d, type: 2}
   moveKey: 323
   moveSpeed: 5
 --- !u!64 &1616682565

@@ -7,6 +7,7 @@ namespace Exanite.Arpg.Gameplay.Player
     public class PlayerController : MonoBehaviour
     {
         public NavGrid grid;
+        public Material glMaterial;
 
         public KeyCode moveKey = KeyCode.Mouse0;
 
@@ -16,17 +17,27 @@ namespace Exanite.Arpg.Gameplay.Player
 
         private Pathfinder pathfinder = new Pathfinder();
 
+        private void Start()
+        {
+            Camera.onPostRender += DrawPathGL;
+        }
+
+        private void OnDestroy()
+        {
+            Camera.onPostRender -= DrawPathGL;
+        }
+
         private void Update()
         {
             if (Input.GetKey(moveKey) && grid.Nodes != null)
             {
                 if (grid.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out Vector3 hitPosition))
                 {
-                    Node destination = grid.GetClosestWalkableNode(hitPosition, 3);
+                    Node destination = grid.GetWalkableNodeAlongLine(hitPosition, transform.position);
 
                     if (destination != null)
                     {
-                        var result = pathfinder.FindPath(grid.GetClosestNode(transform.position), destination);
+                        var result = pathfinder.FindPath(grid, grid.GetClosestNode(transform.position), destination);
 
                         if (result.isSuccess)
                         {
@@ -54,17 +65,14 @@ namespace Exanite.Arpg.Gameplay.Player
             }
         }
 
-        private void OnDrawGizmos()
+        private void DrawPathGL(Camera camera)
         {
-            if (path != null)
-            {
-                for (int i = 1; i < path.Waypoints.Count; i++)
-                {
-                    Gizmos.color = (i + path.Waypoints.Count) % 2 == 0 ? Color.red : Color.blue;
-
-                    Gizmos.DrawLine(path.Waypoints[i] + grid.NodeDrawHeightOffset, path.Waypoints[i - 1] + grid.NodeDrawHeightOffset);
-                }
-            }
+            path?.DrawWithGL(glMaterial, grid, transform.position);
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    path?.DrawWithGizmos(grid, transform.position);
+        //}
     }
 }

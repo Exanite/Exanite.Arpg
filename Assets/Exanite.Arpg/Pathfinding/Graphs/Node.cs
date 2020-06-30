@@ -1,25 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class Node
     {
-        private Vector3 position;
+        private readonly NavGrid grid;
+        private readonly Vector2Int gridPosition;
+
+        private float height;
         private NodeType type = NodeType.Walkable;
 
         private HashSet<Node> connectedNodes = new HashSet<Node>();
+
+        public Node(NavGrid grid, Vector2Int gridPosition)
+        {
+            this.grid = grid ?? throw new ArgumentNullException(nameof(grid));
+            this.gridPosition = gridPosition;
+        }
+
+        public NavGrid Grid
+        {
+            get
+            {
+                return grid;
+            }
+        }
 
         public Vector3 Position
         {
             get
             {
-                return position;
+                return new Vector3(GridPosition.x * Grid.DistanceBetweenNodes, Height, GridPosition.y * Grid.DistanceBetweenNodes);
+            }
+        }
+
+        public Vector2Int GridPosition
+        {
+            get
+            {
+                return gridPosition;
+            }
+        }
+
+        public float Height
+        {
+            get
+            {
+                return height;
             }
 
             set
             {
-                position = value;
+                height = value;
             }
         }
 
