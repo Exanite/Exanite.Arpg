@@ -353,9 +353,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generateOnStart: 1
-  sizeX: 28
-  sizeY: 24
-  distanceBetweenNodes: 1
+  sizeX: 84
+  sizeY: 72
+  distanceBetweenNodes: 0.33333334
   generateDiagonals: 1
   enableNodeDrawing: 1
   enableNodeConnectionDrawing: 0
