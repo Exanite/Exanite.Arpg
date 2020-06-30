@@ -25,11 +25,11 @@ namespace Exanite.Arpg.Pathfinding
         /// </summary>
         public Path(List<Node> nodes)
         {
-            waypoints = new List<Vector3>(nodes.Count);
+            Waypoints = new List<Vector3>(nodes.Count);
 
             foreach (var node in nodes)
             {
-                waypoints.Add(node.Position);
+                Waypoints.Add(node.Position);
             }
         }
 
@@ -49,6 +49,9 @@ namespace Exanite.Arpg.Pathfinding
             }
         }
 
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="Gizmos"/> by drawing a line between each waypoint
+        /// </summary>
         public void DrawWithGizmos(NavGrid grid)
         {
             Gizmos.color = Color.red;
@@ -59,6 +62,9 @@ namespace Exanite.Arpg.Pathfinding
             }
         }
 
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="Gizmos"/> by drawing a line between each waypoint including the <paramref name="currentPosition"/>
+        /// </summary>
         public void DrawWithGizmos(NavGrid grid, Vector3 currentPosition)
         {
             if (Waypoints.Count == 0)
@@ -71,6 +77,9 @@ namespace Exanite.Arpg.Pathfinding
             DrawWithGizmos(grid);
         }
 
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="GL"/> by drawing a line between each waypoint
+        /// </summary>
         public void DrawWithGL(Material material, NavGrid grid)
         {
             if (Waypoints.Count < 2)
@@ -92,6 +101,9 @@ namespace Exanite.Arpg.Pathfinding
             GL.End();
         }
 
+        /// <summary>
+        /// Draw the <see cref="Path"/> with <see cref="GL"/> by drawing a line between each waypoint including the <paramref name="currentPosition"/>
+        /// </summary>
         public void DrawWithGL(Material material, NavGrid grid, Vector3 currentPosition)
         {
             if (Waypoints.Count == 0)
