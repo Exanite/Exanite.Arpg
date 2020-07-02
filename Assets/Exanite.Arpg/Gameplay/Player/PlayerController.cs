@@ -57,7 +57,7 @@ namespace Exanite.Arpg.Gameplay.Player
                 {
                     transform.position = Vector3.MoveTowards(transform.position, path.Waypoints[0], moveSpeed * Time.deltaTime);
 
-                    if (Vector3.Distance(transform.position, path.Waypoints[0]) < 0.1f)
+                    if (transform.position == path.Waypoints[0])
                     {
                         path.Waypoints.RemoveAt(0);
                     }
