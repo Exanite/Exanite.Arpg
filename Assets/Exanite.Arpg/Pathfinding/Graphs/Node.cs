@@ -9,6 +9,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         private readonly NavGrid grid;
         private readonly Vector2Int gridPosition;
 
+        private Vector3 position;
         private float height;
         private NodeType type = NodeType.Walkable;
 
@@ -18,6 +19,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         {
             this.grid = grid ?? throw new ArgumentNullException(nameof(grid));
             this.gridPosition = gridPosition;
+
+            CalculateNewPosition();
         }
 
         public NavGrid Grid
@@ -28,19 +31,24 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             }
         }
 
-        public Vector3 Position
-        {
-            get
-            {
-                return new Vector3(GridPosition.x * Grid.DistanceBetweenNodes, Height, GridPosition.y * Grid.DistanceBetweenNodes);
-            }
-        }
-
         public Vector2Int GridPosition
         {
             get
             {
                 return gridPosition;
+            }
+        }
+
+        public Vector3 Position
+        {
+            get
+            {
+                return position;
+            }
+
+            private set
+            {
+                position = value;
             }
         }
 
@@ -54,6 +62,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             set
             {
                 height = value;
+
+                CalculateNewPosition();
             }
         }
 
@@ -82,6 +92,11 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         public void RemoveConnection(Node node)
         {
             connectedNodes.Remove(node);
+        }
+
+        private void CalculateNewPosition()
+        {
+            Position = new Vector3(GridPosition.x * Grid.DistanceBetweenNodes, Height, GridPosition.y * Grid.DistanceBetweenNodes);
         }
 
         public IEnumerable<Node> GetConnectedNodes()
