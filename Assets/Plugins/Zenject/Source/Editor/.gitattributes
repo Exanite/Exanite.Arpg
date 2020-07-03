@@ -1,1 +1,0 @@
-*.{jpg,jpeg,png,apng,atsc,gif,bmp,exr,tga,tiff,tif,iff,pict,dds,xcf,leo,kra,kpp,clip,webm,webp,svg,svgz,psd,afphoto,afdesign,cubemap,unitypackage,mp3,ogg,wav,aiff,aif,mod,it,s3m,xm,mov,avi,asf,mpg,mpeg,mp4,flv,ogv,wmv,fbx,obj,max,blend,blender,dae,mb,ma,3ds,dfx,c4d,lwo,lwo2,abc,3dm,bin,glb,exe,dll,so,pdb,mdb,zip,7z,gz,rar,tar} filter=lfs diff=lfs merge=lfs -text
