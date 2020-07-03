@@ -25,7 +25,7 @@ jobs:
        unityVersion: 
         - 2019.4.0f1
        targetPlatform:
-        - StandaloneWindows
+        - StandaloneWindows64
     steps:
     # Checkout
     - uses: actions/checkout@v2
@@ -47,5 +47,5 @@ jobs:
     # Upload
     - uses: actions/upload-artifact@v1
       with:
-        name: Build
+        name: Build_${{ matrix.targetPlatform }}
         path: build
