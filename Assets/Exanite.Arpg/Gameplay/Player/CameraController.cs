@@ -2,6 +2,7 @@
 
 namespace Exanite.Arpg.Gameplay.Player
 {
+    [ExecuteAlways]
     public class CameraController : MonoBehaviour
     {
         public Transform target;
