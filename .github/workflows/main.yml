@@ -30,7 +30,7 @@ jobs:
     # Checkout
     - uses: actions/checkout@v2
       with:
-        lfs: true
+        lfs: false
     # Cache
     - uses: actions/cache@v1.1.0
       with:
