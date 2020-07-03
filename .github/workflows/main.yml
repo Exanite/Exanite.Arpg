@@ -20,12 +20,12 @@ jobs:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
        unityVersion: 
         - 2019.4.0f1
        targetPlatform:
-        - StandaloneWindows
+        - StandaloneWindows64
     steps:
     # Checkout
     - uses: actions/checkout@v2
@@ -39,13 +39,14 @@ jobs:
         restore-keys: |
           Library-
     # Build
-    - uses: webbertakken/unity-builder@v0.10
+    - uses: webbertakken/unity-builder@v1.1
       with:
         unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
         versioning: Semantic
+        allowDirtyBuild: true
     # Upload
     - uses: actions/upload-artifact@v1
       with:
-        name: Build
+        name: Build_${{ matrix.targetPlatform }}
         path: build
