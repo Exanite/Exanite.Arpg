@@ -25,7 +25,7 @@ git clone https://github.com/<YourUsername>/Exanite.Arpg.git
 ```
 4. Use Unity to open the project
 
-5. Create a new branch (`dev/<YourUsername>` or `feature/<YourFeature>`)
+5. Create a new branch (`feature/<YourFeature>` or `fix/<YourFix>`)
 
 6. Make and commit your changes
 
