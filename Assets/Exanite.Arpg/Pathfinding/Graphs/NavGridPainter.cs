@@ -6,7 +6,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 {
     public class NavGridPainter : MonoBehaviour
     {
-        public NavGrid target;
+        public NavGrid grid;
 
         public KeyCode paintKey = KeyCode.Mouse1;
 
@@ -14,7 +14,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 
         private void Update()
         {
-            if (target.Nodes != null)
+            if (grid.Nodes != null)
             {
                 if (Input.GetKeyDown(paintKey))
                 {
@@ -35,9 +35,9 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             NodeType paintAction = NodeType.Walkable;
             bool firstRun = true;
 
-            while (target.Nodes != null)
+            while (grid.Nodes != null)
             {
-                if (target.RaycastNode(Camera.main.ScreenPointToRay(Input.mousePosition), out Node node))
+                if (grid.RaycastNode(Camera.main.ScreenPointToRay(Input.mousePosition), out Node node))
                 {
                     if (node != null && !paintedNodes.Contains(node))
                     {
