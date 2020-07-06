@@ -7,6 +7,8 @@ namespace Exanite.Arpg.Pathfinding
 {
     public class Pathfinder
     {
+        private float maxStepAngle = 45f;
+
         /// <summary>
         /// Stores the parents of Nodes: the preceding node in the path
         /// </summary>
@@ -24,7 +26,22 @@ namespace Exanite.Arpg.Pathfinding
         private readonly List<Node> open = new List<Node>();
         private readonly HashSet<Node> closed = new HashSet<Node>();
 
-        private object syncRoot = new object();
+        private readonly List<Node> cache = new List<Node>();
+
+        private readonly object syncRoot = new object();
+
+        public float MaxStepAngle
+        {
+            get
+            {
+                return maxStepAngle;
+            }
+
+            set
+            {
+                maxStepAngle = value;
+            }
+        }
 
         /// <summary>
         /// Attempts to find a path between the start and destination nodes
@@ -114,9 +131,9 @@ namespace Exanite.Arpg.Pathfinding
                     break;
                 }
 
-                foreach (var neighbor in current.GetConnectedNodes())
+                foreach (var neighbor in current.GetWalkableConnectedNodesNonAlloc(cache, MaxStepAngle))
                 {
-                    if (neighbor.Type == NodeType.NonWalkable || closed.Contains(neighbor))
+                    if (closed.Contains(neighbor))
                     {
                         continue;
                     }

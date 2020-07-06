@@ -94,25 +94,54 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             connectedNodes.Remove(node);
         }
 
-        private void CalculateNewPosition()
-        {
-            Position = new Vector3(GridPosition.x * Grid.DistanceBetweenNodes, Height, GridPosition.y * Grid.DistanceBetweenNodes);
-        }
-
         public IEnumerable<Node> GetConnectedNodes()
         {
             return connectedNodes;
         }
 
-        public IEnumerable<Node> GetWalkableConnectedNodes()
+        public IEnumerable<Node> GetWalkableConnectedNodes(float maxStepAngle = float.PositiveInfinity)
         {
-            foreach (var node in connectedNodes)
+            return GetWalkableConnectedNodesNonAlloc(new List<Node>(), maxStepAngle);
+        }
+
+        public IList<Node> GetWalkableConnectedNodesNonAlloc(IList<Node> results, float maxStepAngle = float.PositiveInfinity)
+        {
+            results.Clear();
+
+            foreach (var other in connectedNodes)
             {
-                if (node.type == NodeType.Walkable)
+                if (other.type == NodeType.Walkable 
+                    && Mathf.Abs(GetAngleBetween(this, other)) <= maxStepAngle)
                 {
-                    yield return node;
+                    results.Add(other);
                 }
             }
+
+            return results;
+        }
+
+        private void CalculateNewPosition()
+        {
+            Position = new Vector3(GridPosition.x * Grid.DistanceBetweenNodes, Height, GridPosition.y * Grid.DistanceBetweenNodes);
+        }
+
+        private static float GetVerticalDistance(Node a, Node b)
+        {
+            return a.Height - b.Height;
+        }
+
+        private static float GetHorizontalDistance(Node a, Node b)
+        {
+            Vector3 displacement = a.Position - b.Position;
+
+            displacement.y = 0;
+
+            return displacement.magnitude;
+        }
+
+        private static float GetAngleBetween(Node a, Node b)
+        {
+            return Mathf.Atan((GetVerticalDistance(a, b)) / GetHorizontalDistance(a, b)) * Mathf.Rad2Deg;
         }
     }
 }
