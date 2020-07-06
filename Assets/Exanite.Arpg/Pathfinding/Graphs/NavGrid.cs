@@ -376,7 +376,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                     }
 
                     if (Physics.OverlapSphere(node.Position + Vector3.up * 0.1f, 0).Length > 0
-                    || !Physics.Raycast(node.Position + Vector3.up * 1f, Vector3.down, 2f))
+                        || !Physics.Raycast(node.Position + Vector3.up * 1f, Vector3.down, 2f))
                     {
                         node.Type = NodeType.NonWalkable;
                     }
