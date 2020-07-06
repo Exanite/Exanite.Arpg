@@ -11,13 +11,15 @@ namespace Exanite.Arpg.Pathfinding.Graphs
     {
         private Node[,] nodes;
 
+        [Header("Generation:")]
         [SerializeField] private bool generateOnStart = false;
-
         [SerializeField] private int sizeX = 10;
         [SerializeField] private int sizeY = 10;
+        [SerializeField] private float gridMaxHeight = 100; // temporary
         [SerializeField] private float distanceBetweenNodes = 1;
         [SerializeField] private bool generateDiagonals = false;
 
+        [Header("Drawing:")]
         [SerializeField] private bool enableNodeDrawing = false;
         [SerializeField] private bool enableNodeConnectionDrawing = false;
         [SerializeField] private float nodeDrawHeightOffsetAmount = 0.1f;
@@ -340,6 +342,15 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                 for (int y = 0; y < SizeY; y++)
                 {
                     var node = new Node(this, new Vector2Int(x, y));
+
+                    if (Physics.Raycast(new Vector3(x * DistanceBetweenNodes, gridMaxHeight, y * DistanceBetweenNodes), Vector3.down, out RaycastHit hit))
+                    {
+                        node.Height = hit.point.y;
+                    }
+                    else
+                    {
+                        node.Type = NodeType.NonWalkable;
+                    }
 
                     if (x > 0)
                     {
