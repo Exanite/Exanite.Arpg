@@ -26,7 +26,8 @@ namespace Exanite.Arpg.Pathfinding
         private readonly List<Node> open = new List<Node>();
         private readonly HashSet<Node> closed = new HashSet<Node>();
 
-        private readonly List<Node> cache = new List<Node>();
+        private readonly List<Node> neighborResultsCache = new List<Node>();
+        private readonly List<Node> isDirectlyWalkableCache = new List<Node>();
 
         private readonly object syncRoot = new object();
 
@@ -131,7 +132,7 @@ namespace Exanite.Arpg.Pathfinding
                     break;
                 }
 
-                foreach (var neighbor in current.GetWalkableConnectedNodesNonAlloc(cache, MaxStepAngle))
+                foreach (var neighbor in current.GetWalkableConnectedNodesNonAlloc(neighborResultsCache, MaxStepAngle))
                 {
                     if (closed.Contains(neighbor))
                     {
@@ -150,7 +151,8 @@ namespace Exanite.Arpg.Pathfinding
 
                     // Theta* implementation
                     // Setting this if statement to false disables Theta* and changes the algorithm back to A*
-                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0 && grid.IsDirectlyWalkable(parent[current], neighbor))
+                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0 
+                        && grid.IsDirectlyWalkableNonAlloc(isDirectlyWalkableCache, parent[current], neighbor))
                     {
                         float newGCost = gCost[parent[current]] + heuristic(parent[current], neighbor);
 

@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d61c147935c9cf4bbf826d753b5c64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 471186630}
+  grid: {fileID: 471186630}
   paintKey: 324
 --- !u!1 &738153570
 GameObject:
