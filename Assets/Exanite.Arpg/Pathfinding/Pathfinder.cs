@@ -151,8 +151,8 @@ namespace Exanite.Arpg.Pathfinding
 
                     // Theta* implementation
                     // Setting this if statement to false disables Theta* and changes the algorithm back to A*
-                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0 
-                        && grid.IsDirectlyWalkableNonAlloc(isDirectlyWalkableCache, parent[current], neighbor))
+                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0
+                        && grid.IsDirectlyWalkableNonAlloc(isDirectlyWalkableCache, parent[current], neighbor, MaxStepAngle))
                     {
                         float newGCost = gCost[parent[current]] + heuristic(parent[current], neighbor);
 

@@ -301,22 +301,61 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             return IsDirectlyWalkableNonAlloc(new List<Node>(), start, end);
         }
 
-        // Improved, but still does not support height differences
-        public bool IsDirectlyWalkableNonAlloc(IList<Node> cache, Node start, Node end)
+        public bool IsDirectlyWalkableNonAlloc(IList<Node> cache, Node start, Node end, float maxStepAngle = float.PositiveInfinity)
         {
             if (start.Type != NodeType.Walkable || end.Type != NodeType.Walkable)
             {
                 return false;
             }
 
-            var nodes = GetNodesBetweenNonAlloc(cache, start, end);
-
-            for (int i = 0; i < nodes.Count; i++)
+            if (start == end)
             {
-                if (nodes[i].Type != NodeType.Walkable)
+                return true;
+            }
+
+            int differenceX = end.GridPosition.x - start.GridPosition.x;
+            int differenceY = end.GridPosition.y - start.GridPosition.y;
+            int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
+
+            float dx = Mathf.Abs((float)differenceX / totalDistance);
+            float dy = Mathf.Abs((float)differenceY / totalDistance);
+
+            int currentX = start.GridPosition.x;
+            int currentY = start.GridPosition.y;
+
+            float x = 0;
+            float y = 0;
+
+            int moveDirectionX = differenceX < 0 ? -1 : 1;
+            int moveDirectionY = differenceY < 0 ? -1 : 1;
+
+            Node current = null;
+            Node previous = start;
+
+            for (int i = 0; i < totalDistance; i++)
+            {
+                x += dx;
+                y += dy;
+
+                if (x > y)
+                {
+                    x--;
+                    currentX += moveDirectionX;
+                }
+                else
+                {
+                    y--;
+                    currentY += moveDirectionY;
+                }
+
+                current = Nodes[currentX, currentY];
+
+                if (current.Type != NodeType.Walkable || !current.GetWalkableConnectedNodesNonAlloc(cache, maxStepAngle).Contains(previous))
                 {
                     return false;
                 }
+
+                previous = current;
             }
 
             return true;
@@ -342,8 +381,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             int differenceY = end.GridPosition.y - start.GridPosition.y;
             int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
 
-            float dx = (float)differenceX / totalDistance;
-            float dy = (float)differenceY / totalDistance;
+            float dx = Mathf.Abs((float)differenceX / totalDistance);
+            float dy = Mathf.Abs((float)differenceY / totalDistance);
 
             int currentX = start.GridPosition.x;
             int currentY = start.GridPosition.y;
@@ -358,8 +397,8 @@ namespace Exanite.Arpg.Pathfinding.Graphs
 
             for (int i = 0; i < totalDistance; i++)
             {
-                x += Mathf.Abs(dx);
-                y += Mathf.Abs(dy);
+                x += dx;
+                y += dy;
 
                 if (x > y)
                 {
