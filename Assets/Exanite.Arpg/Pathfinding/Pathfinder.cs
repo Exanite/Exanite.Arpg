@@ -7,6 +7,8 @@ namespace Exanite.Arpg.Pathfinding
 {
     public class Pathfinder
     {
+        private float maxStepAngle = 45f;
+
         /// <summary>
         /// Stores the parents of Nodes: the preceding node in the path
         /// </summary>
@@ -24,7 +26,23 @@ namespace Exanite.Arpg.Pathfinding
         private readonly List<Node> open = new List<Node>();
         private readonly HashSet<Node> closed = new HashSet<Node>();
 
-        private object syncRoot = new object();
+        private readonly List<Node> neighborResultsCache = new List<Node>();
+        private readonly List<Node> isDirectlyWalkableCache = new List<Node>();
+
+        private readonly object syncRoot = new object();
+
+        public float MaxStepAngle
+        {
+            get
+            {
+                return maxStepAngle;
+            }
+
+            set
+            {
+                maxStepAngle = value;
+            }
+        }
 
         /// <summary>
         /// Attempts to find a path between the start and destination nodes
@@ -114,9 +132,9 @@ namespace Exanite.Arpg.Pathfinding
                     break;
                 }
 
-                foreach (var neighbor in current.GetConnectedNodes())
+                foreach (var neighbor in current.GetWalkableConnectedNodesNonAlloc(neighborResultsCache, MaxStepAngle))
                 {
-                    if (neighbor.Type == NodeType.NonWalkable || closed.Contains(neighbor))
+                    if (closed.Contains(neighbor))
                     {
                         continue;
                     }
@@ -133,7 +151,8 @@ namespace Exanite.Arpg.Pathfinding
 
                     // Theta* implementation
                     // Setting this if statement to false disables Theta* and changes the algorithm back to A*
-                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0 && grid.IsDirectlyWalkable(parent[current], neighbor))
+                    if (parent.ContainsKey(current) && lineOfSightCheckCounter++ != 0
+                        && grid.IsDirectlyWalkableNonAlloc(isDirectlyWalkableCache, parent[current], neighbor, MaxStepAngle))
                     {
                         float newGCost = gCost[parent[current]] + heuristic(parent[current], neighbor);
 

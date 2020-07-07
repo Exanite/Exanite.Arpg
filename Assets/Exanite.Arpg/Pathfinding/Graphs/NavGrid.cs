@@ -11,13 +11,15 @@ namespace Exanite.Arpg.Pathfinding.Graphs
     {
         private Node[,] nodes;
 
+        [Header("Generation:")]
         [SerializeField] private bool generateOnStart = false;
-
         [SerializeField] private int sizeX = 10;
         [SerializeField] private int sizeY = 10;
+        [SerializeField] private float gridMaxHeight = 100; // temporary
         [SerializeField] private float distanceBetweenNodes = 1;
         [SerializeField] private bool generateDiagonals = false;
 
+        [Header("Drawing:")]
         [SerializeField] private bool enableNodeDrawing = false;
         [SerializeField] private bool enableNodeConnectionDrawing = false;
         [SerializeField] private float nodeDrawHeightOffsetAmount = 0.1f;
@@ -294,34 +296,125 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             return null;
         }
 
-        // Crude method of testing walkability for now, does not support height differences in the path
-        public bool IsDirectlyWalkable(Node a, Node b)
+        public bool IsDirectlyWalkable(Node start, Node end)
         {
-            if (a.Type != NodeType.Walkable || b.Type != NodeType.Walkable)
+            return IsDirectlyWalkableNonAlloc(new List<Node>(), start, end);
+        }
+
+        public bool IsDirectlyWalkableNonAlloc(IList<Node> cache, Node start, Node end, float maxStepAngle = float.PositiveInfinity)
+        {
+            if (start.Type != NodeType.Walkable || end.Type != NodeType.Walkable)
             {
                 return false;
             }
 
-            float searchIncrement = DistanceBetweenNodes / 2;
-
-            Vector3 direction = (b.Position - a.Position).normalized;
-            Vector3 currentPosition = a.Position;
-
-            Node closestNode;
-
-            while (currentPosition != b.Position)
+            if (start == end)
             {
-                closestNode = GetClosestNode(currentPosition);
+                return true;
+            }
 
-                if (closestNode == null || closestNode.Type != NodeType.Walkable)
+            int differenceX = end.GridPosition.x - start.GridPosition.x;
+            int differenceY = end.GridPosition.y - start.GridPosition.y;
+            int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
+
+            float dx = Mathf.Abs((float)differenceX / totalDistance);
+            float dy = Mathf.Abs((float)differenceY / totalDistance);
+
+            int currentX = start.GridPosition.x;
+            int currentY = start.GridPosition.y;
+
+            float x = 0;
+            float y = 0;
+
+            int moveDirectionX = differenceX < 0 ? -1 : 1;
+            int moveDirectionY = differenceY < 0 ? -1 : 1;
+
+            Node current = null;
+            Node previous = start;
+
+            for (int i = 0; i < totalDistance; i++)
+            {
+                x += dx;
+                y += dy;
+
+                if (x > y)
+                {
+                    x--;
+                    currentX += moveDirectionX;
+                }
+                else
+                {
+                    y--;
+                    currentY += moveDirectionY;
+                }
+
+                current = Nodes[currentX, currentY];
+
+                if (current.Type != NodeType.Walkable || !current.GetWalkableConnectedNodesNonAlloc(cache, maxStepAngle).Contains(previous))
                 {
                     return false;
                 }
 
-                currentPosition = Vector3.MoveTowards(currentPosition, b.Position, searchIncrement);
+                previous = current;
             }
 
             return true;
+        }
+
+        public IList<Node> GetNodesBetween(Node start, Node end)
+        {
+            return GetNodesBetweenNonAlloc(new List<Node>(), start, end);
+        }
+
+        public IList<Node> GetNodesBetweenNonAlloc(IList<Node> results, Node start, Node end)
+        {
+            results.Clear();
+
+            if (start == end)
+            {
+                results.Add(start);
+
+                return results;
+            }
+
+            int differenceX = end.GridPosition.x - start.GridPosition.x;
+            int differenceY = end.GridPosition.y - start.GridPosition.y;
+            int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
+
+            float dx = Mathf.Abs((float)differenceX / totalDistance);
+            float dy = Mathf.Abs((float)differenceY / totalDistance);
+
+            int currentX = start.GridPosition.x;
+            int currentY = start.GridPosition.y;
+
+            float x = 0;
+            float y = 0;
+
+            int moveDirectionX = differenceX < 0 ? -1 : 1;
+            int moveDirectionY = differenceY < 0 ? -1 : 1;
+
+            results.Add(start);
+
+            for (int i = 0; i < totalDistance; i++)
+            {
+                x += dx;
+                y += dy;
+
+                if (x > y)
+                {
+                    x--;
+                    currentX += moveDirectionX;
+                }
+                else
+                {
+                    y--;
+                    currentY += moveDirectionY;
+                }
+
+                results.Add(Nodes[currentX, currentY]);
+            }
+
+            return results;
         }
 
         public void Generate()
@@ -340,6 +433,15 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                 for (int y = 0; y < SizeY; y++)
                 {
                     var node = new Node(this, new Vector2Int(x, y));
+
+                    if (Physics.Raycast(new Vector3(x * DistanceBetweenNodes, gridMaxHeight, y * DistanceBetweenNodes), Vector3.down, out RaycastHit hit))
+                    {
+                        node.Height = hit.point.y;
+                    }
+                    else
+                    {
+                        node.Type = NodeType.NonWalkable;
+                    }
 
                     if (x > 0)
                     {
@@ -365,7 +467,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
                     }
 
                     if (Physics.OverlapSphere(node.Position + Vector3.up * 0.1f, 0).Length > 0
-                    || !Physics.Raycast(node.Position + Vector3.up * 1f, Vector3.down, 2f))
+                        || !Physics.Raycast(node.Position + Vector3.up * 1f, Vector3.down, 2f))
                     {
                         node.Type = NodeType.NonWalkable;
                     }
