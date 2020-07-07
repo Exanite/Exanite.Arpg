@@ -47,7 +47,7 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         {
             if (nodeA != null && nodeB != null)
             {
-                GetNodesBetweenNonAlloc(nodeLine, grid, nodeA, nodeB);
+                grid.GetNodesBetweenNonAlloc(nodeLine, nodeA, nodeB);
             }
         }
 
@@ -69,62 +69,6 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             Gizmos.color = Color.red;
 
             Gizmos.DrawLine(nodeA.Position, nodeB.Position);
-        }
-
-        public IList<Node> GetNodesBetween(NavGrid grid, Node start, Node end)
-        {
-            return GetNodesBetweenNonAlloc(new List<Node>(), grid, start, end);
-        }
-
-        public IList<Node> GetNodesBetweenNonAlloc(IList<Node> results, NavGrid grid, Node start, Node end)
-        {
-            results.Clear();
-
-            if (start == end)
-            {
-                results.Add(start);
-
-                return results;
-            }
-
-            int differenceX = end.GridPosition.x - start.GridPosition.x;
-            int differenceY = end.GridPosition.y - start.GridPosition.y;
-            int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
-
-            float dx = (float)differenceX / totalDistance;
-            float dy = (float)differenceY / totalDistance;
-
-            int currentX = start.GridPosition.x;
-            int currentY = start.GridPosition.y;
-
-            float x = 0;
-            float y = 0;
-
-            int moveDirectionX = differenceX < 0 ? -1 : 1;
-            int moveDirectionY = differenceY < 0 ? -1 : 1;
-
-            results.Add(start);
-
-            for (int i = 0; i < totalDistance; i++)
-            {
-                x += Mathf.Abs(dx);
-                y += Mathf.Abs(dy);
-
-                if (x > y)
-                {
-                    x--;
-                    currentX += moveDirectionX;
-                }
-                else
-                {
-                    y--;
-                    currentY += moveDirectionY;
-                }
-
-                results.Add(grid.Nodes[currentX, currentY]);
-            }
-
-            return results;
         }
     }
 }

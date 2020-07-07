@@ -326,6 +326,62 @@ namespace Exanite.Arpg.Pathfinding.Graphs
             return true;
         }
 
+        public IList<Node> GetNodesBetween(Node start, Node end)
+        {
+            return GetNodesBetweenNonAlloc(new List<Node>(), start, end);
+        }
+
+        public IList<Node> GetNodesBetweenNonAlloc(IList<Node> results, Node start, Node end)
+        {
+            results.Clear();
+
+            if (start == end)
+            {
+                results.Add(start);
+
+                return results;
+            }
+
+            int differenceX = end.GridPosition.x - start.GridPosition.x;
+            int differenceY = end.GridPosition.y - start.GridPosition.y;
+            int totalDistance = Mathf.Abs(differenceX) + Mathf.Abs(differenceY);
+
+            float dx = (float)differenceX / totalDistance;
+            float dy = (float)differenceY / totalDistance;
+
+            int currentX = start.GridPosition.x;
+            int currentY = start.GridPosition.y;
+
+            float x = 0;
+            float y = 0;
+
+            int moveDirectionX = differenceX < 0 ? -1 : 1;
+            int moveDirectionY = differenceY < 0 ? -1 : 1;
+
+            results.Add(start);
+
+            for (int i = 0; i < totalDistance; i++)
+            {
+                x += Mathf.Abs(dx);
+                y += Mathf.Abs(dy);
+
+                if (x > y)
+                {
+                    x--;
+                    currentX += moveDirectionX;
+                }
+                else
+                {
+                    y--;
+                    currentY += moveDirectionY;
+                }
+
+                results.Add(Nodes[currentX, currentY]);
+            }
+
+            return results;
+        }
+
         public void Generate()
         {
             log.Information("Creating grid of size ({SizeX}, {SizeY})", SizeX, SizeY);
