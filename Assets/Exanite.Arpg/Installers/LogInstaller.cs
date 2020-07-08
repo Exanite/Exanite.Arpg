@@ -11,7 +11,6 @@ using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
 using UnityEngine;
 using Zenject;
-using ILogger = Serilog.ILogger;
 using Logger = Serilog.Core.Logger;
 
 namespace Exanite.Arpg.Installers
@@ -168,7 +167,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Creates a log 
+        /// Creates a log that marks LogEntries as being from a specific source
         /// </summary>
         private ILog CreateContextLog(InjectContext ctx)
         {
