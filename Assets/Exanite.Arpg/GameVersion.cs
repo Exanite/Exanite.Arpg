@@ -7,14 +7,14 @@ namespace Exanite.Arpg.Gameplay
     /// <summary>
     /// Used to log the current game version
     /// </summary>
-    public class LogGameVersion : MonoBehaviour
+    public class GameVersion : MonoBehaviour
     {
         private ILogger log;
 
         [Inject]
         public void Inject(ILogger log)
         {
-            this.log = log.ForContext<LogGameVersion>();
+            this.log = log.ForContext<GameVersion>();
 
             LogCurrentVersion();
         }

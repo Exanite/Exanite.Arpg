@@ -76,3 +76,7 @@ crashlytics-build.properties
 
 # User-specific files
 StyleCop.Cache
+
+# --- DarkRift Networking ---
+
+/[Ss]erver[Dd]ata/
