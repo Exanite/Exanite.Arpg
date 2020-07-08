@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Logging.Serilog;
+using Exanite.Arpg.Logging.Unity;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -146,7 +148,9 @@ namespace Exanite.Arpg.Installers
 
             Container.Bind(typeof(ILogger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
 
-            Container.Bind(typeof(UnityToSerilogLogHandler), typeof(IDisposable)).To<UnityToSerilogLogHandler>().FromMethod(CreateUnityToSerilogLogHandler).AsSingle().NonLazy();
+            Container.Bind(typeof(ILog)).To<SerilogLogAdapter>().AsSingle().NonLazy();
+
+            Container.Bind(typeof(UnityDebugLogIntercepter), typeof(IDisposable)).To<UnityDebugLogIntercepter>().FromMethod(CreateUnityDebugLogIntercepter).AsSingle().NonLazy();
         }
 
         /// <summary>
@@ -215,11 +219,11 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Creates a <see cref="UnityToSerilogLogHandler"/> and activates it if <see cref="InterceptUnityDebugLogMessages"/> is <see langword="true"/>
+        /// Creates a <see cref="UnityDebugLogIntercepter"/> and activates it if <see cref="InterceptUnityDebugLogMessages"/> is <see langword="true"/>
         /// </summary>
-        private UnityToSerilogLogHandler CreateUnityToSerilogLogHandler(InjectContext ctx)
+        private UnityDebugLogIntercepter CreateUnityDebugLogIntercepter(InjectContext ctx)
         {
-            var handler = ctx.Container.Instantiate<UnityToSerilogLogHandler>();
+            var handler = ctx.Container.Instantiate<UnityDebugLogIntercepter>();
 
             if (InterceptUnityDebugLogMessages)
             {
