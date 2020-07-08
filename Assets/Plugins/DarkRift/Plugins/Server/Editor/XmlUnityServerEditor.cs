@@ -1,21 +1,20 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEditor;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-using System.Net;
+using UnityEditor;
+using UnityEngine;
 
 namespace DarkRift.Server.Unity
 {
     [CustomEditor(typeof(XmlUnityServer))]
     [CanEditMultipleObjects]
-    public class XmlUnityClientEditor : Editor
+    public class XmlUnityServerEditor : Editor
     {
         private SerializedProperty configuration;
         private SerializedProperty createOnEnable;
         private SerializedProperty eventsFromDispatcher;
+
+        private List<Type> pluginTypes = UnityServerHelper.SearchForPlugins().ToList();
 
         private void OnEnable()
         {
@@ -46,8 +45,6 @@ namespace DarkRift.Server.Unity
             }
 
             EditorGUILayout.Separator();
-
-            IEnumerable<Type> pluginTypes = UnityServerHelper.SearchForPlugins();
 
             if (pluginTypes.Count() > 0)
             {
