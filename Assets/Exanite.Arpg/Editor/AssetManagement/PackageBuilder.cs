@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Exanite.Arpg.AssetManagement.Editor
+namespace Exanite.Arpg.Editor.AssetManagement
 {
     public abstract class PackageBuilder
     {

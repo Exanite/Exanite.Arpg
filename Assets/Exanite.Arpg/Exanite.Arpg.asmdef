@@ -1,16 +1,19 @@
 {
-    "name": "Exanite.Arpg.AssetManagement.Editor",
+    "name": "Exanite.Arpg",
     "references": [
-        "Exanite.Arpg.AssetManagement"
+        "UniRx.Async",
+        "Zenject"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Newtonsoft.Json.dll"
+        "Newtonsoft.Json.dll",
+        "Serilog.dll",
+        "Serilog.Sinks.File.dll",
+        "Serilog.Enrichers.Thread.dll",
+        "Zenject-usage.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
