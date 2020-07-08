@@ -151,7 +151,7 @@ namespace Exanite.Arpg.Installers
                     x.MinimumLevel = MinimumLevel;
                 });
 
-            Container.Bind(typeof(ILogger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
+            Container.Bind(typeof(Logger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
 
             Container.Bind(typeof(ILog)).FromMethod(CreateContextLog).AsTransient();
 
@@ -172,7 +172,7 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         private ILog CreateContextLog(InjectContext ctx)
         {
-            var serilog = ctx.Container.Resolve<ILogger>();
+            var serilog = ctx.Container.Resolve<Logger>();
 
             return new SerilogLogAdapter(serilog.ForContext(ctx.ObjectType));
         }
