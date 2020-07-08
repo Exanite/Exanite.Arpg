@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Exanite.Arpg.Logging;
+using UnityEngine;
 using Zenject;
-using ILogger = Serilog.ILogger;
 
 namespace Exanite.Arpg.Gameplay
 {
@@ -9,10 +9,10 @@ namespace Exanite.Arpg.Gameplay
     /// </summary>
     public class GameVersion : MonoBehaviour
     {
-        private ILogger log;
+        private ILog log;
 
         [Inject]
-        public void Inject(ILogger log)
+        public void Inject(ILog log)
         {
             this.log = log.ForContext<GameVersion>();
 

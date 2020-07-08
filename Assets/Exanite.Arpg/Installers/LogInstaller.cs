@@ -144,26 +144,37 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         public override void InstallBindings()
         {
-            Container.Bind(typeof(LoggingLevelSwitch)).To<LoggingLevelSwitch>().FromMethod(CreateLevelSwitch).AsSingle();
+            Container.Bind(typeof(LoggingLevelSwitch))
+                .To<LoggingLevelSwitch>().AsSingle()
+                .OnInstantiated<LoggingLevelSwitch>((ctx, x) =>
+                {
+                    x.MinimumLevel = MinimumLevel;
+                });
 
             Container.Bind(typeof(ILogger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
 
-            Container.Bind(typeof(ILog)).To<SerilogLogAdapter>().AsSingle().NonLazy();
+            Container.Bind(typeof(ILog)).FromMethod(CreateContextLog).AsTransient();
 
-            Container.Bind(typeof(UnityDebugLogIntercepter), typeof(IDisposable)).To<UnityDebugLogIntercepter>().FromMethod(CreateUnityDebugLogIntercepter).AsSingle().NonLazy();
+            Container.Bind(typeof(UnityDebugLogIntercepter), typeof(IDisposable))
+                .To<UnityDebugLogIntercepter>().AsSingle()
+                .OnInstantiated<UnityDebugLogIntercepter>((ctx, x) =>
+                {
+                    if (InterceptUnityDebugLogMessages)
+                    {
+                        x.Activate();
+                    }
+                })
+                .NonLazy();
         }
 
         /// <summary>
-        /// Creates a <see cref="LoggingLevelSwitch"/> for changing the minimum level of logged events
+        /// Creates a log 
         /// </summary>
-        private LoggingLevelSwitch CreateLevelSwitch(InjectContext ctx)
+        private ILog CreateContextLog(InjectContext ctx)
         {
-            var levelSwitch = new LoggingLevelSwitch
-            {
-                MinimumLevel = MinimumLevel
-            };
+            var serilog = ctx.Container.Resolve<ILogger>();
 
-            return levelSwitch;
+            return new SerilogLogAdapter(serilog.ForContext(ctx.ObjectType));
         }
 
         /// <summary>
@@ -216,21 +227,6 @@ namespace Exanite.Arpg.Installers
             ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
 
             config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
-        }
-
-        /// <summary>
-        /// Creates a <see cref="UnityDebugLogIntercepter"/> and activates it if <see cref="InterceptUnityDebugLogMessages"/> is <see langword="true"/>
-        /// </summary>
-        private UnityDebugLogIntercepter CreateUnityDebugLogIntercepter(InjectContext ctx)
-        {
-            var handler = ctx.Container.Instantiate<UnityDebugLogIntercepter>();
-
-            if (InterceptUnityDebugLogMessages)
-            {
-                handler.Activate();
-            }
-
-            return handler;
         }
     }
 }
