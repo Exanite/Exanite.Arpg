@@ -187,9 +187,11 @@ namespace DarkRift.Client.Unity
         
         private void Awake()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             ObjectCacheSettings = objectCacheSettings.ToObjectCacheSettings();
 
             Client = new DarkRiftClient(ObjectCacheSettings);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             //Setup dispatcher
             Dispatcher = new Dispatcher(true);

@@ -15,6 +15,7 @@ namespace DarkRift.Server.Unity
         /// </summary>
         public DarkRiftServer Server { get; private set; }
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value null
 #pragma warning disable IDE0044 // Add readonly modifier, Unity can't serialize readonly fields
         [SerializeField]
         [Tooltip("The configuration file to use.")]
@@ -28,6 +29,7 @@ namespace DarkRift.Server.Unity
         [Tooltip("Indicates whether the server events will be routed through the dispatcher or just invoked.")]
         private bool eventsFromDispatcher = true;
 #pragma warning restore IDE0044 // Add readonly modifier, Unity can't serialize readonly fields
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value null
 
         private void OnEnable()
         {
