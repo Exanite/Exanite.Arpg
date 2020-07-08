@@ -4,8 +4,6 @@ namespace Exanite.Arpg.Logging
 {
     public static class LogExtensions
     {
-        public const string SourceContextPropertyName = "SourceContext";
-
         private static readonly object[] NoPropertyValues = new object[0];
 
         public static ILog ForContext<TSource>(this ILog log)
@@ -15,7 +13,7 @@ namespace Exanite.Arpg.Logging
 
         public static ILog ForContext(this ILog log, Type source)
         {
-            return log.ForContext(SourceContextPropertyName, source.FullName);
+            return log.ForContext(Constants.SourceContextPropertyName, source.FullName);
         }
 
         public static void Debug(this ILog log, string messageTemplate)
