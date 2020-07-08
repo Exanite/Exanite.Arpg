@@ -2,7 +2,7 @@
 //using Exanite.Core.Extensions;
 //using UnityEditor;
 
-//namespace Exanite.Arpg.Modding.Editor
+//namespace Exanite.Arpg.Editor.Modding
 //{
 //    public static class ModUtility
 //    {

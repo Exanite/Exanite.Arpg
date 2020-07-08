@@ -5,7 +5,7 @@
 //using UnityEditor;
 //using UnityEngine;
 
-//namespace Exanite.Arpg.Modding.Editor
+//namespace Exanite.Arpg.Editor.Modding
 //{
 //    [CustomEditor(typeof(ModInfo))]
 //    public class ModInfoEditor : OdinEditor

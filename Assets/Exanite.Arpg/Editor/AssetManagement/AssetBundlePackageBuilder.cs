@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Exanite.Arpg.AssetManagement;
 using Exanite.Arpg.AssetManagement.Packages;
 using Newtonsoft.Json;
 using UnityEditor;
 
-namespace Exanite.Arpg.AssetManagement.Editor
+namespace Exanite.Arpg.Editor.AssetManagement
 {
     public class AssetBundlePackageBuilder : PackageBuilder
     {
