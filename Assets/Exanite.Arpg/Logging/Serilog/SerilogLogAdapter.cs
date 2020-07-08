@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
 
-namespace Exanite.Arpg.Logging
+namespace Exanite.Arpg.Logging.Serilog
 {
     public class SerilogLogAdapter : ILog
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Exanite.Arpg.Logging;
+using Exanite.Arpg.Logging.Serilog;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;

@@ -3,7 +3,7 @@ using Serilog.Events;
 using UnityEngine;
 using ILogger = Serilog.ILogger;
 
-namespace Exanite.Arpg.Logging
+namespace Exanite.Arpg.Logging.Serilog
 {
     /// <summary>
     /// Intercepts Unity's Debug.Log messages and sends them to a <see cref="Serilog.ILogger"/>
