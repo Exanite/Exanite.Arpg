@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Exanite.Arpg.Logging;
 using UnityEngine;
 using Zenject;
-using ILogger = Serilog.ILogger;
 
 namespace Exanite.Arpg.Pathfinding.Graphs
 {
@@ -24,12 +24,12 @@ namespace Exanite.Arpg.Pathfinding.Graphs
         [SerializeField] private bool enableNodeConnectionDrawing = false;
         [SerializeField] private float nodeDrawHeightOffsetAmount = 0.1f;
 
-        private ILogger log;
+        private ILog log;
 
         [Inject]
-        public void Inject(ILogger log)
+        public void Inject(ILog log)
         {
-            this.log = log.ForContext<NavGrid>();
+            this.log = log;
         }
 
         public Node[,] Nodes

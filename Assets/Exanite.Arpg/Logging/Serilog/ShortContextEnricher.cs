@@ -2,7 +2,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Exanite.Arpg.Logging
+namespace Exanite.Arpg.Logging.Serilog
 {
     /// <summary>
     /// Adds a shorter non-namespaced property, 'ShortContext', based off of the <see cref="LogEvent"/>'s 'SourceContext' property

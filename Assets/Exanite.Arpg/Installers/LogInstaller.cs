@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Logging.Serilog;
+using Exanite.Arpg.Logging.Unity;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -9,7 +11,6 @@ using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
 using UnityEngine;
 using Zenject;
-using ILogger = Serilog.ILogger;
 using Logger = Serilog.Core.Logger;
 
 namespace Exanite.Arpg.Installers
@@ -142,24 +143,37 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         public override void InstallBindings()
         {
-            Container.Bind(typeof(LoggingLevelSwitch)).To<LoggingLevelSwitch>().FromMethod(CreateLevelSwitch).AsSingle();
+            Container.Bind(typeof(LoggingLevelSwitch))
+                .To<LoggingLevelSwitch>().AsSingle()
+                .OnInstantiated<LoggingLevelSwitch>((ctx, x) =>
+                {
+                    x.MinimumLevel = MinimumLevel;
+                });
 
-            Container.Bind(typeof(ILogger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
+            Container.Bind(typeof(Logger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
 
-            Container.Bind(typeof(UnityToSerilogLogHandler), typeof(IDisposable)).To<UnityToSerilogLogHandler>().FromMethod(CreateUnityToSerilogLogHandler).AsSingle().NonLazy();
+            Container.Bind(typeof(ILog)).FromMethod(CreateContextLog).AsTransient();
+
+            Container.Bind(typeof(UnityDebugLogIntercepter), typeof(IDisposable))
+                .To<UnityDebugLogIntercepter>().AsSingle()
+                .OnInstantiated<UnityDebugLogIntercepter>((ctx, x) =>
+                {
+                    if (InterceptUnityDebugLogMessages)
+                    {
+                        x.Activate();
+                    }
+                })
+                .NonLazy();
         }
 
         /// <summary>
-        /// Creates a <see cref="LoggingLevelSwitch"/> for changing the minimum level of logged events
+        /// Creates a log that marks LogEntries as being from a specific source
         /// </summary>
-        private LoggingLevelSwitch CreateLevelSwitch(InjectContext ctx)
+        private ILog CreateContextLog(InjectContext ctx)
         {
-            var levelSwitch = new LoggingLevelSwitch
-            {
-                MinimumLevel = MinimumLevel
-            };
+            var serilog = ctx.Container.Resolve<Logger>();
 
-            return levelSwitch;
+            return new SerilogLogAdapter(serilog.ForContext(ctx.ObjectType));
         }
 
         /// <summary>
@@ -212,21 +226,6 @@ namespace Exanite.Arpg.Installers
             ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
 
             config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
-        }
-
-        /// <summary>
-        /// Creates a <see cref="UnityToSerilogLogHandler"/> and activates it if <see cref="InterceptUnityDebugLogMessages"/> is <see langword="true"/>
-        /// </summary>
-        private UnityToSerilogLogHandler CreateUnityToSerilogLogHandler(InjectContext ctx)
-        {
-            var handler = ctx.Container.Instantiate<UnityToSerilogLogHandler>();
-
-            if (InterceptUnityDebugLogMessages)
-            {
-                handler.Activate();
-            }
-
-            return handler;
         }
     }
 }
