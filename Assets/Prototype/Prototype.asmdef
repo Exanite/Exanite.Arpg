@@ -1,8 +1,7 @@
 {
     "name": "Prototype",
     "references": [
-        "Exanite.Arpg.AssetManagement",
-        "Exanite.Arpg.Pathfinding",
+        "Exanite.Arpg",
         "UniRx.Async",
         "Zenject"
     ],

@@ -1,7 +1,11 @@
 {
-    "name": "Exanite.Arpg.Modding",
-    "references": [],
-    "includePlatforms": [],
+    "name": "Exanite.Arpg.Editor",
+    "references": [
+        "Exanite.Arpg"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
