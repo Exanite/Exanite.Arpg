@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using System.Xml.Linq;
+﻿using System;
 using System.Collections.Specialized;
 using System.Threading;
+using System.Xml.Linq;
+using UnityEngine;
 
 namespace DarkRift.Server.Unity
 {
@@ -80,7 +79,7 @@ namespace DarkRift.Server.Unity
 
                 // Add types
                 spawnData.PluginSearch.PluginTypes.AddRange(UnityServerHelper.SearchForPlugins());
-                spawnData.PluginSearch.PluginTypes.Add(typeof(UnityConsoleWriter));
+                //spawnData.PluginSearch.PluginTypes.Add(typeof(UnityConsoleWriter));
 
                 // Create server
                 Server = new DarkRiftServer(spawnData);
