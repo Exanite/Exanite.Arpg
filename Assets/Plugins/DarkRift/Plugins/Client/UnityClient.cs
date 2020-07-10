@@ -7,8 +7,8 @@ using UnityEngine;
 namespace DarkRift.Client.Unity
 {
     [AddComponentMenu("DarkRift/Client")]
-	public sealed class UnityClient : MonoBehaviour
-	{
+    public sealed class UnityClient : MonoBehaviour
+    {
         /// <summary>
         ///     The IP address this client connects to.
         /// </summary>
@@ -18,9 +18,10 @@ namespace DarkRift.Client.Unity
             set { address = value.ToString(); }
         }
 
+        // Unity requires a serializable backing field so use string
         [SerializeField]
         [Tooltip("The address of the server to connect to.")]
-        private string address = IPAddress.Loopback.ToString();                 // Unity requires a serializable backing field so use string
+        private string address = IPAddress.Loopback.ToString();
 
         /// <summary>
         ///     The port this client connects to.
@@ -31,13 +32,12 @@ namespace DarkRift.Client.Unity
             set { port = value; }
         }
 
-		[SerializeField]
-		[Tooltip("The port on the server the client will connect to.")]
-		private ushort port = 4296;
+        [SerializeField]
+        [Tooltip("The port on the server the client will connect to.")]
+        private ushort port = 4296;
 
         [SerializeField]
         [Tooltip("Whether to disable Nagel's algorithm or not.")]
-#pragma warning disable IDE0044 // Add readonly modifier, Unity can't serialize readonly fields
         private bool noDelay = false;
 
         [SerializeField]
@@ -51,69 +51,6 @@ namespace DarkRift.Client.Unity
         [SerializeField]
         [Tooltip("Specifies whether DarkRift should log all data to the console.")]
         private volatile bool sniffData = false;
-#pragma warning restore IDE0044 // Add readonly modifier
-        #region Cache settings
-        #region Legacy
-        /// <summary>
-        ///     The maximum number of <see cref="DarkRiftWriter"/> instances stored per thread.
-        /// </summary>
-        [Obsolete("Use the ObjectCacheSettings property instead.")]
-        public int MaxCachedWriters
-        {
-            get
-            {
-                return ObjectCacheSettings.MaxWriters;
-            }
-        }
-
-        /// <summary>
-        ///     The maximum number of <see cref="DarkRiftReader"/> instances stored per thread.
-        /// </summary>
-        [Obsolete("Use the ObjectCacheSettings property instead.")]
-        public int MaxCachedReaders
-        {
-            get
-            {
-                return ObjectCacheSettings.MaxReaders;
-            }
-        }
-
-        /// <summary>
-        ///     The maximum number of <see cref="Message"/> instances stored per thread.
-        /// </summary>
-        [Obsolete("Use the ObjectCacheSettings property instead.")]
-        public int MaxCachedMessages
-        {
-            get
-            {
-                return ObjectCacheSettings.MaxMessages;
-            }
-        }
-
-        /// <summary>
-        ///     The maximum number of <see cref="System.Net.Sockets.SocketAsyncEventArgs"/> instances stored per thread.
-        /// </summary>
-        [Obsolete("Use the ObjectCacheSettings property instead.")]
-        public int MaxCachedSocketAsyncEventArgs
-        {
-            get
-            {
-                return ObjectCacheSettings.MaxSocketAsyncEventArgs;
-            }
-        }
-
-        /// <summary>
-        ///     The maximum number of <see cref="ActionDispatcherTask"/> instances stored per thread.
-        /// </summary>
-        [Obsolete("Use the ObjectCacheSettings property instead.")]
-        public int MaxCachedActionDispatcherTasks
-        {
-            get
-            {
-                return ObjectCacheSettings.MaxActionDispatcherTasks;
-            }
-        }
-        #endregion Legacy
 
         /// <summary>
         ///     The object cache settings in use.
@@ -124,10 +61,7 @@ namespace DarkRift.Client.Unity
         ///     Serialisable version of the object cache settings for Unity.
         /// </summary>
         [SerializeField]
-#pragma warning disable IDE0044 // Add readonly modifier, Unity can't serialize readonly fields
         private SerializableObjectCacheSettings objectCacheSettings = new SerializableObjectCacheSettings();
-#pragma warning restore IDE0044 // Add readonly modifier, Unity can't serialize readonly fields
-        #endregion
 
         /// <summary>
         ///     Event fired when a message is received.
@@ -151,19 +85,6 @@ namespace DarkRift.Client.Unity
         }
 
         /// <summary>
-        ///     Returns whether or not this client is connected to the server.
-        /// </summary>
-        [Obsolete("User ConnectionState instead.")]
-        public bool Connected
-        {
-            get
-            {
-                return Client.Connected;
-            }
-        }
-
-
-        /// <summary>
         ///     Returns the state of the connection with the server.
         /// </summary>
         public ConnectionState ConnectionState
@@ -184,7 +105,7 @@ namespace DarkRift.Client.Unity
         ///     The dispatcher for moving work to the main thread.
         /// </summary>
         public Dispatcher Dispatcher { get; private set; }
-        
+
         private void Awake()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -202,44 +123,26 @@ namespace DarkRift.Client.Unity
         }
 
         private void Start()
-		{
-            //If auto connect is true then connect to the server
+        {
             if (autoConnect)
-			    Connect(Address, port, noDelay);
-		}
+            {
+                Connect(Address, port, noDelay);
+            }
+        }
 
         private void Update()
         {
-            //Execute all the queued dispatcher tasks
             Dispatcher.ExecuteDispatcherTasks();
         }
 
         private void OnDestroy()
         {
-            //Remove resources
             Close();
         }
 
         private void OnApplicationQuit()
         {
-            //Remove resources
             Close();
-        }
-
-        /// <summary>
-        ///     Connects to a remote server.
-        /// </summary>
-        /// <param name="ip">The IP address of the server.</param>
-        /// <param name="port">The port of the server.</param>
-        [Obsolete("Use other Connect overloads that automatically detect the IP version.")]
-        public void Connect(IPAddress ip, int port, IPVersion ipVersion)
-        {
-            Client.Connect(ip, port, ipVersion);
-
-            if (ConnectionState == ConnectionState.Connected)
-                Debug.Log("Connected to " + ip + " on port " + port + " using " + ipVersion + ".");
-            else
-                Debug.Log("Connection failed to " + ip + " on port " + port + " using " + ipVersion + ".");
         }
 
         /// <summary>
@@ -253,9 +156,13 @@ namespace DarkRift.Client.Unity
             Client.Connect(ip, port, noDelay);
 
             if (ConnectionState == ConnectionState.Connected)
+            {
                 Debug.Log("Connected to " + ip + " on port " + port + ".");
+            }
             else
+            {
                 Debug.Log("Connection failed to " + ip + " on port " + port + ".");
+            }
         }
 
         /// <summary>
@@ -270,40 +177,13 @@ namespace DarkRift.Client.Unity
             Client.Connect(ip, tcpPort, udpPort, noDelay);
 
             if (ConnectionState == ConnectionState.Connected)
+            {
                 Debug.Log("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+            }
             else
+            {
                 Debug.Log("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
-        }
-
-        /// <summary>
-        ///     Connects to a remote asynchronously.
-        /// </summary>
-        /// <param name="ip">The IP address of the server.</param>
-        /// <param name="port">The port of the server.</param>
-        /// <param name="callback">The callback to make when the connection attempt completes.</param>
-        [Obsolete("Use other ConnectInBackground overloads that automatically detect the IP version.")]
-        public void ConnectInBackground(IPAddress ip, int port, IPVersion ipVersion, DarkRiftClient.ConnectCompleteHandler callback = null)
-        {
-            Client.ConnectInBackground(
-                ip,
-                port, 
-                ipVersion, 
-                delegate (Exception e)
-                {
-                    if (callback != null)
-                    {
-                        if (invokeFromDispatcher)
-                            Dispatcher.InvokeAsync(() => callback(e));
-                        else
-                            callback.Invoke(e);
-                    }
-                    
-                    if (ConnectionState == ConnectionState.Connected)
-                        Debug.Log("Connected to " + ip + " on port " + port + " using " + ipVersion + ".");
-                    else
-                        Debug.Log("Connection failed to " + ip + " on port " + port + " using " + ipVersion + ".");
-                }
-            );
+            }
         }
 
         /// <summary>
@@ -328,11 +208,15 @@ namespace DarkRift.Client.Unity
                         else
                             callback.Invoke(e);
                     }
-                    
+
                     if (ConnectionState == ConnectionState.Connected)
+                    {
                         Debug.Log("Connected to " + ip + " on port " + port + ".");
+                    }
                     else
+                    {
                         Debug.Log("Connection failed to " + ip + " on port " + port + ".");
+                    }
                 }
             );
         }
@@ -361,11 +245,15 @@ namespace DarkRift.Client.Unity
                         else
                             callback.Invoke(e);
                     }
-                    
+
                     if (ConnectionState == ConnectionState.Connected)
+                    {
                         Debug.Log("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                    }
                     else
+                    {
                         Debug.Log("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                    }
                 }
             );
         }
@@ -391,30 +279,32 @@ namespace DarkRift.Client.Unity
             if (invokeFromDispatcher)
             {
                 if (sniffData)
-                    Debug.Log("Message Received");      //TODO more information!
+                {
+                    Debug.Log("Message Received");
+                }
 
                 // DarkRift will recycle the message inside the event args when this method exits so make a copy now that we control the lifecycle of!
                 Message message = e.GetMessage();
                 MessageReceivedEventArgs args = MessageReceivedEventArgs.Create(message, e.SendMode);
 
-                Dispatcher.InvokeAsync(
-                    () => 
-                        {
-                            EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
-                            if (handler != null)
-                            {
-                                handler.Invoke(sender, args);
-                            }
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender, args);
+                    }
 
-                            message.Dispose();
-                            args.Dispose();
-                        }
-                );
+                    message.Dispose();
+                    args.Dispose();
+                });
             }
             else
             {
                 if (sniffData)
-                    Debug.Log("Message Received");      //TODO more information!
+                {
+                    Debug.Log("Message Received");
+                }
 
                 EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
                 if (handler != null)
@@ -430,24 +320,26 @@ namespace DarkRift.Client.Unity
             if (invokeFromDispatcher)
             {
                 if (!e.LocalDisconnect)
+                {
                     Debug.Log("Disconnected from server, error: " + e.Error);
+                }
 
-                Dispatcher.InvokeAsync(
-                    () =>
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<DisconnectedEventArgs> handler = Disconnected;
+                    if (handler != null)
                     {
-                        EventHandler<DisconnectedEventArgs> handler = Disconnected;
-                        if (handler != null)
-                        {
-                            handler.Invoke(sender, e);
-                        }
+                        handler.Invoke(sender, e);
                     }
-                );
+                });
             }
             else
             {
                 if (!e.LocalDisconnect)
+                {
                     Debug.Log("Disconnected from server, error: " + e.Error);
-                
+                }
+
                 EventHandler<DisconnectedEventArgs> handler = Disconnected;
                 if (handler != null)
                 {
@@ -476,5 +368,5 @@ namespace DarkRift.Client.Unity
             Client.Dispose();
             Dispatcher.Dispose();
         }
-	}
+    }
 }
