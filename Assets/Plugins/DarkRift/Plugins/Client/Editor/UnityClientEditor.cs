@@ -23,13 +23,13 @@ namespace DarkRift.Client.Unity
         {
             client = (UnityClient)serializedObject.targetObject;
 
-            address                 = client.Address.ToString();
-            port                    = serializedObject.FindProperty("port");
-            autoConnect             = serializedObject.FindProperty("autoConnect");
-            invokeFromDispatcher    = serializedObject.FindProperty("invokeFromDispatcher");
-            sniffData               = serializedObject.FindProperty("sniffData");
+            address = client.Address.ToString();
+            port = serializedObject.FindProperty("port");
+            autoConnect = serializedObject.FindProperty("autoConnect");
+            invokeFromDispatcher = serializedObject.FindProperty("invokeFromDispatcher");
+            sniffData = serializedObject.FindProperty("sniffData");
 
-            objectCacheSettings     = serializedObject.FindProperty("objectCacheSettings");
+            objectCacheSettings = serializedObject.FindProperty("objectCacheSettings");
         }
 
         public override void OnInspectorGUI()
@@ -37,16 +37,20 @@ namespace DarkRift.Client.Unity
             serializedObject.Update();
 
             //Display IP address
+            string previousAddress = address;
             address = EditorGUILayout.TextField(new GUIContent("Address", "The address the client will connect to."), address);
-            
-            try
+
+            if (address != previousAddress)
             {
-                client.Address = IPAddress.Parse(address);
-                EditorUtility.SetDirty(client);
-            }
-            catch (FormatException)
-            {
-                EditorGUILayout.HelpBox("Invalid IP address.", MessageType.Error);
+                try
+                {
+                    client.Address = IPAddress.Parse(address);
+                    EditorUtility.SetDirty(client);
+                }
+                catch (FormatException)
+                {
+                    EditorGUILayout.HelpBox("Invalid IP address.", MessageType.Error);
+                }
             }
 
             EditorGUILayout.PropertyField(port);
@@ -67,7 +71,7 @@ namespace DarkRift.Client.Unity
             }
 
             EditorGUILayout.PropertyField(sniffData);
-            
+
             EditorGUILayout.PropertyField(objectCacheSettings, true);
 
             serializedObject.ApplyModifiedProperties();
