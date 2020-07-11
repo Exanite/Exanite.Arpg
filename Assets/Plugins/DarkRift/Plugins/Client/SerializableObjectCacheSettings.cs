@@ -1,8 +1,6 @@
-﻿using DarkRift;
+﻿using System;
+using DarkRift;
 using DarkRift.Client;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>

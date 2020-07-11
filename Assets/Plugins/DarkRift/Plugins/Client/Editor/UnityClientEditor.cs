@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEditor;
-using System;
+﻿using System;
 using System.Net;
+using UnityEditor;
+using UnityEngine;
 
 namespace DarkRift.Client.Unity
 {

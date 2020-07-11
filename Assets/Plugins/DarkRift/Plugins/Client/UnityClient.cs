@@ -1,7 +1,6 @@
-﻿using DarkRift.Dispatching;
-using System;
+﻿using System;
 using System.Net;
-using System.Net.Sockets;
+using DarkRift.Dispatching;
 using UnityEngine;
 
 namespace DarkRift.Client.Unity
