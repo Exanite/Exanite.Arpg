@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 291628701}
   - component: {fileID: 291628702}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: PhysicsSceneManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
