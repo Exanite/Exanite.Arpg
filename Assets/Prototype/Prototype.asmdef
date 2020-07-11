@@ -10,6 +10,9 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
+        "DarkRift.dll",
+        "DarkRift.Client.dll",
+        "DarkRift.Server.dll",
         "Newtonsoft.Json.dll",
         "Serilog.dll",
         "Serilog.Enrichers.Thread.dll",
