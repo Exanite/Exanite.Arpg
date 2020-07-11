@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Net;
+using Exanite.Arpg.DarkRift.Client;
 using UnityEditor;
 using UnityEngine;
 
-namespace DarkRift.Client.Unity
+namespace Exanite.Arpg.Editor.DarkRift
 {
     [CustomEditor(typeof(UnityClient))]
     [CanEditMultipleObjects]
-    public class UnityClientEditor : Editor
+    public class UnityClientEditor : UnityEditor.Editor
     {
         private UnityClient client;
         private string address;

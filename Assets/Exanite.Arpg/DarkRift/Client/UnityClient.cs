@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
+using DarkRift;
+using DarkRift.Client;
 using DarkRift.Dispatching;
 using UnityEngine;
 
-namespace DarkRift.Client.Unity
+namespace Exanite.Arpg.DarkRift.Client
 {
     [AddComponentMenu("DarkRift/Client")]
     public sealed class UnityClient : MonoBehaviour
@@ -54,7 +56,7 @@ namespace DarkRift.Client.Unity
         /// <summary>
         ///     The object cache settings in use.
         /// </summary>
-        public ObjectCacheSettings ObjectCacheSettings { get; set; }
+        public ClientObjectCacheSettings ClientObjectCacheSettings { get; set; }
 
         /// <summary>
         ///     Serialisable version of the object cache settings for Unity.
@@ -107,11 +109,9 @@ namespace DarkRift.Client.Unity
 
         private void Awake()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            ObjectCacheSettings = objectCacheSettings.ToObjectCacheSettings();
+            ClientObjectCacheSettings = objectCacheSettings.ToClientObjectCacheSettings();
 
-            Client = new DarkRiftClient(ObjectCacheSettings);
-#pragma warning restore CS0618 // Type or member is obsolete
+            Client = new DarkRiftClient(ClientObjectCacheSettings);
 
             //Setup dispatcher
             Dispatcher = new Dispatcher(true);

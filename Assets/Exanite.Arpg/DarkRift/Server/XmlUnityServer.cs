@@ -2,9 +2,10 @@
 using System.Collections.Specialized;
 using System.Threading;
 using System.Xml.Linq;
+using DarkRift.Server;
 using UnityEngine;
 
-namespace DarkRift.Server.Unity
+namespace Exanite.Arpg.DarkRift.Server
 {
     [AddComponentMenu("DarkRift/Server")]
     public class XmlUnityServer : MonoBehaviour

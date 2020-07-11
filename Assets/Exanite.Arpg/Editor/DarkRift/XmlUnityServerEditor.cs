@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Exanite.Arpg.DarkRift.Server;
 using UnityEditor;
 using UnityEngine;
 
-namespace DarkRift.Server.Unity
+namespace Exanite.Arpg.Editor.DarkRift
 {
     [CustomEditor(typeof(XmlUnityServer))]
     [CanEditMultipleObjects]
-    public class XmlUnityServerEditor : Editor
+    public class XmlUnityServerEditor : UnityEditor.Editor
     {
         private SerializedProperty configuration;
         private SerializedProperty createOnEnable;
