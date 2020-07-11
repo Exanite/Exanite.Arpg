@@ -15,10 +15,6 @@ namespace Exanite.Arpg.Logging
         /// <summary>
         /// Creates a new <see cref="LogEntry"/>
         /// </summary>
-        /// <param name="level"></param>
-        /// <param name="exception"></param>
-        /// <param name="messageTemplate"></param>
-        /// <param name="propertyValues"></param>
         public LogEntry(LogLevel level, Exception exception, string messageTemplate, object[] propertyValues)
         {
             this.level = level;

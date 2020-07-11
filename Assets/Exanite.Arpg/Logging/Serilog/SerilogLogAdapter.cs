@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using Serilog.Events;
 
 namespace Exanite.Arpg.Logging.Serilog
 {
@@ -31,7 +30,7 @@ namespace Exanite.Arpg.Logging.Serilog
         /// </summary>
         public bool IsEnabled(LogLevel level)
         {
-            return inner.IsEnabled((LogEventLevel)level);
+            return inner.IsEnabled(level.ToLogEventLevel());
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Exanite.Arpg.Logging.Serilog
         /// </summary>
         public void Log(LogEntry entry)
         {
-            inner.Write((LogEventLevel)entry.Level, entry.Exception, entry.MessageTemplate, entry.PropertyValues);
+            inner.Write(entry.Level.ToLogEventLevel(), entry.Exception, entry.MessageTemplate, entry.PropertyValues);
         }
     }
 }

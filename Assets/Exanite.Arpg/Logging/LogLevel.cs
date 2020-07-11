@@ -1,10 +1,13 @@
-﻿namespace Exanite.Arpg.Logging
+﻿using System;
+
+namespace Exanite.Arpg.Logging
 {
     //! Documentation is copied from Serilog.Events.LogEventLevel
     //! Should be replaced later on
     /// <summary>
     /// Specifies the meaning and relative importance of a <see cref="LogEntry"/>.
     /// </summary>
+    [Serializable]
     public enum LogLevel
     {
         /// <summary>

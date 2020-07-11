@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Exanite.Arpg.AssetRegistry
+namespace Exanite.Arpg.AssetManagement.Registry
 {
     public struct Key : IEquatable<Key>
     {
