@@ -5,7 +5,6 @@ using Exanite.Arpg.Logging.Serilog;
 using Exanite.Arpg.Logging.Unity;
 using Serilog;
 using Serilog.Core;
-using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
@@ -123,7 +122,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Minimum level required for <see cref="LogEvent"/>s to be logged
+        /// Minimum level required for <see cref="LogEntry"/>s to be logged
         /// </summary>
         public LogLevel MinimumLevel
         {
@@ -139,7 +138,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Installs the <see cref="Logger"/> to the Extenject DI container
+        /// Installs an <see cref="ILog"/> to the Extenject DI container
         /// </summary>
         public override void InstallBindings()
         {
