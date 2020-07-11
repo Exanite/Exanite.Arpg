@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 291628701}
   - component: {fileID: 291628702}
   m_Layer: 0
-  m_Name: NetworkManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -165,9 +165,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073d2632a3a8031468867c9e3fce79ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clientScenePath: Assets/Prototype/DarkRift/Client.unity
-  serverScenePath: Assets/Prototype/DarkRift/Server.unity
-  physicsSpeed: 1
+  clientSceneName: Client
+  serverSceneName: Server
 --- !u!1 &339886105
 GameObject:
   m_ObjectHideFlags: 0
