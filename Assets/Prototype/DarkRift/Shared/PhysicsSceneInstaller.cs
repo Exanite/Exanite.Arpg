@@ -1,5 +1,4 @@
 ﻿using System;
-using Exanite.Arpg.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
