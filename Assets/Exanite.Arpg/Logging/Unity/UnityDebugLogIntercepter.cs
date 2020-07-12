@@ -58,7 +58,7 @@ namespace Exanite.Arpg.Logging.Unity
         }
 
         /// <summary>
-        /// Starts the interception of Unity Debug.Log messages<para/>
+        /// Starts the interception of Unity Debug.Log messages
         /// </summary>
         public void Activate()
         {
@@ -75,7 +75,7 @@ namespace Exanite.Arpg.Logging.Unity
 
         /// <summary>
         /// Stops the interception of Unity Debug.Log messages<para/>
-        /// Note: This is also called when this <see cref="UnityDebugLogIntercepter"/> is disposed or goes out of scope
+        /// Note: This is also called when this <see cref="UnityDebugLogIntercepter"/> is disposed
         /// </summary>
         public void Deactivate()
         {
