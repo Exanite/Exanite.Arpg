@@ -66,11 +66,11 @@ namespace Prototype.DarkRift.Server
                     writer.Write(player.transform.position.y);
                 }
 
-                using (var createPlayerMessage = Message.Create(MessageTag.PlayerCreate, writer))
+                using (var playerCreateMessage = Message.Create(MessageTag.PlayerCreate, writer))
                 {
                     foreach (var client in players.Keys)
                     {
-                        client.SendMessage(createPlayerMessage, SendMode.Reliable);
+                        client.SendMessage(playerCreateMessage, SendMode.Reliable);
                     }
                 }
             }
@@ -93,6 +93,19 @@ namespace Prototype.DarkRift.Server
             Destroy(players[e.Client].transform.gameObject);
 
             players.Remove(e.Client);
+
+            using (var writer = DarkRiftWriter.Create())
+            {
+                writer.Write(e.Client.ID);
+
+                using (var playerDestroyMessage = Message.Create(MessageTag.PlayerDestroy, writer))
+                {
+                    foreach (var client in players.Keys)
+                    {
+                        client.SendMessage(playerDestroyMessage, SendMode.Reliable);
+                    }
+                }
+            }
         }
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)

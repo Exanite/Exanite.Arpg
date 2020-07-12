@@ -104,13 +104,20 @@ namespace Prototype.DarkRift.Client
                         }
                     }
                 }
-
             }
         }
 
         private void OnPlayerDestroy(object sender, MessageReceivedEventArgs e)
         {
+            using (var message = e.GetMessage())
+            using (var reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
 
+                Destroy(players[id].transform.gameObject);
+
+                players.Remove(id);
+            }
         }
 
         private void OnPlayerPositionUpdate(object sender, MessageReceivedEventArgs e)
