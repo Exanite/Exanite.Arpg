@@ -3,13 +3,23 @@ using System.Net;
 using DarkRift;
 using DarkRift.Client;
 using DarkRift.Dispatching;
+using Exanite.Arpg.Logging;
 using UnityEngine;
+using Zenject;
 
 namespace Exanite.Arpg.DarkRift.Client
 {
     [AddComponentMenu("DarkRift/Client")]
-    public sealed class UnityClient : MonoBehaviour
+    public class UnityClient : MonoBehaviour
     {
+        private ILog log;
+
+        [Inject]
+        public void Inject(ILog log)
+        {
+            this.log = log;
+        }
+
         /// <summary>
         ///     The IP address this client connects to.
         /// </summary>
@@ -156,11 +166,11 @@ namespace Exanite.Arpg.DarkRift.Client
 
             if (ConnectionState == ConnectionState.Connected)
             {
-                Debug.Log("Connected to " + ip + " on port " + port + ".");
+                log.Information("Connected to " + ip + " on port " + port + ".");
             }
             else
             {
-                Debug.Log("Connection failed to " + ip + " on port " + port + ".");
+                log.Information("Connection failed to " + ip + " on port " + port + ".");
             }
         }
 
@@ -177,11 +187,11 @@ namespace Exanite.Arpg.DarkRift.Client
 
             if (ConnectionState == ConnectionState.Connected)
             {
-                Debug.Log("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                log.Information("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
             }
             else
             {
-                Debug.Log("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                log.Information("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
             }
         }
 
@@ -210,11 +220,11 @@ namespace Exanite.Arpg.DarkRift.Client
 
                     if (ConnectionState == ConnectionState.Connected)
                     {
-                        Debug.Log("Connected to " + ip + " on port " + port + ".");
+                        log.Information("Connected to " + ip + " on port " + port + ".");
                     }
                     else
                     {
-                        Debug.Log("Connection failed to " + ip + " on port " + port + ".");
+                        log.Information("Connection failed to " + ip + " on port " + port + ".");
                     }
                 }
             );
@@ -247,11 +257,11 @@ namespace Exanite.Arpg.DarkRift.Client
 
                     if (ConnectionState == ConnectionState.Connected)
                     {
-                        Debug.Log("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                        log.Information("Connected to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
                     }
                     else
                     {
-                        Debug.Log("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
+                        log.Information("Connection failed to " + ip + " on port " + tcpPort + "|" + udpPort + ".");
                     }
                 }
             );
@@ -279,7 +289,7 @@ namespace Exanite.Arpg.DarkRift.Client
             {
                 if (sniffData)
                 {
-                    Debug.Log("Message Received");
+                    log.Information("Message Received");
                 }
 
                 // DarkRift will recycle the message inside the event args when this method exits so make a copy now that we control the lifecycle of!
@@ -302,7 +312,7 @@ namespace Exanite.Arpg.DarkRift.Client
             {
                 if (sniffData)
                 {
-                    Debug.Log("Message Received");
+                    log.Information("Message Received");
                 }
 
                 EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
@@ -320,7 +330,7 @@ namespace Exanite.Arpg.DarkRift.Client
             {
                 if (!e.LocalDisconnect)
                 {
-                    Debug.Log("Disconnected from server, error: " + e.Error);
+                    log.Information("Disconnected from server, error: " + e.Error);
                 }
 
                 Dispatcher.InvokeAsync(() =>
@@ -336,7 +346,7 @@ namespace Exanite.Arpg.DarkRift.Client
             {
                 if (!e.LocalDisconnect)
                 {
-                    Debug.Log("Disconnected from server, error: " + e.Error);
+                    log.Information("Disconnected from server, error: " + e.Error);
                 }
 
                 EventHandler<DisconnectedEventArgs> handler = Disconnected;
