@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace Prototype.DarkRift.Client
 {
+    public class PlayerController : MonoBehaviour
+    {
 
+    } 
 }
