@@ -15,6 +15,8 @@ namespace Prototype.DarkRift.Client
     {
         public UnityClient client;
 
+        public bool isDisconnecting = false;
+
         public Dictionary<ushort, Player> players = new Dictionary<ushort, Player>();
 
         private ILog log;
@@ -32,6 +34,16 @@ namespace Prototype.DarkRift.Client
             yield return new WaitForSeconds(1);
 
             Connect();
+        }
+
+        private void Update()
+        {
+            if (isDisconnecting)
+            {
+                Disconnect();
+
+                isDisconnecting = false;
+            }
         }
 
         public void Connect()
@@ -70,33 +82,29 @@ namespace Prototype.DarkRift.Client
 
         private void OnPlayerCreate(object sender, MessageReceivedEventArgs e)
         {
-            if (e.Tag == MessageTag.PlayerCreate)
+            using (var message = e.GetMessage())
+            using (var reader = message.GetReader())
             {
-                using (var message = e.GetMessage())
+                while (reader.Position < reader.Length)
                 {
-                    using (var reader = message.GetReader())
+                    ushort id = reader.ReadUInt16();
+                    Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+
+                    if (!players.ContainsKey(id))
                     {
-                        while (reader.Position < reader.Length)
+                        var player = new Player(id, scene);
+                        player.transform.position = position;
+
+                        players.Add(id, player);
+
+                        if (id == client.ID)
                         {
-                            ushort id = reader.ReadUInt16();
-                            Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
-
-                            if (!players.ContainsKey(id))
-                            {
-                                var player = new Player(id, scene);
-                                player.transform.position = position;
-
-                                players.Add(id, player);
-
-                                if (id == client.ID)
-                                {
-                                    player.transform.gameObject.name += " (Local)";
-                                    player.transform.gameObject.AddComponent<PlayerController>().client = client.Client;
-                                }
-                            }
+                            player.transform.gameObject.name += " (Local)";
+                            player.transform.gameObject.AddComponent<PlayerController>().client = client.Client;
                         }
                     }
                 }
+
             }
         }
 
