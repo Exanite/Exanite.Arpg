@@ -165,8 +165,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073d2632a3a8031468867c9e3fce79ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clientSceneName: Client
   serverSceneName: Server
+  clientSceneName: Client
+  numberOfClients: 10
 --- !u!1 &641455150
 GameObject:
   m_ObjectHideFlags: 0
