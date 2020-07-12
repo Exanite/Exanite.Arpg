@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
 using Exanite.Arpg.DarkRift.Server;

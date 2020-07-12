@@ -76,10 +76,25 @@ namespace Prototype.DarkRift.Client
                 {
                     using (var reader = message.GetReader())
                     {
-                        var player = new Player(reader.ReadUInt16(), scene);
-                        player.transform.position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                        while (reader.Position < reader.Length)
+                        {
+                            ushort id = reader.ReadUInt16();
+                            Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
 
-                        // if self -> add controller 
+                            if (!players.ContainsKey(id))
+                            {
+                                var player = new Player(id, scene);
+                                player.transform.position = position;
+
+                                players.Add(id, player);
+
+                                if (id == client.ID)
+                                {
+                                    player.transform.gameObject.name += " (Local)";
+                                    player.transform.gameObject.AddComponent<PlayerController>().client = client.Client;
+                                }
+                            }
+                        }
                     }
                 }
             }
