@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg.AssetManagement.Packages;
 
-namespace Exanite.Arpg.AssetRegistry
+namespace Exanite.Arpg.AssetManagement.Registry
 {
     public class AssetRegistry
     {

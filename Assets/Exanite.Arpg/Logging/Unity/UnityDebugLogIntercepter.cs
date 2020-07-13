@@ -31,7 +31,7 @@ namespace Exanite.Arpg.Logging.Unity
         /// <summary>
         /// Creates a new <see cref="UnityDebugLogIntercepter"/>
         /// </summary>
-        /// <param name="log"><see cref="Serilog.ILogger"/> to log to</param>
+        /// <param name="log"><see cref="ILog"/> to log to</param>
         public UnityDebugLogIntercepter(ILog log)
         {
             // Not ForContext<UnityDebugLogIntercepter> because this is so log messages from Unity have their context set properly
@@ -52,13 +52,13 @@ namespace Exanite.Arpg.Logging.Unity
         public void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args)
         {
             string message = string.Format(format, args);
-            LogLevel level = ConvertToLogLevel(logType);
+            LogLevel level = logType.ToLogLevel();
 
             log.Write(level, message);
         }
 
         /// <summary>
-        /// Starts the interception of Unity Debug.Log messages<para/>
+        /// Starts the interception of Unity Debug.Log messages
         /// </summary>
         public void Activate()
         {
@@ -75,7 +75,7 @@ namespace Exanite.Arpg.Logging.Unity
 
         /// <summary>
         /// Stops the interception of Unity Debug.Log messages<para/>
-        /// Note: This is also called when this <see cref="UnityDebugLogIntercepter"/> is disposed or goes out of scope
+        /// Note: This is also called when this <see cref="UnityDebugLogIntercepter"/> is disposed
         /// </summary>
         public void Deactivate()
         {
@@ -108,19 +108,6 @@ namespace Exanite.Arpg.Logging.Unity
                 }
 
                 hasDisposed = true;
-            }
-        }
-
-        private LogLevel ConvertToLogLevel(LogType logType)
-        {
-            switch (logType)
-            {
-                case LogType.Error: return LogLevel.Error;
-                case LogType.Assert: return LogLevel.Warning;
-                case LogType.Warning: return LogLevel.Warning;
-                case LogType.Log: return LogLevel.Information;
-                case LogType.Exception: return LogLevel.Error;
-                default: return LogLevel.Information;
             }
         }
     }

@@ -5,7 +5,6 @@ using Exanite.Arpg.Logging.Serilog;
 using Exanite.Arpg.Logging.Unity;
 using Serilog;
 using Serilog.Core;
-using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using Serilog.Formatting.Json;
@@ -16,7 +15,7 @@ using Logger = Serilog.Core.Logger;
 namespace Exanite.Arpg.Installers
 {
     /// <summary>
-    /// Installs a <see cref="Logger"/> to the Extenject DI container
+    /// Installs an <see cref="ILog"/> to the Extenject DI container
     /// </summary>
     public class LogInstaller : MonoInstaller
     {
@@ -26,10 +25,10 @@ namespace Exanite.Arpg.Installers
         [SerializeField] private bool includeTimestampInUnityConsole = false;
         [SerializeField] private string timestampFormat = "[{Timestamp:HH:mm:ss}]";
         [SerializeField] private string format = "[{Level}] [{ShortContext}]: {Message:lj}{NewLine}{Exception}";
-        [SerializeField] private LogEventLevel minimumLevel = LogEventLevel.Information;
+        [SerializeField] private LogLevel minimumLevel = LogLevel.Information;
 
         /// <summary>
-        /// Should the <see cref="Logger"/> log to file while in the Unity Editor?
+        /// Should the <see cref="ILog"/> log to file while in the Unity Editor?
         /// </summary>
         public bool LogToFileInEditor
         {
@@ -45,7 +44,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Should the <see cref="Logger"/> log to the Unity Console?
+        /// Should the <see cref="ILog"/> log to the Unity Console?
         /// </summary>
         public bool LogToUnityConsole
         {
@@ -61,7 +60,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Should the <see cref="Logger"/> intercept Unity Debug.Log messages?
+        /// Should the <see cref="ILog"/> intercept Unity Debug.Log messages?
         /// </summary>
         public bool InterceptUnityDebugLogMessages
         {
@@ -77,7 +76,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Should the <see cref="Logger"/> include timestamps when logging to the Unity Console?<para/>
+        /// Should the <see cref="ILog"/> include timestamps when logging to the Unity Console?<para/>
         /// Usually this should be off because Unity already provides timestamps for logged events
         /// </summary>
         public bool IncludeTimestampInUnityConsole
@@ -123,9 +122,9 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Minimum level required for <see cref="LogEvent"/>s to be logged
+        /// Minimum level required for <see cref="LogEntry"/>s to be logged
         /// </summary>
-        public LogEventLevel MinimumLevel
+        public LogLevel MinimumLevel
         {
             get
             {
@@ -139,7 +138,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Installs the <see cref="Logger"/> to the Extenject DI container
+        /// Installs an <see cref="ILog"/> to the Extenject DI container
         /// </summary>
         public override void InstallBindings()
         {
@@ -147,7 +146,7 @@ namespace Exanite.Arpg.Installers
                 .To<LoggingLevelSwitch>().AsSingle()
                 .OnInstantiated<LoggingLevelSwitch>((ctx, x) =>
                 {
-                    x.MinimumLevel = MinimumLevel;
+                    x.MinimumLevel = MinimumLevel.ToLogEventLevel();
                 });
 
             Container.Bind(typeof(Logger), typeof(IDisposable)).To<Logger>().FromMethod(CreateLogger).AsSingle().NonLazy();
