@@ -1,6 +1,6 @@
 ﻿namespace Prototype.DarkRift.Shared
 {
-    public class MessageTag
+    public static class MessageTag
     {
         public const ushort PlayerCreate = 0;
         public const ushort PlayerDestroy = 1;
