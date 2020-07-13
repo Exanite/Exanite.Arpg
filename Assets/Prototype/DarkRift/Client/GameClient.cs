@@ -17,7 +17,10 @@ namespace Prototype.DarkRift.Client
 
         public bool isDisconnecting = false;
 
-        public Dictionary<ushort, Player> players = new Dictionary<ushort, Player>();
+        private Dictionary<ushort, Player> players = new Dictionary<ushort, Player>();
+
+        private Player localPlayer;
+        private PlayerController playerController;
 
         private ILog log;
         private Scene scene;
@@ -46,6 +49,16 @@ namespace Prototype.DarkRift.Client
             }
         }
 
+        private void OnDrawGizmos()
+        {
+            foreach (var player in players.Values)
+            {
+                Gizmos.color = Color.red * 0.1f;
+
+                Gizmos.DrawSphere(player.transform.position, 0.5f);
+            }
+        }
+
         public void Connect()
         {
             client.ConnectInBackground(client.Address, client.Port, false, OnConnected);
@@ -70,8 +83,6 @@ namespace Prototype.DarkRift.Client
 
         private void OnMessageRecieved(object sender, MessageReceivedEventArgs e)
         {
-            log.Information("Recieved message with ID {MessageID}", e.Tag);
-
             switch (e.Tag)
             {
                 case MessageTag.PlayerCreate: OnPlayerCreate(sender, e); return;
@@ -99,8 +110,12 @@ namespace Prototype.DarkRift.Client
 
                         if (id == client.ID)
                         {
-                            player.transform.gameObject.name += " (Local)";
-                            player.transform.gameObject.AddComponent<PlayerController>().client = client.Client;
+                            localPlayer = player;
+                            localPlayer.transform.gameObject.name += " (Local)";
+
+                            playerController = localPlayer.transform.gameObject.AddComponent<PlayerController>();
+                            playerController.client = client.Client;
+                            playerController.player = localPlayer;
                         }
                     }
                 }
@@ -122,7 +137,17 @@ namespace Prototype.DarkRift.Client
 
         private void OnPlayerPositionUpdate(object sender, MessageReceivedEventArgs e)
         {
+            using (var message = e.GetMessage())
+            using (var reader = message.GetReader())
+            {
+                while (reader.Position < reader.Length)
+                {
+                    ushort id = reader.ReadUInt16();
+                    Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
 
+                    players[id].transform.position = position;
+                }
+            }
         }
     }
 }

@@ -19,9 +19,10 @@ namespace Prototype.DarkRift.Server
 
         private ILog log;
         private Scene scene;
+        private PhysicsScene physics;
 
         [Inject]
-        public void Inject(ILog log, Scene scene)
+        public void Inject(ILog log, Scene scene, PhysicsScene physics)
         {
             this.log = log;
             this.scene = scene;
@@ -30,6 +31,54 @@ namespace Prototype.DarkRift.Server
         private void Start()
         {
             StartServer();
+        }
+
+        private void Update() // replace with server tick loop
+        {
+            foreach (var player in players.Values)
+            {
+                player.transform.position += (Vector3)(player.movementInput * Time.deltaTime * 10);
+
+                float verticalExtents = Camera.main.orthographicSize;
+                float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
+
+                if (player.transform.position.x > horizontalExtents)
+                {
+                    Vector2 newPosition = player.transform.position;
+                    newPosition.x -= horizontalExtents * 2;
+                    player.transform.position = newPosition;
+                }
+                else if (player.transform.position.x < -horizontalExtents)
+                {
+                    Vector2 newPosition = player.transform.position;
+                    newPosition.x += horizontalExtents * 2;
+                    player.transform.position = newPosition;
+                }
+                else if (player.transform.position.y > verticalExtents)
+                {
+                    Vector2 newPosition = player.transform.position;
+                    newPosition.y -= verticalExtents * 2;
+                    player.transform.position = newPosition;
+                }
+                else if (player.transform.position.y < -verticalExtents)
+                {
+                    Vector2 newPosition = player.transform.position;
+                    newPosition.y += verticalExtents * 2;
+                    player.transform.position = newPosition;
+                }
+
+                SendPositionUpdates();
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            foreach (var player in players.Values)
+            {
+                Gizmos.color = Color.red;
+
+                Gizmos.DrawSphere(player.transform.position, 0.5f);
+            }
         }
 
         public void StartServer()
@@ -49,6 +98,17 @@ namespace Prototype.DarkRift.Server
             server.Close();
         }
 
+        private void CreateNewPlayer(IClient client)
+        {
+            var player = new Player(client.ID, scene);
+
+            float angle = Random.Range(0, 360);
+
+            player.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
+
+            players.Add(client, player);
+        }
+
         private void OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
             log.Information("Player {ClientID} connected", e.Client.ID);
@@ -62,6 +122,7 @@ namespace Prototype.DarkRift.Server
                 foreach (var player in players.Values)
                 {
                     writer.Write(player.id);
+
                     writer.Write(player.transform.position.x);
                     writer.Write(player.transform.position.y);
                 }
@@ -74,14 +135,6 @@ namespace Prototype.DarkRift.Server
                     }
                 }
             }
-        }
-
-        private void CreateNewPlayer(IClient client)
-        {
-            var player = new Player(client.ID, scene);
-            player.transform.position = new Vector2(Random.value, Random.value);
-
-            players.Add(client, player);
         }
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
@@ -110,8 +163,6 @@ namespace Prototype.DarkRift.Server
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            log.Information("Message recieved from Player {ClientID} with ID {MessageID}", e.Client.ID, e.Tag);
-
             switch (e.Tag)
             {
                 case MessageTag.PlayerInput: OnPlayerInput(sender, e); return;
@@ -120,7 +171,35 @@ namespace Prototype.DarkRift.Server
 
         private void OnPlayerInput(object sender, MessageReceivedEventArgs e)
         {
+            using (var message = e.GetMessage())
+            using (var reader = message.GetReader())
+            {
+                Vector2 movementInput = new Vector2(reader.ReadSingle(), reader.ReadSingle());
 
+                players[e.Client].movementInput = movementInput.normalized;
+            }
+        }
+
+        private void SendPositionUpdates()
+        {
+            using (var writer = DarkRiftWriter.Create())
+            {
+                foreach (var player in players.Values)
+                {
+                    writer.Write(player.id);
+
+                    writer.Write(player.transform.position.x);
+                    writer.Write(player.transform.position.y);
+                }
+
+                using (var message = Message.Create(MessageTag.PlayerPositionUpdate, writer))
+                {
+                    foreach (var client in players.Keys)
+                    {
+                        client.SendMessage(message, SendMode.Unreliable);
+                    }
+                }
+            }
         }
     }
 }
