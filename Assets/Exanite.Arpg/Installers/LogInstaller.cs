@@ -15,7 +15,7 @@ using Logger = Serilog.Core.Logger;
 namespace Exanite.Arpg.Installers
 {
     /// <summary>
-    /// Installs an <see cref="ILog"/> to the Extenject DI container
+    /// Installs an <see cref="ILog"/> to a <see cref="DiContainer"/>
     /// </summary>
     public class LogInstaller : MonoInstaller
     {
@@ -138,7 +138,7 @@ namespace Exanite.Arpg.Installers
         }
 
         /// <summary>
-        /// Installs an <see cref="ILog"/> to the Extenject DI container
+        /// Installs bindings to the <see cref="DiContainer"/>
         /// </summary>
         public override void InstallBindings()
         {
