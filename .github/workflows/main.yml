@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - master
-    paths-ignore: 
-      - '*.md'
   pull_request:
     branches:
       - master
-    paths-ignore: 
-      - '*.md'
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -44,7 +40,6 @@ jobs:
         unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
         versioning: Semantic
-        allowDirtyBuild: false
     # Upload
     - uses: actions/upload-artifact@v1
       with:
