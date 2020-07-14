@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DarkRift.Client;
 using Exanite.Arpg.DarkRift.Client;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -143,7 +144,7 @@ namespace Prototype.DarkRift.Client
                 while (reader.Position < reader.Length)
                 {
                     ushort id = reader.ReadUInt16();
-                    Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                    Vector2 position = reader.ReadVector2();
 
                     players[id].transform.position = position;
                 }

@@ -3,6 +3,7 @@ using DarkRift;
 using DarkRift.Server;
 using Exanite.Arpg.DarkRift.Server;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -174,7 +175,7 @@ namespace Prototype.DarkRift.Server
             using (var message = e.GetMessage())
             using (var reader = message.GetReader())
             {
-                Vector2 movementInput = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                Vector2 movementInput = reader.ReadVector2();
 
                 players[e.Client].movementInput = movementInput.normalized;
             }
@@ -188,8 +189,7 @@ namespace Prototype.DarkRift.Server
                 {
                     writer.Write(player.id);
 
-                    writer.Write(player.transform.position.x);
-                    writer.Write(player.transform.position.y);
+                    writer.WriteVector2(player.transform.position);
                 }
 
                 using (var message = Message.Create(MessageTag.PlayerPositionUpdate, writer))
