@@ -72,7 +72,7 @@ namespace Exanite.Arpg.DarkRift.Client
         ///     Serialisable version of the object cache settings for Unity.
         /// </summary>
         [SerializeField]
-        private SerializableObjectCacheSettings objectCacheSettings = new SerializableObjectCacheSettings();
+        private SerializableClientObjectCacheSettings objectCacheSettings = new SerializableClientObjectCacheSettings();
 
         /// <summary>
         ///     Event fired when a message is received.
