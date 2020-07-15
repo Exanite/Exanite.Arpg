@@ -271,12 +271,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1963829738}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4adc319de44073349ab168522e64c4fb, type: 3}
+  m_Script: {fileID: 11500000, guid: f59347cad1af6d14492e7ce72c7cd2b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   configuration: {fileID: 4900000, guid: 6ca6c57824a896f48b517f5f5c14d8b9, type: 3}
-  createOnEnable: 0
-  eventsFromDispatcher: 1
+  useMainThreadForEvents: 1
 --- !u!114 &1963829741
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
-using Exanite.Arpg.DarkRift.Server;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
+using Exanite.Arpg.Networking.Server;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,9 +12,9 @@ using Random = UnityEngine.Random;
 
 namespace Prototype.DarkRift.Server
 {
-    public class GameServer : MonoBehaviour
+    public class ServerGameManager : MonoBehaviour
     {
-        public XmlUnityServer server;
+        public UnityServer server;
 
         public Dictionary<IClient, Player> players = new Dictionary<IClient, Player>();
 
@@ -88,8 +88,10 @@ namespace Prototype.DarkRift.Server
 
             server.Create();
 
-            server.Server.ClientManager.ClientConnected += OnClientConnected;
-            server.Server.ClientManager.ClientDisconnected += OnClientDisconnected;
+            server.OnClientConnected += OnClientConnected;
+            server.OnClientConnected += (sender, e) => log.Information("HELLO?");
+            server.OnClientDisconnected += OnClientDisconnected;
+            server.OnMessageRecieved += OnMessageReceived;
         }
 
         public void StopServer()
@@ -113,8 +115,6 @@ namespace Prototype.DarkRift.Server
         private void OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
             log.Information("Player {ClientID} connected", e.Client.ID);
-
-            e.Client.MessageReceived += OnMessageReceived;
 
             CreateNewPlayer(e.Client);
 
@@ -141,8 +141,6 @@ namespace Prototype.DarkRift.Server
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
             log.Information("Player {ClientID} disconnected", e.Client.ID);
-
-            e.Client.MessageReceived -= OnMessageReceived;
 
             Destroy(players[e.Client].transform.gameObject);
 

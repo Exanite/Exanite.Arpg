@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using DarkRift.Client;
-using Exanite.Arpg.DarkRift.Client;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
+using Exanite.Arpg.Networking.Client;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +12,7 @@ using Zenject;
 
 namespace Prototype.DarkRift.Client
 {
-    public class GameClient : MonoBehaviour
+    public class ClientGameManager : MonoBehaviour
     {
         public UnityClient client;
 
@@ -62,9 +62,9 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            client.ConnectInBackground(client.Address, client.Port, false, OnConnected);
-            client.Disconnected += OnDisconnected;
-            client.MessageReceived += OnMessageRecieved;
+            client.ConnectInBackground(OnConnected);
+            client.OnDisconnected += OnDisconnected;
+            client.OnMessageReceived += OnMessageRecieved;
         }
 
         public void Disconnect()
@@ -115,7 +115,7 @@ namespace Prototype.DarkRift.Client
                             localPlayer.transform.gameObject.name += " (Local)";
 
                             playerController = localPlayer.transform.gameObject.AddComponent<PlayerController>();
-                            playerController.client = client.Client;
+                            playerController.client = client;
                             playerController.player = localPlayer;
                         }
                     }

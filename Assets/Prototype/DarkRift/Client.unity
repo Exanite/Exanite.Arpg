@@ -271,16 +271,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 856146288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d2b44c570cb28644b8762e0b13e7c23, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b5960ff9cd4ecc4daea0ac88662fb42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   address: 127.0.0.1
   port: 4296
-  noDelay: 0
-  autoConnect: 0
-  invokeFromDispatcher: 1
-  sniffData: 0
-  objectCacheSettings:
+  enableNagelsAlgorithm: 1
+  useMainThreadForEvents: 1
+  serializableClientObjectCacheSettings:
     maxWriters: 2
     maxReaders: 2
     maxMessages: 4
