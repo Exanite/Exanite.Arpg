@@ -128,16 +128,11 @@ namespace Exanite.Arpg.Networking.Client
         /// <summary>
         /// The dispatcher for moving work to the main thread
         /// </summary>
-        public Dispatcher Dispatcher
+        public IDispatcher Dispatcher
         {
             get
             {
                 return dispatcher;
-            }
-
-            private set
-            {
-                dispatcher = value;
             }
         }
 
@@ -180,7 +175,7 @@ namespace Exanite.Arpg.Networking.Client
 
             client = new DarkRiftClient(ClientObjectCacheSettings);
 
-            Dispatcher = new Dispatcher(true);
+            dispatcher = new Dispatcher(true);
 
             client.MessageReceived += Client_OnMessageReceived;
             client.Disconnected += Client_OnDisconnected;
@@ -188,7 +183,7 @@ namespace Exanite.Arpg.Networking.Client
 
         private void Update()
         {
-            Dispatcher.ExecuteDispatcherTasks();
+            dispatcher.ExecuteDispatcherTasks();
         }
 
         private void OnDestroy()
@@ -266,7 +261,7 @@ namespace Exanite.Arpg.Networking.Client
             client.Disconnected -= Client_OnDisconnected;
 
             client.Dispose();
-            Dispatcher.Dispose();
+            dispatcher.Dispose();
         }
 
         private void Client_OnMessageReceived(object sender, MessageReceivedEventArgs e)

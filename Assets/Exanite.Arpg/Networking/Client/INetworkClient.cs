@@ -52,7 +52,7 @@ namespace Exanite.Arpg.Networking.Client
         /// <summary>
         /// The dispatcher for moving work to the main thread
         /// </summary>
-        Dispatcher Dispatcher { get; }
+        IDispatcher Dispatcher { get; }
 
         /// <summary>
         /// The ID the client has been assigned
