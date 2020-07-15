@@ -4,6 +4,7 @@ using DarkRift;
 using DarkRift.Client;
 using DarkRift.Dispatching;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Client;
 using UnityEngine;
 using Zenject;
 

@@ -5,7 +5,7 @@ using DarkRift.Client;
 using DarkRift.Dispatching;
 using UnityEngine;
 
-namespace Exanite.Arpg.DarkRift.Client
+namespace Exanite.Arpg.Networking.Client
 {
     /// <summary>
     /// Unity serializable version of <see cref="ClientObjectCacheSettings"/>
