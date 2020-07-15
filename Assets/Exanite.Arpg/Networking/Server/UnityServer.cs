@@ -108,12 +108,6 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
-        private void Awake()
-        {
-            OnClientConnected += Server_OnClientConnected;
-            OnClientDisconnected += Server_OnClientDisconnected;
-        }
-
         private void Update()
         {
             server?.ExecuteDispatcherTasks();
@@ -121,26 +115,26 @@ namespace Exanite.Arpg.Networking.Server
 
         private void OnDisable()
         {
-            Stop();
+            Close();
         }
 
         private void OnApplicationQuit()
         {
-            Stop();
+            Close();
         }
 
         /// <summary>
-        /// Starts the server
+        /// Creates the server
         /// </summary>
-        public void Start()
+        public void Create() // Cannot use Start due to Unity
         {
-            Start(new NameValueCollection());
+            Create(new NameValueCollection());
         }
 
         /// <summary>
-        /// Starts the server with the specified variables
+        /// Creates the server with the specified variables
         /// </summary>
-        public void Start(NameValueCollection variables)
+        public void Create(NameValueCollection variables)
         {
             if (server != null)
             {
@@ -160,19 +154,19 @@ namespace Exanite.Arpg.Networking.Server
             server = new DarkRiftServer(spawnData);
             server.Start();
 
-            server.ClientManager.ClientConnected += OnClientConnected;
-            server.ClientManager.ClientDisconnected += OnClientDisconnected;
+            server.ClientManager.ClientConnected += Server_OnClientConnected;
+            server.ClientManager.ClientDisconnected += Server_OnClientDisconnected;
         }
 
         /// <summary>
-        /// Stops the server
+        /// Closes the server
         /// </summary>
-        public void Stop()
+        public void Close()
         {
             if (server != null)
             {
-                server.ClientManager.ClientConnected -= OnClientConnected;
-                server.ClientManager.ClientDisconnected -= OnClientDisconnected;
+                server.ClientManager.ClientConnected -= Server_OnClientConnected;
+                server.ClientManager.ClientDisconnected -= Server_OnClientDisconnected;
 
                 server.Dispose();
             }
@@ -180,11 +174,13 @@ namespace Exanite.Arpg.Networking.Server
 
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
+            OnClientConnected?.Invoke(sender, e);
             e.Client.MessageReceived += OnMessageRecieved;
         }
 
         private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
+            OnClientDisconnected?.Invoke(sender, e);
             e.Client.MessageReceived -= OnMessageRecieved;
         }
     }

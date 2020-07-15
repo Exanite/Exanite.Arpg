@@ -335,7 +335,10 @@ namespace Exanite.Arpg.Networking.Client
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
-            address = IPAddress.ToString();
+            if (IPAddress != null)
+            {
+                address = IPAddress.ToString();
+            }
         }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize()

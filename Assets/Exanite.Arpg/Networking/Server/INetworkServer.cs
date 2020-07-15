@@ -54,18 +54,18 @@ namespace Exanite.Arpg.Networking.Server
         DarkRiftInfo ServerInfo { get; }
 
         /// <summary>
-        /// Starts the server
+        /// Creates the server
         /// </summary>
-        void Start();
+        void Create();
 
         /// <summary>
-        /// Starts the server with the specified variables
+        /// Creates the server with the specified variables
         /// </summary>
-        void Start(NameValueCollection variables);
+        void Create(NameValueCollection variables);
 
         /// <summary>
-        /// Stops the server
+        /// Closes the server
         /// </summary>
-        void Stop();
+        void Close();
     }
 }
