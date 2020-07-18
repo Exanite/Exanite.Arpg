@@ -1,5 +1,6 @@
 ﻿using DarkRift;
-using DarkRift.Client;
+using Exanite.Arpg.Networking;
+using Exanite.Arpg.Networking.Client;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Prototype.DarkRift.Client
     {
         public static PlayerController Current; //! hack for making sure only 1 player is locally controlled at a time
 
-        public DarkRiftClient client;
+        public INetworkClient client;
         public Player player;
 
         public bool forceEnableControls = false;
@@ -32,7 +33,12 @@ namespace Prototype.DarkRift.Client
 
             //if (Current == this)
             {
-                SendMovementInput(GetMovementInput());
+                Vector2 input = GetMovementInput();
+
+                if (input != Vector2.zero)
+                {
+                    SendMovementInput(input);
+                }
             }
         }
 
@@ -55,8 +61,7 @@ namespace Prototype.DarkRift.Client
         {
             using (var writer = DarkRiftWriter.Create())
             {
-                writer.Write(movementInput.x);
-                writer.Write(movementInput.y);
+                writer.WriteVector2(movementInput);
 
                 using (var message = Message.Create(MessageTag.PlayerInput, writer))
                 {
