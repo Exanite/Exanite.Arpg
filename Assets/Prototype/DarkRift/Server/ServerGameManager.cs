@@ -89,7 +89,6 @@ namespace Prototype.DarkRift.Server
             server.Create();
 
             server.OnClientConnected += OnClientConnected;
-            server.OnClientConnected += (sender, e) => log.Information("HELLO?");
             server.OnClientDisconnected += OnClientDisconnected;
             server.OnMessageRecieved += OnMessageReceived;
         }
