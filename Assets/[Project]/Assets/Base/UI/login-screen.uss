@@ -1,7 +1,3 @@
-VisualElement {
-    -unity-font: url('Library/unity default resources');
-}
-
 #background {
     background-color: rgb(26, 26, 26);
     position: absolute;
