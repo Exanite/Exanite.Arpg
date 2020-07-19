@@ -33,9 +33,3 @@
 .unity-text-field__label {
     min-width: 80px;
 }
-
-.unity-text-field__input {
-}
-
-.unity-text-field__input:hover {
-}
