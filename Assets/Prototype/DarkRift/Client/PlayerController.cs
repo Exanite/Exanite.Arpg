@@ -10,7 +10,7 @@ namespace Prototype.DarkRift.Client
     {
         public static PlayerController Current; //! hack for making sure only 1 player is locally controlled at a time
 
-        public INetworkClient client;
+        public UnityClient client;
         public Player player;
 
         public bool forceEnableControls = false;

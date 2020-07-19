@@ -12,7 +12,7 @@ namespace Exanite.Arpg.Networking.Client
     /// <summary>
     /// Client used to connect to a server
     /// </summary>
-    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetworkClient
+    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver
     {
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = 4296;

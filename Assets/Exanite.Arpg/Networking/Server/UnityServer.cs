@@ -13,7 +13,7 @@ namespace Exanite.Arpg.Networking.Server
     /// <summary>
     /// Used to start a server
     /// </summary>
-    public class UnityServer : MonoBehaviour, INetworkServer
+    public class UnityServer : MonoBehaviour
     {
         [SerializeField] private TextAsset configuration;
         [SerializeField] private bool useMainThreadForEvents = true;
