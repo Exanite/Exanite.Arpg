@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="background">
+        <Style src="login-screen.uss" />
+    </ui:VisualElement>
+    <ui:VisualElement name="container" class="vertical-center">
+        <Style src="login-screen.uss" />
+        <ui:Label text="Login" name="title" class="title" />
+        <ui:TextField picking-mode="Ignore" label="Username" text="PlayerName" name="username-field" />
+        <ui:TextField picking-mode="Ignore" label="IP Address" text="127.0.0.1" value="127.0.0.1" name="ip-address-field" />
+        <ui:TextField picking-mode="Ignore" label="Port" text="4296" name="port-field" />
+        <ui:Button text="Connect to server" name="submit-button" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,45 @@
+VisualElement {
+    -unity-font: url('Library/unity default resources');
+}
+
+#background {
+    background-color: rgb(26, 26, 26);
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.vertical-center {
+    align-items: stretch;
+    justify-content: center;
+    flex-grow: 1;
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 25%;
+    bottom: 25%;
+}
+
+.title {
+    font-size: 25px;
+    -unity-text-align: upper-center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    -unity-font-style: bold;
+}
+
+.unity-label {
+    color: rgb(242, 242, 242);
+}
+
+.unity-text-field__label {
+    min-width: 80px;
+}
+
+.unity-text-field__input {
+}
+
+.unity-text-field__input:hover {
+}
