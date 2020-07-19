@@ -1,5 +1,8 @@
-﻿namespace Exanite.Arpg.Gameplay.Shared
+﻿namespace Exanite.Arpg.Networking.Shared
 {
+    /// <summary>
+    /// Used to determine what type of message was sent in a packet
+    /// </summary>
     public static class MessageTag
     {
         /// <summary>
