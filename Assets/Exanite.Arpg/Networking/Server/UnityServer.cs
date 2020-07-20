@@ -5,6 +5,8 @@ using System.Xml.Linq;
 using DarkRift.Dispatching;
 using DarkRift.Server;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Shared;
+using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
@@ -176,10 +178,98 @@ namespace Exanite.Arpg.Networking.Server
 
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
+            Server_OnClientConnectedAsync(sender, e).Forget();
+
+            // wait for client login request
+            // if the client does not respond in 10 sec, send timeout packet and disconnect
+            // if the client responds, process login request
+        }
+
+        private async UniTask Server_OnClientConnectedAsync(object sender, ClientConnectedEventArgs e)
+        {
+            var result = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
+
+            if (result.success)
+            {
+                using (var message = result.e.GetMessage())
+                using (var reader = message.GetReader())
+                {
+                    var request = reader.ReadSerializable<LoginRequestData>();
+
+                    if (Application.version != request.GameVersion)
+                    {
+                        //! send login request denied packet first
+
+                        e.Client.Disconnect();
+                    }
+
+                    if (playerManager.Contains(request.PlayerName))
+                    {
+                        //! send login request denied packet first
+
+                        e.Client.Disconnect();
+                    }
+
+                    playerManager.AddPlayer(new PlayerConnection()
+                    {
+                        id = e.Client.ID,
+                        client = e.Client,
+
+                        name = request.PlayerName,
+                    });
+
+                    //! fire OnPlayerConnected event
+                }
+            }
+            else
+            {
+                //! send login request denied packet first
+
+                e.Client.Disconnect();
+            }
+        }
+
+        private async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> WaitForMessageWithTag(IClient client, ushort tag, int millisecondsTimeout = -1)
+        {
+            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
+
+            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Tag == tag)
+                {
+                    source.TrySetResult((sender, e));
+                }
+            };
+
+            client.MessageReceived += handler;
+
+            if (millisecondsTimeout > 0)
+            {
+                await UniTask.WhenAny(source.Task, UniTask.Delay(millisecondsTimeout));
+            }
+            else
+            {
+                await source.Task;
+            }
+
+            client.MessageReceived -= handler;
+
+            if (source.Task.IsCompleted)
+            {
+                var result = source.Task.Result;
+
+                return (true, result.sender, result.e);
+            }
+            else
+            {
+                return (false, null, null);
+            }
         }
 
         private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
+            // check if it is an authenticated player
+            // if it is, remove player and fire event
         }
     }
 }
