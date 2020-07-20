@@ -9,14 +9,14 @@ namespace Exanite.Arpg.Networking.Server
 
         public void AddPlayer(PlayerConnection connection)
         {
-            playersByID.Add(connection.id, connection);
-            playersByName.Add(connection.name, connection);
+            playersByID.Add(connection.ID, connection);
+            playersByName.Add(connection.Name, connection);
         }
 
         public void RemovePlayer(PlayerConnection connection)
         {
-            playersByID.Remove(connection.id);
-            playersByName.Remove(connection.name);
+            playersByID.Remove(connection.ID);
+            playersByName.Remove(connection.Name);
         }
 
         public bool Contains(ushort id)

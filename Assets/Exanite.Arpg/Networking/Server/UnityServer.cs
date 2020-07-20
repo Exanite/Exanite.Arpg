@@ -212,10 +212,10 @@ namespace Exanite.Arpg.Networking.Server
 
                     playerManager.AddPlayer(new PlayerConnection()
                     {
-                        id = e.Client.ID,
-                        client = e.Client,
+                        Id = e.Client.ID,
+                        Client = e.Client,
 
-                        name = request.PlayerName,
+                        Name = request.PlayerName,
                     });
 
                     //! fire OnPlayerConnected event
