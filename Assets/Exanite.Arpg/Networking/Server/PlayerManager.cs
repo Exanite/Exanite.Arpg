@@ -28,5 +28,15 @@ namespace Exanite.Arpg.Networking.Server
         {
             return playersByName.ContainsKey(name);
         }
+
+        public PlayerConnection GetPlayerConnection(ushort id)
+        {
+            return playersByID[id];
+        }
+
+        public PlayerConnection GetPlayerConnection(string name)
+        {
+            return playersByName[name];
+        }
     }
 }
