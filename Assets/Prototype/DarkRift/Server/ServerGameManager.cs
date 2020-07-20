@@ -88,8 +88,8 @@ namespace Prototype.DarkRift.Server
 
             server.Create();
 
-            server.OnPlayerConnected += OnClientConnected;
-            server.OnPlayerDisconnected += OnClientDisconnected;
+            server.OnPlayerConnected += OnPlayerConnected;
+            server.OnPlayerDisconnected += OnPlayerDisconnected;
             server.OnMessageRecieved += OnMessageReceived;
         }
 
@@ -111,11 +111,11 @@ namespace Prototype.DarkRift.Server
             players.Add(client, player);
         }
 
-        private void OnClientConnected(object sender, ClientConnectedEventArgs e)
+        private void OnPlayerConnected(object sender, PlayerConnectedArgs e)
         {
-            log.Information("Player {ClientID} connected", e.Client.ID);
+            log.Information("Player {ClientID} connected", e.Connection.Client.ID);
 
-            CreateNewPlayer(e.Client);
+            CreateNewPlayer(e.Connection.Client);
 
             using (var writer = DarkRiftWriter.Create())
             {
@@ -137,17 +137,17 @@ namespace Prototype.DarkRift.Server
             }
         }
 
-        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        private void OnPlayerDisconnected(object sender, PlayerDisconnectedArgs e)
         {
-            log.Information("Player {ClientID} disconnected", e.Client.ID);
+            log.Information("Player {ClientID} disconnected", e.Connection.ID);
 
-            Destroy(players[e.Client].transform.gameObject);
+            Destroy(players[e.Connection.Client].transform.gameObject);
 
-            players.Remove(e.Client);
+            players.Remove(e.Connection.Client);
 
             using (var writer = DarkRiftWriter.Create())
             {
-                writer.Write(e.Client.ID);
+                writer.Write(e.Connection.ID);
 
                 using (var playerDestroyMessage = Message.Create(MessageTag.PlayerDestroy, writer))
                 {

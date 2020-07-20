@@ -35,12 +35,12 @@ namespace Exanite.Arpg.Networking.Server
         /// <summary>
         /// Event fired when a player connects to this server
         /// </summary>
-        public event EventHandler<ClientConnectedEventArgs> OnPlayerConnected;
+        public event EventHandler<PlayerConnectedArgs> OnPlayerConnected;
 
         /// <summary>
         /// Event fired when a player disconnects from this server
         /// </summary>
-        public event EventHandler<ClientDisconnectedEventArgs> OnPlayerDisconnected;
+        public event EventHandler<PlayerDisconnectedArgs> OnPlayerDisconnected;
 
         /// <summary>
         /// Event fired when the server recieves a message from any player
@@ -179,10 +179,6 @@ namespace Exanite.Arpg.Networking.Server
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
             Server_OnClientConnectedAsync(sender, e).Forget();
-
-            // wait for client login request
-            // if the client does not respond in 10 sec, send timeout packet and disconnect
-            // if the client responds, process login request
         }
 
         private async UniTask Server_OnClientConnectedAsync(object sender, ClientConnectedEventArgs e)
@@ -210,15 +206,18 @@ namespace Exanite.Arpg.Networking.Server
                         e.Client.Disconnect();
                     }
 
-                    playerManager.AddPlayer(new PlayerConnection()
+                    var connection = new PlayerConnection()
                     {
-                        Id = e.Client.ID,
+                        ID = e.Client.ID,
                         Client = e.Client,
 
                         Name = request.PlayerName,
-                    });
+                    };
 
-                    //! fire OnPlayerConnected event
+                    playerManager.AddPlayer(connection);
+
+                    e.Client.MessageReceived += OnMessageRecieved;
+                    OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
                 }
             }
             else
@@ -268,8 +267,15 @@ namespace Exanite.Arpg.Networking.Server
 
         private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            // check if it is an authenticated player
-            // if it is, remove player and fire event
+            if (playerManager.Contains(e.Client.ID))
+            {
+                var connection = playerManager.GetPlayerConnection(e.Client.ID);
+
+                OnPlayerDisconnected?.Invoke(e.Client, new PlayerDisconnectedArgs(connection));
+                e.Client.MessageReceived -= OnMessageRecieved;
+
+                playerManager.RemovePlayer(connection);
+            }
         }
     }
 }
