@@ -84,7 +84,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.ClientManager;
+                return server?.ClientManager;
             }
         }
 
@@ -95,7 +95,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.Dispatcher;
+                return server?.Dispatcher;
             }
         }
 
@@ -106,7 +106,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.ServerInfo;
+                return server?.ServerInfo;
             }
         }
 
