@@ -21,11 +21,13 @@ namespace Exanite.Arpg.Networking.Server
         private DarkRiftServer server;
 
         private ILog log;
+        private PlayerManager playerManager;
 
         [Inject]
-        public void Inject(ILog log)
+        public void Inject(ILog log, PlayerManager playerManager)
         {
             this.log = log;
+            this.playerManager = playerManager;
         }
 
         /// <summary>
