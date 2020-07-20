@@ -3,7 +3,7 @@
 namespace Exanite.Arpg.Networking.Shared
 {
     /// <summary>
-    /// Data sent during a <see cref="MessageTag.LoginRequest"/>
+    /// Data sent during a <see cref="MessageTag.LoginRequest"/> message
     /// </summary>
     public class LoginRequestData : IDarkRiftSerializable
     {
@@ -44,8 +44,8 @@ namespace Exanite.Arpg.Networking.Shared
 
         public void Deserialize(DeserializeEvent e)
         {
-            playerName = e.Reader.ReadString();
-            gameVersion = e.Reader.ReadString();
+            PlayerName = e.Reader.ReadString();
+            GameVersion = e.Reader.ReadString();
         }
 
         public void Serialize(SerializeEvent e)
