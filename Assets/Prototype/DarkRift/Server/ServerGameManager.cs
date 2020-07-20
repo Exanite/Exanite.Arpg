@@ -88,8 +88,8 @@ namespace Prototype.DarkRift.Server
 
             server.Create();
 
-            server.OnClientConnected += OnClientConnected;
-            server.OnClientDisconnected += OnClientDisconnected;
+            server.OnPlayerConnected += OnClientConnected;
+            server.OnPlayerDisconnected += OnClientDisconnected;
             server.OnMessageRecieved += OnMessageReceived;
         }
 

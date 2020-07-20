@@ -31,17 +31,17 @@ namespace Exanite.Arpg.Networking.Server
         }
 
         /// <summary>
-        /// Event fired when a client connects to this server
+        /// Event fired when a player connects to this server
         /// </summary>
-        public event EventHandler<ClientConnectedEventArgs> OnClientConnected;
+        public event EventHandler<ClientConnectedEventArgs> OnPlayerConnected;
 
         /// <summary>
-        /// Event fired when a client disconnects from this server
+        /// Event fired when a player disconnects from this server
         /// </summary>
-        public event EventHandler<ClientDisconnectedEventArgs> OnClientDisconnected;
+        public event EventHandler<ClientDisconnectedEventArgs> OnPlayerDisconnected;
 
         /// <summary>
-        /// Event fired when the server recieves a message from any client
+        /// Event fired when the server recieves a message from any player
         /// </summary>
         public event EventHandler<MessageReceivedEventArgs> OnMessageRecieved;
 
@@ -176,14 +176,10 @@ namespace Exanite.Arpg.Networking.Server
 
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
-            OnClientConnected?.Invoke(sender, e);
-            e.Client.MessageReceived += OnMessageRecieved;
         }
 
         private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            OnClientDisconnected?.Invoke(sender, e);
-            e.Client.MessageReceived -= OnMessageRecieved;
         }
     }
 }
