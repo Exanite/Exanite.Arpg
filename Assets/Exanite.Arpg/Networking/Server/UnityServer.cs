@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Threading;
 using System.Xml.Linq;
+using DarkRift;
 using DarkRift.Dispatching;
 using DarkRift.Server;
 using Exanite.Arpg.Logging;
@@ -194,14 +195,14 @@ namespace Exanite.Arpg.Networking.Server
 
                     if (Application.version != request.GameVersion)
                     {
-                        //! send login request denied packet first
+                        SendLoginRequestDenied(e.Client, $"Client game version '{request.GameVersion}' did not match server game version '{Application.version}'.");
 
                         e.Client.Disconnect();
                     }
 
                     if (playerManager.Contains(request.PlayerName))
                     {
-                        //! send login request denied packet first
+                        SendLoginRequestDenied(e.Client, $"Player with name {request.PlayerName} already exists on the server.");
 
                         e.Client.Disconnect();
                     }
@@ -216,15 +217,41 @@ namespace Exanite.Arpg.Networking.Server
 
                     playerManager.AddPlayer(connection);
 
+                    SendLoginRequestAccepted(e.Client);
+
                     e.Client.MessageReceived += OnMessageRecieved;
                     OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
                 }
             }
             else
             {
-                //! send login request denied packet first
+                SendLoginRequestDenied(e.Client, $"Login request timed out.");
 
                 e.Client.Disconnect();
+            }
+        }
+
+        private void SendLoginRequestAccepted(IClient client)
+        {
+            using (var writer = DarkRiftWriter.Create())
+            {
+                using (var message = Message.Create(MessageTag.LoginRequestAccepted, writer))
+                {
+                    client.SendMessage(message, SendMode.Reliable);
+                }
+            }
+        }
+
+        private void SendLoginRequestDenied(IClient client, string reason = "No reason was provided.")
+        {
+            using (var writer = DarkRiftWriter.Create())
+            {
+                writer.Write(new LoginRequestDeniedData() { Reason = reason });
+
+                using (var message = Message.Create(MessageTag.LoginRequestDenied, writer))
+                {
+                    client.SendMessage(message, SendMode.Reliable);
+                }
             }
         }
 
