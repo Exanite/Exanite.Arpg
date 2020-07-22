@@ -295,57 +295,6 @@ namespace Exanite.Arpg.Networking.Client
             }
         }
 
-        /// <summary>
-        /// Connects to a server asynchronously
-        /// </summary>
-        public void ConnectInBackground(DarkRiftClient.ConnectCompleteHandler callback = null)
-        {
-            ConnectInBackground(IPAddress, Port, !EnableNagelsAlgorithm, callback);
-        }
-
-        /// <summary>
-        /// Connects to a server asynchronously with the specified settings
-        /// </summary>
-        public void ConnectInBackground(IPAddress ip, int port, bool noDelay, DarkRiftClient.ConnectCompleteHandler callback = null)
-        {
-            client.ConnectInBackground(ip, port, noDelay, (e) =>
-            {
-                if (callback != null)
-                {
-                    if (UseMainThreadForEvents)
-                    {
-                        Dispatcher.InvokeAsync(() => callback(e));
-                    }
-                    else
-                    {
-                        callback.Invoke(e);
-                    }
-
-                    Dispatcher.InvokeAsync(() =>
-                    {
-                        // ! temp: should not be creating the request here, pass it in as a parameter instead
-
-                        var request = new LoginRequestData()
-                        {
-                            GameVersion = Application.version,
-                            PlayerName = $"Player {ID}",
-                        };
-
-                        SendLoginRequest(request);
-                    });
-                }
-
-                if (ConnectionState == ConnectionState.Connected)
-                {
-                    log.Information("Connected to " + ip + " on port " + port + ".");
-                }
-                else
-                {
-                    log.Information("Connection failed to " + ip + " on port " + port + ".");
-                }
-            });
-        }
-
         private void SendLoginRequest(LoginRequestData request)
         {
             using (var message = Message.Create(MessageTag.LoginRequest, request))

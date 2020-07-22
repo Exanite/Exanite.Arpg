@@ -64,8 +64,6 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            //client.ConnectInBackground(OnConnected);
-
             client.ConnectAsync().ContinueWith((x) => OnConnected()).Forget();
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageRecieved;
