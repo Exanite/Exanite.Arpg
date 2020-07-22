@@ -229,7 +229,7 @@ namespace Exanite.Arpg.Networking.Client
 
                         var request = new LoginRequestData()
                         {
-                            GameVersion = Application.version + "1",
+                            GameVersion = Application.version,
                             PlayerName = $"Player {ID}",
                         };
 
