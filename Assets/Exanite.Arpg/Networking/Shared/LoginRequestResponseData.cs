@@ -8,7 +8,7 @@ namespace Exanite.Arpg.Networking.Shared
     public class LoginRequestReponseData : IDarkRiftSerializable
     {
         private bool isSuccess;
-        private string reason;
+        private string reason = string.Empty;
 
         /// <summary>
         /// Was the authentication successful?
