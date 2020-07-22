@@ -4,6 +4,7 @@ using DarkRift;
 using DarkRift.Client;
 using DarkRift.Dispatching;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Shared;
 using UnityEngine;
 using Zenject;
 
@@ -221,6 +222,19 @@ namespace Exanite.Arpg.Networking.Client
                     {
                         callback.Invoke(e);
                     }
+
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        // ! temp: should not be creating the request here, pass it in as a parameter instead
+
+                        var request = new LoginRequestData()
+                        {
+                            GameVersion = Application.version + "1",
+                            PlayerName = $"Player {ID}",
+                        };
+
+                        SendLoginRequest(request);
+                    });
                 }
 
                 if (ConnectionState == ConnectionState.Connected)
@@ -232,6 +246,14 @@ namespace Exanite.Arpg.Networking.Client
                     log.Information("Connection failed to " + ip + " on port " + port + ".");
                 }
             });
+        }
+
+        private void SendLoginRequest(LoginRequestData request)
+        {
+            using (var message = Message.Create(MessageTag.LoginRequest, request))
+            {
+                SendMessage(message, SendMode.Reliable);
+            }
         }
 
         /// <summary>
