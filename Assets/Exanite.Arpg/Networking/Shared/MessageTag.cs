@@ -10,13 +10,9 @@
         /// </summary>
         public const ushort LoginRequest = 0;
         /// <summary>
-        /// Server to client - Reply to LoginRequest that the login succeeded
+        /// Server to client - Response to LoginRequest stating whether authentication succeeded or not
         /// </summary>
-        public const ushort LoginRequestAccepted = 1;
-        /// <summary>
-        /// Server to client - Reply to LoginRequest that the login failed and the reason for disconnection
-        /// </summary>
-        public const ushort LoginRequestDenied = 2;
+        public const ushort LoginRequestResponse = 1;
 
         /// <summary>
         /// Server to client - Tells the client to create a level

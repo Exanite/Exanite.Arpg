@@ -237,22 +237,28 @@ namespace Exanite.Arpg.Networking.Server
 
         private void SendLoginRequestAccepted(IClient client)
         {
-            using (var writer = DarkRiftWriter.Create())
+            var response = new LoginRequestReponseData()
             {
-                using (var message = Message.Create(MessageTag.LoginRequestAccepted, writer))
-                {
-                    client.SendMessage(message, SendMode.Reliable);
-                }
-            }
+                IsSuccess = true,
+            };
         }
 
         private void SendLoginRequestDenied(IClient client, string reason = "No reason was provided.")
         {
+            var response = new LoginRequestReponseData()
+            {
+                IsSuccess = true,
+                DisconnectReason = reason,
+            };
+        }
+
+        private void SendLoginRequestResponse(IClient client, LoginRequestReponseData response)
+        {
             using (var writer = DarkRiftWriter.Create())
             {
-                writer.Write(new LoginRequestDeniedData() { Reason = reason });
+                writer.Write(response);
 
-                using (var message = Message.Create(MessageTag.LoginRequestDenied, writer))
+                using (var message = Message.Create(MessageTag.LoginRequestResponse, writer))
                 {
                     client.SendMessage(message, SendMode.Reliable);
                 }
