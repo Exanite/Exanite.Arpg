@@ -5,6 +5,7 @@ using DarkRift.Client;
 using DarkRift.Dispatching;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Shared;
+using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
@@ -195,6 +196,103 @@ namespace Exanite.Arpg.Networking.Client
         private void OnApplicationQuit()
         {
             Close();
+        }
+
+        public async UniTask<bool> ConnectAsync()
+        {
+            return await ConnectAsync(IPAddress, Port, !EnableNagelsAlgorithm);
+        }
+
+        public async UniTask<bool> ConnectAsync(IPAddress ip, int port, bool noDelay) // todo clean up
+        {
+            var source = new UniTaskCompletionSource();
+
+            client.ConnectInBackground(ip, port, noDelay, (e) =>
+            {
+                source.TrySetResult();
+            });
+
+            await source.Task;
+
+            if (ConnectionState == ConnectionState.Connected)
+            {
+                await UniTask.SwitchToMainThread();
+
+                // ! temp: should not be creating the request here, pass it in as a parameter instead
+
+                var request = new LoginRequestData()
+                {
+                    GameVersion = Application.version,
+                    PlayerName = $"Player {ID}",
+                };
+
+                SendLoginRequest(request);
+
+                var result = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
+
+                if (result.success)
+                {
+                    using (var message = result.e.GetMessage())
+                    using (var reader = message.GetReader())
+                    {
+                        var response = reader.ReadSerializable<LoginRequestReponseData>();
+
+                        if (response.IsSuccess)
+                        {
+                            log.Information($"Connected to {ip} on port {port}.");
+
+                            return true;
+                        }
+                        else
+                        {
+                            log.Information($"Connection failed to {ip} on port {port}. Reason: {response.DisconnectReason}");
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            log.Information($"Connection failed to {ip} on port {port}. Reason: The server failed to respond");
+
+            return false;
+        }
+
+        private async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> WaitForMessageWithTag(ushort tag, int millisecondsTimeout = -1)
+        {
+            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
+
+            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Tag == tag)
+                {
+                    source.TrySetResult((sender, e));
+                }
+            };
+
+            OnMessageReceived += handler;
+
+            if (millisecondsTimeout > 0)
+            {
+                await UniTask.WhenAny(source.Task, UniTask.Delay(millisecondsTimeout));
+            }
+            else
+            {
+                await source.Task;
+            }
+
+            OnMessageReceived -= handler;
+
+            if (source.Task.IsCompleted)
+            {
+                var result = source.Task.Result;
+
+                return (true, result.sender, result.e);
+            }
+            else
+            {
+                return (false, null, null);
+            }
         }
 
         /// <summary>
