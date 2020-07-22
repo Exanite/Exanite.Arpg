@@ -5,6 +5,7 @@ using DarkRift.Client;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
+using Exanite.Arpg.Networking.Shared;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
