@@ -7,6 +7,7 @@ using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
 using Exanite.Arpg.Networking.Shared;
 using Prototype.DarkRift.Shared;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -63,7 +64,9 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            client.ConnectInBackground(OnConnected);
+            //client.ConnectInBackground(OnConnected);
+
+            client.ConnectAsync().ContinueWith((x) => OnConnected()).Forget();
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageRecieved;
         }
@@ -73,7 +76,7 @@ namespace Prototype.DarkRift.Client
             client.Disconnect();
         }
 
-        private void OnConnected(Exception e)
+        private void OnConnected()
         {
             log.Information("Connected");
         }
