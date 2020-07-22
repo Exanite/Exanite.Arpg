@@ -241,6 +241,8 @@ namespace Exanite.Arpg.Networking.Server
             {
                 IsSuccess = true,
             };
+
+            SendLoginRequestResponse(client, response);
         }
 
         private void SendLoginRequestDenied(IClient client, string reason = "No reason was provided.")
@@ -250,6 +252,8 @@ namespace Exanite.Arpg.Networking.Server
                 IsSuccess = true,
                 DisconnectReason = reason,
             };
+
+            SendLoginRequestResponse(client, response);
         }
 
         private void SendLoginRequestResponse(IClient client, LoginRequestReponseData response)
