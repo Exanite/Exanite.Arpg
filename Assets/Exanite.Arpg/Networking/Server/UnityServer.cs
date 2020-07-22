@@ -198,6 +198,8 @@ namespace Exanite.Arpg.Networking.Server
                         SendLoginRequestDenied(e.Client, $"Client game version '{request.GameVersion}' did not match server game version '{Application.version}'.");
 
                         e.Client.Disconnect();
+
+                        return;
                     }
 
                     if (playerManager.Contains(request.PlayerName))
@@ -205,6 +207,8 @@ namespace Exanite.Arpg.Networking.Server
                         SendLoginRequestDenied(e.Client, $"Player with name {request.PlayerName} already exists on the server.");
 
                         e.Client.Disconnect();
+
+                        return;
                     }
 
                     var connection = new PlayerConnection()
