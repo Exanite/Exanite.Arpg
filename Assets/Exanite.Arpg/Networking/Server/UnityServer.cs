@@ -6,6 +6,7 @@ using DarkRift;
 using DarkRift.Dispatching;
 using DarkRift.Server;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Server.Authentication;
 using Exanite.Arpg.Networking.Shared;
 using UniRx.Async;
 using UnityEngine;
@@ -26,12 +27,14 @@ namespace Exanite.Arpg.Networking.Server
 
         private ILog log;
         private PlayerManager playerManager;
+        private Authenticator authenticator;
 
         [Inject]
-        public void Inject(ILog log, PlayerManager playerManager)
+        public void Inject(ILog log, PlayerManager playerManager, Authenticator authenticator)
         {
             this.log = log;
             this.playerManager = playerManager;
+            this.authenticator = authenticator;
         }
 
         /// <summary>
@@ -230,38 +233,31 @@ namespace Exanite.Arpg.Networking.Server
                 {
                     var request = reader.ReadSerializable<LoginRequest>();
 
-                    if (Application.version != request.GameVersion)
+                    var authenticationResult = authenticator.Authenticate(request);
+
+                    if (authenticationResult.IsSuccess)
                     {
-                        SendLoginRequestDenied(e.Client, $"Client game version '{request.GameVersion}' did not match server game version '{Application.version}'");
+                        var connection = new PlayerConnection()
+                        {
+                            ID = e.Client.ID,
+                            Client = e.Client,
+
+                            Name = request.PlayerName,
+                        };
+
+                        playerManager.AddPlayer(connection);
+
+                        SendLoginRequestAccepted(e.Client);
+
+                        e.Client.MessageReceived += OnMessageRecieved;
+                        OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
+                    }
+                    else
+                    {
+                        SendLoginRequestDenied(e.Client, authenticationResult.FailReason);
 
                         e.Client.Disconnect();
-
-                        return;
                     }
-
-                    if (playerManager.Contains(request.PlayerName))
-                    {
-                        SendLoginRequestDenied(e.Client, $"Player with name {request.PlayerName} already exists on the server");
-
-                        e.Client.Disconnect();
-
-                        return;
-                    }
-
-                    var connection = new PlayerConnection()
-                    {
-                        ID = e.Client.ID,
-                        Client = e.Client,
-
-                        Name = request.PlayerName,
-                    };
-
-                    playerManager.AddPlayer(connection);
-
-                    SendLoginRequestAccepted(e.Client);
-
-                    e.Client.MessageReceived += OnMessageRecieved;
-                    OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
                 }
             }
             else
