@@ -72,6 +72,12 @@ namespace Prototype.DarkRift.Client
 
             client.ConnectAsync(request).Forget();
             client.OnMessageReceived += OnMessageRecieved;
+            client.OnDisconnected += OnDisconnected;
+        }
+
+        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            SceneManager.UnloadSceneAsync(scene);
         }
 
         public void Disconnect()
