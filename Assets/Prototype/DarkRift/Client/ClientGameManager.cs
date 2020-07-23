@@ -70,24 +70,13 @@ namespace Prototype.DarkRift.Client
                 GameVersion = Application.version,
             };
 
-            client.ConnectAsync(request).ContinueWith((x) => OnConnected()).Forget();
-            client.OnDisconnected += OnDisconnected;
+            client.ConnectAsync(request).Forget();
             client.OnMessageReceived += OnMessageRecieved;
         }
 
         public void Disconnect()
         {
             client.Disconnect();
-        }
-
-        private void OnConnected()
-        {
-            log.Information("Connected");
-        }
-
-        private void OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            log.Information("Disconnected");
         }
 
         private void OnMessageRecieved(object sender, MessageReceivedEventArgs e)
