@@ -64,7 +64,7 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            var request = new LoginRequestData()
+            var request = new LoginRequest()
             {
                 PlayerName = $"Player {Guid.NewGuid()}",
                 GameVersion = Application.version,

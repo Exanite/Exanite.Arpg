@@ -181,12 +181,12 @@ namespace Exanite.Arpg.Networking.Client
             Close();
         }
 
-        public async UniTask<bool> ConnectAsync(LoginRequestData loginRequest)
+        public async UniTask<bool> ConnectAsync(LoginRequest loginRequest)
         {
             return await ConnectAsync(loginRequest, IPAddress, Port);
         }
 
-        public async UniTask<bool> ConnectAsync(LoginRequestData loginRequest, IPAddress ip, int port) // todo clean up
+        public async UniTask<bool> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port) // todo clean up
         {
             var source = new UniTaskCompletionSource();
 
@@ -208,7 +208,7 @@ namespace Exanite.Arpg.Networking.Client
                     using (var message = result.e.GetMessage())
                     using (var reader = message.GetReader())
                     {
-                        var response = reader.ReadSerializable<LoginRequestReponseData>();
+                        var response = reader.ReadSerializable<LoginRequestReponse>();
 
                         if (response.IsSuccess)
                         {
@@ -297,7 +297,7 @@ namespace Exanite.Arpg.Networking.Client
             dispatcher.Dispose();
         }
 
-        private void SendLoginRequest(LoginRequestData request)
+        private void SendLoginRequest(LoginRequest request)
         {
             using (var message = Message.Create(MessageTag.LoginRequest, request))
             {

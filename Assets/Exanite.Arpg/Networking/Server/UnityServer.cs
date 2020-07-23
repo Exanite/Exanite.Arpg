@@ -228,7 +228,7 @@ namespace Exanite.Arpg.Networking.Server
                 using (var message = result.e.GetMessage())
                 using (var reader = message.GetReader())
                 {
-                    var request = reader.ReadSerializable<LoginRequestData>();
+                    var request = reader.ReadSerializable<LoginRequest>();
 
                     if (Application.version != request.GameVersion)
                     {
@@ -274,7 +274,7 @@ namespace Exanite.Arpg.Networking.Server
 
         private void SendLoginRequestAccepted(IClient client)
         {
-            var response = new LoginRequestReponseData()
+            var response = new LoginRequestReponse()
             {
                 IsSuccess = true,
             };
@@ -282,9 +282,9 @@ namespace Exanite.Arpg.Networking.Server
             SendLoginRequestResponse(client, response);
         }
 
-        private void SendLoginRequestDenied(IClient client, string reason = LoginRequestReponseData.DefaultReason)
+        private void SendLoginRequestDenied(IClient client, string reason = LoginRequestReponse.DefaultReason)
         {
-            var response = new LoginRequestReponseData()
+            var response = new LoginRequestReponse()
             {
                 IsSuccess = false,
                 DisconnectReason = reason,
@@ -293,7 +293,7 @@ namespace Exanite.Arpg.Networking.Server
             SendLoginRequestResponse(client, response);
         }
 
-        private void SendLoginRequestResponse(IClient client, LoginRequestReponseData response)
+        private void SendLoginRequestResponse(IClient client, LoginRequestReponse response)
         {
             using (var writer = DarkRiftWriter.Create())
             {

@@ -5,7 +5,7 @@ namespace Exanite.Arpg.Networking.Shared
     /// <summary>
     /// Data sent during a <see cref="MessageTag.LoginRequest"/> message
     /// </summary>
-    public class LoginRequestData : IDarkRiftSerializable
+    public class LoginRequest : IDarkRiftSerializable
     {
         private string playerName = string.Empty;
         private string gameVersion = string.Empty;

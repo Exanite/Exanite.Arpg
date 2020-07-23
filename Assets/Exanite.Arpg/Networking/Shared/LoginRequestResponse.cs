@@ -5,7 +5,7 @@ namespace Exanite.Arpg.Networking.Shared
     /// <summary>
     /// Data sent during a <see cref="MessageTag.LoginRequestDenied"/> message
     /// </summary>
-    public class LoginRequestReponseData : IDarkRiftSerializable
+    public class LoginRequestReponse : IDarkRiftSerializable
     {
         /// <summary>
         /// Default reason for disconnection
