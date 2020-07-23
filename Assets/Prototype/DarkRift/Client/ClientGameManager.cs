@@ -64,7 +64,13 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            client.ConnectAsync().ContinueWith((x) => OnConnected()).Forget();
+            var request = new LoginRequestData()
+            {
+                PlayerName = $"Player {Guid.NewGuid()}",
+                GameVersion = Application.version,
+            };
+
+            client.ConnectAsync(request).ContinueWith((x) => OnConnected()).Forget();
             client.OnDisconnected += OnDisconnected;
             client.OnMessageReceived += OnMessageRecieved;
         }

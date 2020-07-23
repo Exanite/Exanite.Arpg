@@ -18,7 +18,6 @@ namespace Exanite.Arpg.Networking.Client
     {
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = 4296;
-        [SerializeField] private bool enableNagelsAlgorithm = true;
         [SerializeField] private volatile bool useMainThreadForEvents = true;
         [SerializeField] private SerializableClientObjectCacheSettings serializableClientObjectCacheSettings = new SerializableClientObjectCacheSettings();
 
@@ -75,23 +74,6 @@ namespace Exanite.Arpg.Networking.Client
             set
             {
                 port = value;
-            }
-        }
-
-        /// <summary>
-        /// Should Nagel's Algorithm be used?<para/>
-        /// Enabling this will reduce the number of packets sent, but increase delay
-        /// </summary>
-        public bool EnableNagelsAlgorithm
-        {
-            get
-            {
-                return enableNagelsAlgorithm;
-            }
-
-            set
-            {
-                enableNagelsAlgorithm = value;
             }
         }
 
@@ -198,16 +180,16 @@ namespace Exanite.Arpg.Networking.Client
             Close();
         }
 
-        public async UniTask<bool> ConnectAsync()
+        public async UniTask<bool> ConnectAsync(LoginRequestData loginRequest)
         {
-            return await ConnectAsync(IPAddress, Port, !EnableNagelsAlgorithm);
+            return await ConnectAsync(loginRequest, IPAddress, Port);
         }
 
-        public async UniTask<bool> ConnectAsync(IPAddress ip, int port, bool noDelay) // todo clean up
+        public async UniTask<bool> ConnectAsync(LoginRequestData loginRequest, IPAddress ip, int port) // todo clean up
         {
             var source = new UniTaskCompletionSource();
 
-            client.ConnectInBackground(ip, port, noDelay, (e) =>
+            client.ConnectInBackground(ip, port, true, (e) =>
             {
                 source.TrySetResult();
             });
@@ -218,15 +200,7 @@ namespace Exanite.Arpg.Networking.Client
             {
                 await UniTask.SwitchToMainThread();
 
-                // ! temp: should not be creating the request here, pass it in as a parameter instead
-
-                var request = new LoginRequestData()
-                {
-                    GameVersion = Application.version,
-                    PlayerName = $"Player {ID}",
-                };
-
-                SendLoginRequest(request);
+                SendLoginRequest(loginRequest);
 
                 var result = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
 
