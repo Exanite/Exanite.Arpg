@@ -8,6 +8,7 @@ using Exanite.Arpg.Networking.Shared;
 using UniRx.Async;
 using UnityEngine;
 using Zenject;
+using Constants = Exanite.Arpg.Networking.Shared.Constants;
 
 namespace Exanite.Arpg.Networking.Client
 {
@@ -198,8 +199,6 @@ namespace Exanite.Arpg.Networking.Client
 
             if (ConnectionState == ConnectionState.Connected)
             {
-                await UniTask.SwitchToMainThread();
-
                 SendLoginRequest(loginRequest);
 
                 var result = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
@@ -232,8 +231,14 @@ namespace Exanite.Arpg.Networking.Client
             return false;
         }
 
-        private async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> WaitForMessageWithTag(ushort tag, int millisecondsTimeout = -1)
+        public async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> 
+            WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.MaxTimeoutMilliseconds)
         {
+            if (timeoutMilliseconds > Constants.MaxTimeoutMilliseconds)
+            {
+                timeoutMilliseconds = Constants.MaxTimeoutMilliseconds;
+            }
+
             var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
 
             EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
@@ -246,14 +251,7 @@ namespace Exanite.Arpg.Networking.Client
 
             OnMessageReceived += handler;
 
-            if (millisecondsTimeout > 0)
-            {
-                await UniTask.WhenAny(source.Task, UniTask.Delay(millisecondsTimeout));
-            }
-            else
-            {
-                await source.Task;
-            }
+            await UniTask.WhenAny(source.Task, UniTask.Delay(timeoutMilliseconds));
 
             OnMessageReceived -= handler;
 
@@ -266,14 +264,6 @@ namespace Exanite.Arpg.Networking.Client
             else
             {
                 return (false, null, null);
-            }
-        }
-
-        private void SendLoginRequest(LoginRequestData request)
-        {
-            using (var message = Message.Create(MessageTag.LoginRequest, request))
-            {
-                SendMessage(message, SendMode.Reliable);
             }
         }
 
@@ -305,6 +295,14 @@ namespace Exanite.Arpg.Networking.Client
 
             client.Dispose();
             dispatcher.Dispose();
+        }
+
+        private void SendLoginRequest(LoginRequestData request)
+        {
+            using (var message = Message.Create(MessageTag.LoginRequest, request))
+            {
+                SendMessage(message, SendMode.Reliable);
+            }
         }
 
         private void Client_OnMessageReceived(object sender, MessageReceivedEventArgs e)

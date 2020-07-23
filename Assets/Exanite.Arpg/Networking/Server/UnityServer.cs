@@ -10,6 +10,7 @@ using Exanite.Arpg.Networking.Shared;
 using UniRx.Async;
 using UnityEngine;
 using Zenject;
+using Constants = Exanite.Arpg.Networking.Shared.Constants;
 
 namespace Exanite.Arpg.Networking.Server
 {
@@ -177,6 +178,42 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
+        public async UniTask<(bool success, object sender, MessageReceivedEventArgs e)>
+            WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.MaxTimeoutMilliseconds)
+        {
+            if (timeoutMilliseconds > Constants.MaxTimeoutMilliseconds)
+            {
+                timeoutMilliseconds = Constants.MaxTimeoutMilliseconds;
+            }
+
+            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
+
+            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Tag == tag)
+                {
+                    source.TrySetResult((sender, e));
+                }
+            };
+
+            client.MessageReceived += handler;
+
+            await UniTask.WhenAny(source.Task, UniTask.Delay(timeoutMilliseconds, true));
+
+            client.MessageReceived -= handler;
+
+            if (source.Task.IsCompleted)
+            {
+                var result = source.Task.Result;
+
+                return (true, result.sender, result.e);
+            }
+            else
+            {
+                return (false, null, null);
+            }
+        }
+
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
             Server_OnClientConnectedAsync(sender, e).Forget();
@@ -266,43 +303,6 @@ namespace Exanite.Arpg.Networking.Server
                 {
                     client.SendMessage(message, SendMode.Reliable);
                 }
-            }
-        }
-
-        private async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> WaitForMessageWithTag(IClient client, ushort tag, int millisecondsTimeout = -1)
-        {
-            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
-
-            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
-            {
-                if (e.Tag == tag)
-                {
-                    source.TrySetResult((sender, e));
-                }
-            };
-
-            client.MessageReceived += handler;
-
-            if (millisecondsTimeout > 0)
-            {
-                await UniTask.WhenAny(source.Task, UniTask.Delay(millisecondsTimeout));
-            }
-            else
-            {
-                await source.Task;
-            }
-
-            client.MessageReceived -= handler;
-
-            if (source.Task.IsCompleted)
-            {
-                var result = source.Task.Result;
-
-                return (true, result.sender, result.e);
-            }
-            else
-            {
-                return (false, null, null);
             }
         }
 
