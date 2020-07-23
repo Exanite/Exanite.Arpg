@@ -245,11 +245,11 @@ namespace Exanite.Arpg.Networking.Server
             SendLoginRequestResponse(client, response);
         }
 
-        private void SendLoginRequestDenied(IClient client, string reason = "No reason was provided.")
+        private void SendLoginRequestDenied(IClient client, string reason = LoginRequestReponseData.DefaultReason)
         {
             var response = new LoginRequestReponseData()
             {
-                IsSuccess = true,
+                IsSuccess = false,
                 DisconnectReason = reason,
             };
 
