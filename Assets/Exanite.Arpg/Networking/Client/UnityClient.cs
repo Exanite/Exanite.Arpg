@@ -224,9 +224,15 @@ namespace Exanite.Arpg.Networking.Client
                         }
                     }
                 }
+                else
+                {
+                    log.Information($"Connection failed to {ip} on port {port}. Reason: The server failed to respond");
+
+                    return false;
+                }
             }
 
-            log.Information($"Connection failed to {ip} on port {port}. Reason: The server failed to respond");
+            log.Information($"Connection failed to {ip} on port {port}. Reason: Server unreachable");
 
             return false;
         }
