@@ -256,6 +256,8 @@ namespace Exanite.Arpg.Networking.Server
                     {
                         SendLoginRequestDenied(e.Client, authenticationResult.FailReason);
 
+                        await UniTask.Delay(250); // ! temporary fix to make sure the client receives the Response message
+
                         e.Client.Disconnect();
                     }
                 }
