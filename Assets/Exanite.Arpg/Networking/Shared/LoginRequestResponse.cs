@@ -32,7 +32,7 @@ namespace Exanite.Arpg.Networking.Shared
         }
 
         /// <summary>
-        /// The reason for the disconnection, <see langword="null"/> if authentication succeeded
+        /// The reason for the disconnection, invalid if authentication succeeded
         /// </summary>
         public string DisconnectReason
         {
