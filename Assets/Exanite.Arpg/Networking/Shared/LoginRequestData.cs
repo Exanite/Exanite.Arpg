@@ -7,8 +7,8 @@ namespace Exanite.Arpg.Networking.Shared
     /// </summary>
     public class LoginRequestData : IDarkRiftSerializable
     {
-        private string playerName;
-        private string gameVersion;
+        private string playerName = string.Empty;
+        private string gameVersion = string.Empty;
 
         /// <summary>
         /// Name of the player that is requesting the connection
