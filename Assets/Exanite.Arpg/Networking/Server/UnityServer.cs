@@ -195,7 +195,7 @@ namespace Exanite.Arpg.Networking.Server
 
                     if (Application.version != request.GameVersion)
                     {
-                        SendLoginRequestDenied(e.Client, $"Client game version '{request.GameVersion}' did not match server game version '{Application.version}'.");
+                        SendLoginRequestDenied(e.Client, $"Client game version '{request.GameVersion}' did not match server game version '{Application.version}'");
 
                         e.Client.Disconnect();
 
@@ -204,7 +204,7 @@ namespace Exanite.Arpg.Networking.Server
 
                     if (playerManager.Contains(request.PlayerName))
                     {
-                        SendLoginRequestDenied(e.Client, $"Player with name {request.PlayerName} already exists on the server.");
+                        SendLoginRequestDenied(e.Client, $"Player with name {request.PlayerName} already exists on the server");
 
                         e.Client.Disconnect();
 
@@ -229,7 +229,7 @@ namespace Exanite.Arpg.Networking.Server
             }
             else
             {
-                SendLoginRequestDenied(e.Client, $"Login request timed out.");
+                SendLoginRequestDenied(e.Client, $"Login request timed out");
 
                 e.Client.Disconnect();
             }

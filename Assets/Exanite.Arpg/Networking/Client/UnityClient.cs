@@ -213,7 +213,7 @@ namespace Exanite.Arpg.Networking.Client
 
                         if (response.IsSuccess)
                         {
-                            log.Information($"Connected to {ip} on port {port}.");
+                            log.Information($"Connected to {ip} on port {port}");
 
                             return true;
                         }
