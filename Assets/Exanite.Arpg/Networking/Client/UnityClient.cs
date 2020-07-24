@@ -202,7 +202,7 @@ namespace Exanite.Arpg.Networking.Client
 
                 var result = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
 
-                if (result.success)
+                if (result.isSuccess)
                 {
                     using (var message = result.e.GetMessage())
                     using (var reader = message.GetReader())
@@ -236,7 +236,7 @@ namespace Exanite.Arpg.Networking.Client
             return false;
         }
 
-        public async UniTask<(bool success, object sender, MessageReceivedEventArgs e)> 
+        public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)> 
             WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
             if (timeoutMilliseconds > Constants.DefaultTimeoutMilliseconds)
