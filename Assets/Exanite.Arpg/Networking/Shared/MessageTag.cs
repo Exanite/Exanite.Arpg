@@ -19,9 +19,9 @@
         /// </summary>
         public const ushort LevelLoad = 100;
         /// <summary>
-        /// Client to server - Tells the server that the client finished loading a level
+        /// Client to server - Tells the server that the client completed loading a level
         /// </summary>
-        public const ushort LevelLoadFinished = 101;
+        public const ushort LevelLoadCompleted = 101;
 
         /// <summary>
         /// Server to client - Tells the client to create a player

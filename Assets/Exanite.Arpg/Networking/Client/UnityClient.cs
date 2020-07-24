@@ -37,10 +37,12 @@ namespace Exanite.Arpg.Networking.Client
 
         /// <summary>
         /// Event fired when the client is connected to the server<para/>
-        /// Note: This is not fired when the client fails to connect
+        /// Note: This is not fired when the client connects, but fails to log in
         /// </summary>
         public event EventHandler<ConnectedEventArgs> OnConnected;
 
+        // todo make sure OnConnected and OnDisconnected events are paired, currently OnDisconnected is called even when the client is disconnected for failing to log in
+        // todo eventually, logging in should be moved out of UnityClient completely
         /// <summary>
         /// Event fired when the client is disconnected from the server
         /// </summary>
