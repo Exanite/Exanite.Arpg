@@ -36,6 +36,12 @@ namespace Exanite.Arpg.Networking.Client
         }
 
         /// <summary>
+        /// Event fired when the client is connected to the server<para/>
+        /// Note: This is not fired when the client fails to connect
+        /// </summary>
+        public event EventHandler<ConnectedEventArgs> OnConnected;
+
+        /// <summary>
         /// Event fired when the client is disconnected from the server
         /// </summary>
         public event EventHandler<DisconnectedEventArgs> OnDisconnected;
@@ -180,13 +186,15 @@ namespace Exanite.Arpg.Networking.Client
             Close();
         }
 
-        public async UniTask<bool> ConnectAsync(LoginRequest loginRequest)
+        public async UniTask<(bool isSuccess, string failReason)> ConnectAsync(LoginRequest loginRequest)
         {
             return await ConnectAsync(loginRequest, IPAddress, Port);
         }
 
-        public async UniTask<bool> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port) // todo clean up
+        public async UniTask<(bool isSuccess, string failReason)> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port)
         {
+            (bool isSuccess, string failReason) result;
+
             var source = new UniTaskCompletionSource();
 
             client.ConnectInBackground(ip, port, true, (e) =>
@@ -198,45 +206,55 @@ namespace Exanite.Arpg.Networking.Client
 
             if (ConnectionState == ConnectionState.Connected)
             {
-                SendLoginRequest(loginRequest);
-
-                var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
-
-                if (waitResult.isSuccess)
-                {
-                    using (var message = waitResult.e.GetMessage())
-                    using (var reader = message.GetReader())
-                    {
-                        var response = reader.ReadSerializable<LoginRequestReponse>();
-
-                        if (response.IsSuccess)
-                        {
-                            log.Information($"Connected to {ip} on port {port}");
-
-                            return true;
-                        }
-                        else
-                        {
-                            log.Information($"Connection failed to {ip} on port {port}. Reason: {response.DisconnectReason}");
-
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    log.Information($"Connection failed to {ip} on port {port}. Reason: The server failed to respond");
-
-                    return false;
-                }
+                result = await TryLogin(loginRequest, ip, port);
+            }
+            else
+            {
+                result = (false, "Server unreachable");
             }
 
-            log.Information($"Connection failed to {ip} on port {port}. Reason: Server unreachable");
+            if (result.isSuccess)
+            {
+                OnConnected?.Invoke(this, new ConnectedEventArgs());
+            }
 
-            return false;
+            return result;
         }
 
-        public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)> 
+        private async UniTask<(bool isSuccess, string failReason)> TryLogin(LoginRequest loginRequest, IPAddress ip, int port)
+        {
+            (bool isSuccess, string failReason) result;
+
+            SendLoginRequest(loginRequest);
+
+            var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
+
+            if (waitResult.isSuccess)
+            {
+                using (var message = waitResult.e.GetMessage())
+                using (var reader = message.GetReader())
+                {
+                    var response = reader.ReadSerializable<LoginRequestReponse>();
+
+                    if (response.IsSuccess)
+                    {
+                        result = (true, string.Empty);
+                    }
+                    else
+                    {
+                        result = (false, response.DisconnectReason);
+                    }
+                }
+            }
+            else
+            {
+                result = (false, "The server failed to respond");
+            }
+
+            return result;
+        }
+
+        public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)>
             WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
             if (timeoutMilliseconds > Constants.DefaultTimeoutMilliseconds)
