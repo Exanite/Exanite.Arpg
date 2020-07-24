@@ -223,11 +223,11 @@ namespace Exanite.Arpg.Networking.Server
 
         private async UniTask Server_OnClientConnectedAsync(object sender, ClientConnectedEventArgs e)
         {
-            var result = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
+            var waitResult = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
 
-            if (result.isSuccess)
+            if (waitResult.isSuccess)
             {
-                using (var message = result.e.GetMessage())
+                using (var message = waitResult.e.GetMessage())
                 using (var reader = message.GetReader())
                 {
                     var request = reader.ReadSerializable<LoginRequest>();

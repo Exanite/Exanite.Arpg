@@ -200,11 +200,11 @@ namespace Exanite.Arpg.Networking.Client
             {
                 SendLoginRequest(loginRequest);
 
-                var result = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
+                var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
 
-                if (result.isSuccess)
+                if (waitResult.isSuccess)
                 {
-                    using (var message = result.e.GetMessage())
+                    using (var message = waitResult.e.GetMessage())
                     using (var reader = message.GetReader())
                     {
                         var response = reader.ReadSerializable<LoginRequestReponse>();
