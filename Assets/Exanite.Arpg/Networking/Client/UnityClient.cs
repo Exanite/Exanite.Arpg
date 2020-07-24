@@ -265,11 +265,6 @@ namespace Exanite.Arpg.Networking.Client
         public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)>
             WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
-            if (timeoutMilliseconds > Constants.DefaultTimeoutMilliseconds)
-            {
-                timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds;
-            }
-
             var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
 
             EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
