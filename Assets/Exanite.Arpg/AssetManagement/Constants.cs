@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        public static readonly string PackageFileExtension = "packageinfo";
-        public static readonly string AssetBundleFileExtension = "assetbundle";
+        public const string PackageFileExtension = "packageinfo";
+        public const string AssetBundleFileExtension = "assetbundle";
     }
 }

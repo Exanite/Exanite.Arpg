@@ -11,7 +11,6 @@ using Exanite.Arpg.Networking.Shared;
 using UniRx.Async;
 using UnityEngine;
 using Zenject;
-using Constants = Exanite.Arpg.Networking.Shared.Constants;
 
 namespace Exanite.Arpg.Networking.Server
 {
@@ -182,11 +181,11 @@ namespace Exanite.Arpg.Networking.Server
         }
 
         public async UniTask<(bool success, object sender, MessageReceivedEventArgs e)>
-            WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.MaxTimeoutMilliseconds)
+            WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
-            if (timeoutMilliseconds > Constants.MaxTimeoutMilliseconds)
+            if (timeoutMilliseconds > Constants.DefaultTimeoutMilliseconds)
             {
-                timeoutMilliseconds = Constants.MaxTimeoutMilliseconds;
+                timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds;
             }
 
             var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
