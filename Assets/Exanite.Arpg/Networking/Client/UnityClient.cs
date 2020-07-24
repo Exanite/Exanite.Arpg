@@ -215,7 +215,13 @@ namespace Exanite.Arpg.Networking.Client
 
             if (result.isSuccess)
             {
+                log.Information("Connected to {IP} on port {Port}", ip, port);
+
                 OnConnected?.Invoke(this, new ConnectedEventArgs());
+            }
+            else
+            {
+                log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", ip, port, result.failReason);
             }
 
             return result;
@@ -364,7 +370,7 @@ namespace Exanite.Arpg.Networking.Client
             {
                 if (!e.LocalDisconnect)
                 {
-                    log.Information("Disconnected from server, disconnect code: " + e.Error);
+                    log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
                 }
 
                 Dispatcher.InvokeAsync(() =>
@@ -380,7 +386,7 @@ namespace Exanite.Arpg.Networking.Client
             {
                 if (!e.LocalDisconnect)
                 {
-                    log.Information("Disconnected from server, disconnect code: " + e.Error);
+                    log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
                 }
 
                 EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
