@@ -274,7 +274,7 @@ namespace Exanite.Arpg.Networking.Server
             SendLoginRequestResponse(client, response);
         }
 
-        private void SendLoginRequestDenied(IClient client, string reason = LoginRequestReponse.DefaultReason)
+        private void SendLoginRequestDenied(IClient client, string reason = Constants.DefaultReason)
         {
             var response = new LoginRequestReponse()
             {

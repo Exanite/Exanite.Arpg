@@ -9,5 +9,10 @@
         /// Default timeout used for waiting for a specific message to arrive
         /// </summary>
         public const int DefaultTimeoutMilliseconds = 10 * 1000;
+
+        /// <summary>
+        /// Default reason when no reason is provided
+        /// </summary>
+        public const string DefaultReason = "No reason was provided";
     }
 }

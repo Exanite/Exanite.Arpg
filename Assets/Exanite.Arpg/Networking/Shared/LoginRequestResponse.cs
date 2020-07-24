@@ -7,13 +7,8 @@ namespace Exanite.Arpg.Networking.Shared
     /// </summary>
     public class LoginRequestReponse : IDarkRiftSerializable
     {
-        /// <summary>
-        /// Default reason for disconnection
-        /// </summary>
-        public const string DefaultReason = "No reason was provided";
-
         private bool isSuccess;
-        private string disconnectReason = DefaultReason;
+        private string disconnectReason = Constants.DefaultReason;
 
         /// <summary>
         /// Was the authentication successful?
