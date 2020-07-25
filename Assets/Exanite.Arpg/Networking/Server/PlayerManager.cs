@@ -7,6 +7,14 @@ namespace Exanite.Arpg.Networking.Server
         private Dictionary<ushort, PlayerConnection> playersByID = new Dictionary<ushort, PlayerConnection>();
         private Dictionary<string, PlayerConnection> playersByName = new Dictionary<string, PlayerConnection>();
 
+        public ICollection<PlayerConnection> ConnectedPlayers
+        {
+            get
+            {
+                return playersByID.Values;
+            }
+        }
+
         public void AddPlayer(PlayerConnection connection)
         {
             playersByID.Add(connection.ID, connection);
