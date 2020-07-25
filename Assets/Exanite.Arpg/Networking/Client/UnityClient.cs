@@ -21,6 +21,8 @@ namespace Exanite.Arpg.Networking.Client
         [SerializeField] private volatile bool useMainThreadForEvents = true;
         [SerializeField] private SerializableClientObjectCacheSettings serializableClientObjectCacheSettings = new SerializableClientObjectCacheSettings();
 
+        private bool isConnected = false;
+
         private ClientObjectCacheSettings clientObjectCacheSettings;
         private IPAddress ipAddress;
         private Dispatcher dispatcher;
@@ -139,11 +141,11 @@ namespace Exanite.Arpg.Networking.Client
         /// <summary>
         /// Returns the state of the connection with the server
         /// </summary>
-        public ConnectionState ConnectionState
+        public bool IsConnected
         {
             get
             {
-                return client.ConnectionState;
+                return IsConnected;
             }
         }
 
@@ -201,10 +203,8 @@ namespace Exanite.Arpg.Networking.Client
 
             await source.Task;
 
-            if (ConnectionState == ConnectionState.Connected)
+            if (client.ConnectionState == ConnectionState.Connected)
             {
-                Client_OnConnected(this, new ConnectedEventArgs());
-
                 result = await TryLogin(loginRequest, ip, port);
             }
             else
@@ -215,6 +215,8 @@ namespace Exanite.Arpg.Networking.Client
             if (result.IsSuccess)
             {
                 log.Information("Connected to {IP} on port {Port}", ip, port);
+
+                Client_OnConnected(this, new ConnectedEventArgs());
             }
             else
             {
@@ -316,6 +318,8 @@ namespace Exanite.Arpg.Networking.Client
 
         private void Client_OnConnected(object sender, ConnectedEventArgs e)
         {
+            isConnected = true;
+
             if (UseMainThreadForEvents)
             {
                 Dispatcher.InvokeAsync(() =>
@@ -340,6 +344,13 @@ namespace Exanite.Arpg.Networking.Client
 
         private void Client_OnDisconnected(object sender, DisconnectedEventArgs e)
         {
+            if (!isConnected)
+            {
+                return;
+            }
+
+            isConnected = false;
+
             log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
 
             if (UseMainThreadForEvents)
