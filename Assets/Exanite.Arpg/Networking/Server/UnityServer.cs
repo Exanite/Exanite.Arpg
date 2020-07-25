@@ -2,9 +2,13 @@
 using System.Collections.Specialized;
 using System.Threading;
 using System.Xml.Linq;
+using DarkRift;
 using DarkRift.Dispatching;
 using DarkRift.Server;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Server.Authentication;
+using Exanite.Arpg.Networking.Shared;
+using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
@@ -13,7 +17,7 @@ namespace Exanite.Arpg.Networking.Server
     /// <summary>
     /// Used to start a server
     /// </summary>
-    public class UnityServer : MonoBehaviour, INetworkServer
+    public class UnityServer : MonoBehaviour
     {
         [SerializeField] private TextAsset configuration;
         [SerializeField] private bool useMainThreadForEvents = true;
@@ -21,25 +25,29 @@ namespace Exanite.Arpg.Networking.Server
         private DarkRiftServer server;
 
         private ILog log;
+        private PlayerManager playerManager;
+        private Authenticator authenticator;
 
         [Inject]
-        public void Inject(ILog log)
+        public void Inject(ILog log, PlayerManager playerManager, Authenticator authenticator)
         {
             this.log = log;
+            this.playerManager = playerManager;
+            this.authenticator = authenticator;
         }
 
         /// <summary>
-        /// Event fired when a client connects to this server
+        /// Event fired when a player connects to this server
         /// </summary>
-        public event EventHandler<ClientConnectedEventArgs> OnClientConnected;
+        public event EventHandler<PlayerConnectedArgs> OnPlayerConnected;
 
         /// <summary>
-        /// Event fired when a client disconnects from this server
+        /// Event fired when a player disconnects from this server
         /// </summary>
-        public event EventHandler<ClientDisconnectedEventArgs> OnClientDisconnected;
+        public event EventHandler<PlayerDisconnectedArgs> OnPlayerDisconnected;
 
         /// <summary>
-        /// Event fired when the server recieves a message from any client
+        /// Event fired when the server recieves a message from any player
         /// </summary>
         public event EventHandler<MessageReceivedEventArgs> OnMessageRecieved;
 
@@ -82,7 +90,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.ClientManager;
+                return server?.ClientManager;
             }
         }
 
@@ -93,7 +101,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.Dispatcher;
+                return server?.Dispatcher;
             }
         }
 
@@ -104,7 +112,7 @@ namespace Exanite.Arpg.Networking.Server
         {
             get
             {
-                return server.ServerInfo;
+                return server?.ServerInfo;
             }
         }
 
@@ -172,16 +180,135 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
+        public async UniTask<WaitForMessageResult>
+            WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
+        {
+            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
+
+            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Tag == tag)
+                {
+                    source.TrySetResult((sender, e));
+                }
+            };
+
+            client.MessageReceived += handler;
+
+            await UniTask.WhenAny(source.Task, UniTask.Delay(timeoutMilliseconds, true));
+
+            client.MessageReceived -= handler;
+
+            if (source.Task.IsCompleted)
+            {
+                var result = source.Task.Result;
+
+                return new WaitForMessageResult(true, result.sender, result.e);
+            }
+            else
+            {
+                return new WaitForMessageResult(false, null, null);
+            }
+        }
+
         private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
         {
-            OnClientConnected?.Invoke(sender, e);
-            e.Client.MessageReceived += OnMessageRecieved;
+            Server_OnClientConnectedAsync(sender, e).Forget();
+        }
+
+        private async UniTask Server_OnClientConnectedAsync(object sender, ClientConnectedEventArgs e)
+        {
+            var waitResult = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
+
+            if (waitResult.IsSuccess)
+            {
+                using (var message = waitResult.E.GetMessage())
+                using (var reader = message.GetReader())
+                {
+                    var request = reader.ReadSerializable<LoginRequest>();
+
+                    var authenticationResult = authenticator.Authenticate(request);
+
+                    if (authenticationResult.IsSuccess)
+                    {
+                        var connection = new PlayerConnection()
+                        {
+                            ID = e.Client.ID,
+                            Client = e.Client,
+
+                            Name = request.PlayerName,
+                        };
+
+                        playerManager.AddPlayer(connection);
+
+                        SendLoginRequestAccepted(e.Client);
+
+                        e.Client.MessageReceived += OnMessageRecieved;
+                        OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
+                    }
+                    else
+                    {
+                        SendLoginRequestDenied(e.Client, authenticationResult.FailReason);
+
+                        await UniTask.Delay(250); // ! fix to make sure the client receives the Response message
+
+                        e.Client.Disconnect();
+                    }
+                }
+            }
+            else
+            {
+                SendLoginRequestDenied(e.Client, $"Login request timed out");
+
+                e.Client.Disconnect();
+            }
+        }
+
+        private void SendLoginRequestAccepted(IClient client)
+        {
+            var response = new LoginRequestReponse()
+            {
+                IsSuccess = true,
+            };
+
+            SendLoginRequestResponse(client, response);
+        }
+
+        private void SendLoginRequestDenied(IClient client, string reason = Constants.DefaultReason)
+        {
+            var response = new LoginRequestReponse()
+            {
+                IsSuccess = false,
+                DisconnectReason = reason,
+            };
+
+            SendLoginRequestResponse(client, response);
+        }
+
+        private void SendLoginRequestResponse(IClient client, LoginRequestReponse response)
+        {
+            using (var writer = DarkRiftWriter.Create())
+            {
+                writer.Write(response);
+
+                using (var message = Message.Create(MessageTag.LoginRequestResponse, writer))
+                {
+                    client.SendMessage(message, SendMode.Reliable);
+                }
+            }
         }
 
         private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            OnClientDisconnected?.Invoke(sender, e);
-            e.Client.MessageReceived -= OnMessageRecieved;
+            if (playerManager.Contains(e.Client.ID))
+            {
+                var connection = playerManager.GetPlayerConnection(e.Client.ID);
+
+                OnPlayerDisconnected?.Invoke(e.Client, new PlayerDisconnectedArgs(connection));
+                e.Client.MessageReceived -= OnMessageRecieved;
+
+                playerManager.RemovePlayer(connection);
+            }
         }
     }
 }

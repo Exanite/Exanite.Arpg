@@ -5,7 +5,9 @@ using DarkRift.Client;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
+using Exanite.Arpg.Networking.Shared;
 using Prototype.DarkRift.Shared;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -62,24 +64,25 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            client.ConnectInBackground(OnConnected);
-            client.OnDisconnected += OnDisconnected;
+            var request = new LoginRequest()
+            {
+                PlayerName = $"Player {Guid.NewGuid()}",
+                GameVersion = Application.version,
+            };
+
+            client.ConnectAsync(request).Forget();
             client.OnMessageReceived += OnMessageRecieved;
+            client.OnDisconnected += OnDisconnected;
+        }
+
+        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            SceneManager.UnloadSceneAsync(scene);
         }
 
         public void Disconnect()
         {
             client.Disconnect();
-        }
-
-        private void OnConnected(Exception e)
-        {
-            log.Information("Connected");
-        }
-
-        private void OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            log.Information("Disconnected");
         }
 
         private void OnMessageRecieved(object sender, MessageReceivedEventArgs e)

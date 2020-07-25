@@ -276,7 +276,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   address: 127.0.0.1
   port: 4296
-  enableNagelsAlgorithm: 1
   useMainThreadForEvents: 1
   serializableClientObjectCacheSettings:
     maxWriters: 2

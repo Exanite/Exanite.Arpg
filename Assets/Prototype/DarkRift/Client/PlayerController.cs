@@ -1,6 +1,7 @@
 ﻿using DarkRift;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
+using Exanite.Arpg.Networking.Shared;
 using Prototype.DarkRift.Shared;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Prototype.DarkRift.Client
     {
         public static PlayerController Current; //! hack for making sure only 1 player is locally controlled at a time
 
-        public INetworkClient client;
+        public UnityClient client;
         public Player player;
 
         public bool forceEnableControls = false;

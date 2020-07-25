@@ -4,6 +4,8 @@ using DarkRift;
 using DarkRift.Client;
 using DarkRift.Dispatching;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.Networking.Shared;
+using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
@@ -12,13 +14,14 @@ namespace Exanite.Arpg.Networking.Client
     /// <summary>
     /// Client used to connect to a server
     /// </summary>
-    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetworkClient
+    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver
     {
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = 4296;
-        [SerializeField] private bool enableNagelsAlgorithm = true;
         [SerializeField] private volatile bool useMainThreadForEvents = true;
         [SerializeField] private SerializableClientObjectCacheSettings serializableClientObjectCacheSettings = new SerializableClientObjectCacheSettings();
+
+        private bool isConnected = false;
 
         private ClientObjectCacheSettings clientObjectCacheSettings;
         private IPAddress ipAddress;
@@ -33,6 +36,11 @@ namespace Exanite.Arpg.Networking.Client
         {
             this.log = log;
         }
+
+        /// <summary>
+        /// Event fired when the client is connected to the server
+        /// </summary>
+        public event EventHandler<ConnectedEventArgs> OnConnected;
 
         /// <summary>
         /// Event fired when the client is disconnected from the server
@@ -73,23 +81,6 @@ namespace Exanite.Arpg.Networking.Client
             set
             {
                 port = value;
-            }
-        }
-
-        /// <summary>
-        /// Should Nagel's Algorithm be used?<para/>
-        /// Enabling this will reduce the number of packets sent, but increase delay
-        /// </summary>
-        public bool EnableNagelsAlgorithm
-        {
-            get
-            {
-                return enableNagelsAlgorithm;
-            }
-
-            set
-            {
-                enableNagelsAlgorithm = value;
             }
         }
 
@@ -150,11 +141,11 @@ namespace Exanite.Arpg.Networking.Client
         /// <summary>
         /// Returns the state of the connection with the server
         /// </summary>
-        public ConnectionState ConnectionState
+        public bool IsConnected
         {
             get
             {
-                return client.ConnectionState;
+                return IsConnected;
             }
         }
 
@@ -173,10 +164,9 @@ namespace Exanite.Arpg.Networking.Client
         {
             ClientObjectCacheSettings = serializableClientObjectCacheSettings.ToClientObjectCacheSettings();
 
-            client = new DarkRiftClient(ClientObjectCacheSettings);
-
             dispatcher = new Dispatcher(true);
 
+            client = new DarkRiftClient(ClientObjectCacheSettings);
             client.MessageReceived += Client_OnMessageReceived;
             client.Disconnected += Client_OnDisconnected;
         }
@@ -188,50 +178,83 @@ namespace Exanite.Arpg.Networking.Client
 
         private void OnDestroy()
         {
-            Close();
+            client.MessageReceived -= Client_OnMessageReceived;
+            client.Disconnected -= Client_OnDisconnected;
+
+            dispatcher.Dispose();
+            client.Dispose();
         }
 
-        private void OnApplicationQuit()
+        public async UniTask<ConnectResult> ConnectAsync(LoginRequest loginRequest)
         {
-            Close();
+            return await ConnectAsync(loginRequest, IPAddress, Port);
         }
 
-        /// <summary>
-        /// Connects to a server asynchronously
-        /// </summary>
-        public void ConnectInBackground(DarkRiftClient.ConnectCompleteHandler callback = null)
+        public async UniTask<ConnectResult> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port)
         {
-            ConnectInBackground(IPAddress, Port, !EnableNagelsAlgorithm, callback);
-        }
+            ConnectResult result;
 
-        /// <summary>
-        /// Connects to a server asynchronously with the specified settings
-        /// </summary>
-        public void ConnectInBackground(IPAddress ip, int port, bool noDelay, DarkRiftClient.ConnectCompleteHandler callback = null)
-        {
-            client.ConnectInBackground(ip, port, noDelay, (e) =>
+            var source = new UniTaskCompletionSource();
+
+            client.ConnectInBackground(ip, port, true, (e) =>
             {
-                if (callback != null)
-                {
-                    if (UseMainThreadForEvents)
-                    {
-                        Dispatcher.InvokeAsync(() => callback(e));
-                    }
-                    else
-                    {
-                        callback.Invoke(e);
-                    }
-                }
-
-                if (ConnectionState == ConnectionState.Connected)
-                {
-                    log.Information("Connected to " + ip + " on port " + port + ".");
-                }
-                else
-                {
-                    log.Information("Connection failed to " + ip + " on port " + port + ".");
-                }
+                source.TrySetResult();
             });
+
+            await source.Task;
+
+            if (client.ConnectionState == ConnectionState.Connected)
+            {
+                result = await TryLogin(loginRequest, ip, port);
+            }
+            else
+            {
+                result = new ConnectResult(false, "Server unreachable");
+            }
+
+            if (result.IsSuccess)
+            {
+                log.Information("Connected to {IP} on port {Port}", ip, port);
+
+                Client_OnConnected(this, new ConnectedEventArgs());
+            }
+            else
+            {
+                log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", ip, port, result.FailReason);
+            }
+
+            return result;
+        }
+
+        public async UniTask<WaitForMessageResult>
+            WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
+        {
+            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
+
+            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Tag == tag)
+                {
+                    source.TrySetResult((sender, e));
+                }
+            };
+
+            OnMessageReceived += handler;
+
+            await UniTask.WhenAny(source.Task, UniTask.Delay(timeoutMilliseconds));
+
+            OnMessageReceived -= handler;
+
+            if (source.Task.IsCompleted)
+            {
+                var result = source.Task.Result;
+
+                return new WaitForMessageResult(true, result.sender, result.e);
+            }
+            else
+            {
+                return new WaitForMessageResult(false, null, null);
+            }
         }
 
         /// <summary>
@@ -252,16 +275,104 @@ namespace Exanite.Arpg.Networking.Client
             return client.SendMessage(message, sendMode);
         }
 
-        /// <summary>
-        /// Closes this client
-        /// </summary>
-        private void Close()
+        private async UniTask<ConnectResult> TryLogin(LoginRequest loginRequest, IPAddress ip, int port)
         {
-            client.MessageReceived -= Client_OnMessageReceived;
-            client.Disconnected -= Client_OnDisconnected;
+            ConnectResult result;
 
-            client.Dispose();
-            dispatcher.Dispose();
+            SendLoginRequest(loginRequest);
+
+            var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
+
+            if (waitResult.IsSuccess)
+            {
+                using (var message = waitResult.E.GetMessage())
+                using (var reader = message.GetReader())
+                {
+                    var response = reader.ReadSerializable<LoginRequestReponse>();
+
+                    if (response.IsSuccess)
+                    {
+                        result = new ConnectResult(true);
+                    }
+                    else
+                    {
+                        result = new ConnectResult(false, response.DisconnectReason);
+                    }
+                }
+            }
+            else
+            {
+                result = new ConnectResult(false, "The server failed to respond");
+            }
+
+            return result;
+        }
+
+        private void SendLoginRequest(LoginRequest request)
+        {
+            using (var message = Message.Create(MessageTag.LoginRequest, request))
+            {
+                SendMessage(message, SendMode.Reliable);
+            }
+        }
+
+        private void Client_OnConnected(object sender, ConnectedEventArgs e)
+        {
+            isConnected = true;
+
+            if (UseMainThreadForEvents)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<ConnectedEventArgs> handler = OnConnected;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender, e);
+                    }
+                });
+            }
+            else
+            {
+                EventHandler<ConnectedEventArgs> handler = OnConnected;
+
+                if (handler != null)
+                {
+                    handler.Invoke(sender, e);
+                }
+            }
+        }
+
+        private void Client_OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            if (!isConnected)
+            {
+                return;
+            }
+
+            isConnected = false;
+
+            log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
+
+            if (UseMainThreadForEvents)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender, e);
+                    }
+                });
+            }
+            else
+            {
+                EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
+
+                if (handler != null)
+                {
+                    handler.Invoke(sender, e);
+                }
+            }
         }
 
         private void Client_OnMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -286,40 +397,6 @@ namespace Exanite.Arpg.Networking.Client
             else
             {
                 EventHandler<MessageReceivedEventArgs> handler = OnMessageReceived;
-
-                if (handler != null)
-                {
-                    handler.Invoke(sender, e);
-                }
-            }
-        }
-
-        private void Client_OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            if (UseMainThreadForEvents)
-            {
-                if (!e.LocalDisconnect)
-                {
-                    log.Information("Disconnected from server, disconnect code: " + e.Error);
-                }
-
-                Dispatcher.InvokeAsync(() =>
-                {
-                    EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
-                    if (handler != null)
-                    {
-                        handler.Invoke(sender, e);
-                    }
-                });
-            }
-            else
-            {
-                if (!e.LocalDisconnect)
-                {
-                    log.Information("Disconnected from server, disconnect code: " + e.Error);
-                }
-
-                EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
 
                 if (handler != null)
                 {
