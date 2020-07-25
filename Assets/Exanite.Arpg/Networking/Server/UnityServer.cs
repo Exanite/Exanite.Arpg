@@ -180,7 +180,7 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
-        public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)>
+        public async UniTask<WaitForMessageResult>
             WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
             var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
@@ -203,11 +203,11 @@ namespace Exanite.Arpg.Networking.Server
             {
                 var result = source.Task.Result;
 
-                return (true, result.sender, result.e);
+                return new WaitForMessageResult(true, result.sender, result.e);
             }
             else
             {
-                return (false, null, null);
+                return new WaitForMessageResult(false, null, null);
             }
         }
 
@@ -220,9 +220,9 @@ namespace Exanite.Arpg.Networking.Server
         {
             var waitResult = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
 
-            if (waitResult.isSuccess)
+            if (waitResult.IsSuccess)
             {
-                using (var message = waitResult.e.GetMessage())
+                using (var message = waitResult.E.GetMessage())
                 using (var reader = message.GetReader())
                 {
                     var request = reader.ReadSerializable<LoginRequest>();

@@ -36,13 +36,10 @@ namespace Exanite.Arpg.Networking.Client
         }
 
         /// <summary>
-        /// Event fired when the client is connected to the server<para/>
-        /// Note: This is not fired when the client connects, but fails to log in
+        /// Event fired when the client is connected to the server
         /// </summary>
         public event EventHandler<ConnectedEventArgs> OnConnected;
 
-        // todo make sure OnConnected and OnDisconnected events are paired, currently OnDisconnected is called even when the client is disconnected for failing to log in
-        // todo eventually, logging in should be moved out of UnityClient completely
         /// <summary>
         /// Event fired when the client is disconnected from the server
         /// </summary>
@@ -165,10 +162,9 @@ namespace Exanite.Arpg.Networking.Client
         {
             ClientObjectCacheSettings = serializableClientObjectCacheSettings.ToClientObjectCacheSettings();
 
-            client = new DarkRiftClient(ClientObjectCacheSettings);
-
             dispatcher = new Dispatcher(true);
 
+            client = new DarkRiftClient(ClientObjectCacheSettings);
             client.MessageReceived += Client_OnMessageReceived;
             client.Disconnected += Client_OnDisconnected;
         }
@@ -180,22 +176,21 @@ namespace Exanite.Arpg.Networking.Client
 
         private void OnDestroy()
         {
-            Close();
+            client.MessageReceived -= Client_OnMessageReceived;
+            client.Disconnected -= Client_OnDisconnected;
+
+            dispatcher.Dispose();
+            client.Dispose();
         }
 
-        private void OnApplicationQuit()
-        {
-            Close();
-        }
-
-        public async UniTask<(bool isSuccess, string failReason)> ConnectAsync(LoginRequest loginRequest)
+        public async UniTask<ConnectResult> ConnectAsync(LoginRequest loginRequest)
         {
             return await ConnectAsync(loginRequest, IPAddress, Port);
         }
 
-        public async UniTask<(bool isSuccess, string failReason)> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port)
+        public async UniTask<ConnectResult> ConnectAsync(LoginRequest loginRequest, IPAddress ip, int port)
         {
-            (bool isSuccess, string failReason) result;
+            ConnectResult result;
 
             var source = new UniTaskCompletionSource();
 
@@ -208,61 +203,28 @@ namespace Exanite.Arpg.Networking.Client
 
             if (ConnectionState == ConnectionState.Connected)
             {
+                Client_OnConnected(this, new ConnectedEventArgs());
+
                 result = await TryLogin(loginRequest, ip, port);
             }
             else
             {
-                result = (false, "Server unreachable");
+                result = new ConnectResult(false, "Server unreachable");
             }
 
-            if (result.isSuccess)
+            if (result.IsSuccess)
             {
                 log.Information("Connected to {IP} on port {Port}", ip, port);
-
-                OnConnected?.Invoke(this, new ConnectedEventArgs());
             }
             else
             {
-                log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", ip, port, result.failReason);
+                log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", ip, port, result.FailReason);
             }
 
             return result;
         }
 
-        private async UniTask<(bool isSuccess, string failReason)> TryLogin(LoginRequest loginRequest, IPAddress ip, int port)
-        {
-            (bool isSuccess, string failReason) result;
-
-            SendLoginRequest(loginRequest);
-
-            var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
-
-            if (waitResult.isSuccess)
-            {
-                using (var message = waitResult.e.GetMessage())
-                using (var reader = message.GetReader())
-                {
-                    var response = reader.ReadSerializable<LoginRequestReponse>();
-
-                    if (response.IsSuccess)
-                    {
-                        result = (true, string.Empty);
-                    }
-                    else
-                    {
-                        result = (false, response.DisconnectReason);
-                    }
-                }
-            }
-            else
-            {
-                result = (false, "The server failed to respond");
-            }
-
-            return result;
-        }
-
-        public async UniTask<(bool isSuccess, object sender, MessageReceivedEventArgs e)>
+        public async UniTask<WaitForMessageResult>
             WaitForMessageWithTag(ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
         {
             var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
@@ -285,11 +247,11 @@ namespace Exanite.Arpg.Networking.Client
             {
                 var result = source.Task.Result;
 
-                return (true, result.sender, result.e);
+                return new WaitForMessageResult(true, result.sender, result.e);
             }
             else
             {
-                return (false, null, null);
+                return new WaitForMessageResult(false, null, null);
             }
         }
 
@@ -311,16 +273,37 @@ namespace Exanite.Arpg.Networking.Client
             return client.SendMessage(message, sendMode);
         }
 
-        /// <summary>
-        /// Closes this client
-        /// </summary>
-        private void Close()
+        private async UniTask<ConnectResult> TryLogin(LoginRequest loginRequest, IPAddress ip, int port)
         {
-            client.MessageReceived -= Client_OnMessageReceived;
-            client.Disconnected -= Client_OnDisconnected;
+            ConnectResult result;
 
-            client.Dispose();
-            dispatcher.Dispose();
+            SendLoginRequest(loginRequest);
+
+            var waitResult = await WaitForMessageWithTag(MessageTag.LoginRequestResponse);
+
+            if (waitResult.IsSuccess)
+            {
+                using (var message = waitResult.E.GetMessage())
+                using (var reader = message.GetReader())
+                {
+                    var response = reader.ReadSerializable<LoginRequestReponse>();
+
+                    if (response.IsSuccess)
+                    {
+                        result = new ConnectResult(true);
+                    }
+                    else
+                    {
+                        result = new ConnectResult(false, response.DisconnectReason);
+                    }
+                }
+            }
+            else
+            {
+                result = new ConnectResult(false, "The server failed to respond");
+            }
+
+            return result;
         }
 
         private void SendLoginRequest(LoginRequest request)
@@ -328,6 +311,56 @@ namespace Exanite.Arpg.Networking.Client
             using (var message = Message.Create(MessageTag.LoginRequest, request))
             {
                 SendMessage(message, SendMode.Reliable);
+            }
+        }
+
+        private void Client_OnConnected(object sender, ConnectedEventArgs e)
+        {
+            if (UseMainThreadForEvents)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<ConnectedEventArgs> handler = OnConnected;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender, e);
+                    }
+                });
+            }
+            else
+            {
+                EventHandler<ConnectedEventArgs> handler = OnConnected;
+
+                if (handler != null)
+                {
+                    handler.Invoke(sender, e);
+                }
+            }
+        }
+
+        private void Client_OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
+
+            if (UseMainThreadForEvents)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender, e);
+                    }
+                });
+            }
+            else
+            {
+                EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
+
+                if (handler != null)
+                {
+                    handler.Invoke(sender, e);
+                }
             }
         }
 
@@ -353,40 +386,6 @@ namespace Exanite.Arpg.Networking.Client
             else
             {
                 EventHandler<MessageReceivedEventArgs> handler = OnMessageReceived;
-
-                if (handler != null)
-                {
-                    handler.Invoke(sender, e);
-                }
-            }
-        }
-
-        private void Client_OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            if (UseMainThreadForEvents)
-            {
-                if (!e.LocalDisconnect)
-                {
-                    log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
-                }
-
-                Dispatcher.InvokeAsync(() =>
-                {
-                    EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
-                    if (handler != null)
-                    {
-                        handler.Invoke(sender, e);
-                    }
-                });
-            }
-            else
-            {
-                if (!e.LocalDisconnect)
-                {
-                    log.Information("Disconnected from server. Disconnect code: {Code}", e.Error.ToString());
-                }
-
-                EventHandler<DisconnectedEventArgs> handler = OnDisconnected;
 
                 if (handler != null)
                 {
