@@ -1,6 +1,7 @@
 {
     "name": "Exanite.Arpg",
     "references": [
+        "LiteNetLib",
         "UniRx.Async",
         "Zenject"
     ],

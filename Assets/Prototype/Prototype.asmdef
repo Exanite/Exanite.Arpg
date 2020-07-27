@@ -2,6 +2,7 @@
     "name": "Prototype",
     "references": [
         "Exanite.Arpg",
+        "LiteNetLib",
         "UniRx.Async",
         "Zenject"
     ],
