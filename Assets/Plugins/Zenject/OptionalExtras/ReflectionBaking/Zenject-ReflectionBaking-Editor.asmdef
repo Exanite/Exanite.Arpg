@@ -7,5 +7,18 @@
     "includePlatforms": [
         "Editor"
     ],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Zenject.ReflectionBaking.Mono.Cecil.dll",
+        "Zenject.ReflectionBaking.Mono.Cecil.Mdb.dll",
+        "Zenject.ReflectionBaking.Mono.Cecil.Pdb.dll",
+        "Zenject.ReflectionBaking.Mono.Cecil.Rocks.dll",
+        "Zenject-usage.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
