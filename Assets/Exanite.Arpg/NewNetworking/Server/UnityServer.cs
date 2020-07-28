@@ -9,9 +9,9 @@ namespace Exanite.Arpg.NewNetworking.Server
 {
     public class UnityServer : MonoBehaviour
     {
-        public ushort port = Constants.DefaultPort;
+        private ushort port = Constants.DefaultPort;
 
-        public bool isCreated = false;
+        private bool isCreated = false;
 
         private EventBasedNetListener netListener;
         private NetManager netManager;
@@ -23,6 +23,32 @@ namespace Exanite.Arpg.NewNetworking.Server
         public void Inject(ILog log)
         {
             this.log = log;
+        }
+
+        public ushort Port
+        {
+            get
+            {
+                return port;
+            }
+
+            set
+            {
+                port = value;
+            }
+        }
+
+        public bool IsCreated
+        {
+            get
+            {
+                return isCreated;
+            }
+
+            private set
+            {
+                isCreated = value;
+            }
         }
 
         private void Awake()
@@ -53,19 +79,19 @@ namespace Exanite.Arpg.NewNetworking.Server
 
         public void Create()
         {
-            if (isCreated)
+            if (IsCreated)
             {
                 throw new InvalidOperationException("Server has already been created.");
             }
 
-            netManager.Start(port);
+            netManager.Start(Port);
 
-            isCreated = true;
+            IsCreated = true;
         }
 
         public void Close()
         {
-            if (!isCreated)
+            if (!IsCreated)
             {
                 return;
             }
@@ -73,7 +99,7 @@ namespace Exanite.Arpg.NewNetworking.Server
             netManager.DisconnectAll();
             netManager.Stop();
 
-            isCreated = false;
+            IsCreated = false;
         }
 
         private void UnityServer_ConnectionRequestEvent(ConnectionRequest request)
