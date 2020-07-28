@@ -1,4 +1,5 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -13,6 +14,7 @@ namespace Exanite.Arpg.NewNetworking.Client
         public string ipAddress = "127.0.0.1";
         public ushort port = Constants.DefaultPort;
 
+        public bool isConnecting;
         public bool isConnected;
 
         public NetPeer server;
@@ -63,12 +65,17 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         public async UniTask<ConnectResult> ConnectAsync()
         {
-            NetPeer peer;
+            if (isConnected)
+            {
+                throw new InvalidOperationException("Client is already connected.");
+            }
+
+            isConnecting = true;
 
             netClient.Start();
-            peer = netClient.Connect(ipAddress, port, Constants.ConnectionKey);
+            netClient.Connect(ipAddress, port, Constants.ConnectionKey);
 
-            await UniTask.WaitUntil(() => peer.ConnectionState != ConnectionState.Outgoing);
+            await UniTask.WaitUntil(() => !isConnecting);
 
             return new ConnectResult(isConnected, previousDisconnectInfo.Reason.ToString());
         }
@@ -80,6 +87,9 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         private void UnityClient_PeerConnectedEvent(NetPeer peer)
         {
+            // call OnConnected event
+
+            isConnecting = false;
             isConnected = true;
 
             server = peer;
@@ -87,6 +97,12 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         private void UnityClient_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
+            if (isConnected)
+            {
+                // call OnDisconnected event
+            }
+
+            isConnecting = false;
             isConnected = false;
 
             server = null;
