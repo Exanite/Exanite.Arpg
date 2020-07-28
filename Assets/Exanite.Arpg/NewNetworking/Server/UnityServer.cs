@@ -25,6 +25,10 @@ namespace Exanite.Arpg.NewNetworking.Server
             this.log = log;
         }
 
+        public event EventHandler<ClientConnectedEventArgs> ClientConnectedEvent;
+
+        public event EventHandler<ClientDisconnectedEventArgs> ClientDisconnectedEvent;
+
         public ushort Port
         {
             get
@@ -58,6 +62,8 @@ namespace Exanite.Arpg.NewNetworking.Server
             netPacketProcessor = new NetPacketProcessor();
 
             netListener.ConnectionRequestEvent += UnityServer_ConnectionRequestEvent;
+            netListener.PeerConnectedEvent += UnityServer_PeerConnectedEvent;
+            netListener.PeerDisconnectedEvent += UnityServer_PeerDisconnectedEvent;
         }
 
         private void Start() // ! temp
@@ -105,6 +111,16 @@ namespace Exanite.Arpg.NewNetworking.Server
         private void UnityServer_ConnectionRequestEvent(ConnectionRequest request)
         {
             request.AcceptIfKey(Constants.ConnectionKey);
+        }
+
+        private void UnityServer_PeerConnectedEvent(NetPeer peer)
+        {
+            ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
+        }
+
+        private void UnityServer_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
+        {
+            ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
         }
     }
 }
