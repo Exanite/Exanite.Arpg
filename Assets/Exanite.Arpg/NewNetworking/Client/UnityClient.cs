@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
@@ -9,17 +10,18 @@ using Zenject;
 
 namespace Exanite.Arpg.NewNetworking.Client
 {
-    public class UnityClient : MonoBehaviour
+    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver
     {
-        public string ipAddress = "127.0.0.1";
-        public ushort port = Constants.DefaultPort;
+        [SerializeField] private string address = IPAddress.Loopback.ToString();
+        [SerializeField] private ushort port = Constants.DefaultPort;
 
-        public bool isConnecting;
-        public bool isConnected;
+        private bool isConnecting;
+        private bool isConnected;
 
-        public NetPeer server;
+        private IPAddress ipAddress;
         private DisconnectInfo previousDisconnectInfo;
 
+        private NetPeer server;
         private EventBasedNetListener netListener;
         private NetManager netClient;
         private NetPacketProcessor netPacketProcessor;
@@ -30,6 +32,73 @@ namespace Exanite.Arpg.NewNetworking.Client
         public void Inject(ILog log)
         {
             this.log = log;
+        }
+
+        // ! events here
+
+        /// <summary>
+        /// The IP Address of the server the client will connect to
+        /// </summary>
+        public IPAddress IPAddress
+        {
+            get
+            {
+                return ipAddress;
+            }
+
+            set
+            {
+                ipAddress = value;
+                address = value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// The port on the server the client will connect to
+        /// </summary>
+        public ushort Port
+        {
+            get
+            {
+                return port;
+            }
+
+            set
+            {
+                port = value;
+            }
+        }
+
+        /// <summary>
+        /// Is the client currently connecting to the server?
+        /// </summary>
+        public bool IsConnecting
+        {
+            get
+            {
+                return isConnecting;
+            }
+
+            private set
+            {
+                isConnecting = value;
+            }
+        }
+
+        /// <summary>
+        /// Is the client connected to the server?
+        /// </summary>
+        public bool IsConnected
+        {
+            get
+            {
+                return isConnected;
+            }
+
+            private set
+            {
+                isConnected = value;
+            }
         }
 
         private void Awake()
@@ -48,11 +117,11 @@ namespace Exanite.Arpg.NewNetworking.Client
             {
                 if (x.IsSuccess)
                 {
-                    log.Information("Connected to {IP} on port {Port}", ipAddress, port);
+                    log.Information("Connected to {IP} on port {Port}", IPAddress, Port);
                 }
                 else
                 {
-                    log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", ipAddress, port, x.FailReason);
+                    log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", IPAddress, Port, x.FailReason);
                 }
             })
             .Forget();
@@ -65,19 +134,19 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         public async UniTask<ConnectResult> ConnectAsync()
         {
-            if (isConnected)
+            if (IsConnected)
             {
                 throw new InvalidOperationException("Client is already connected.");
             }
 
-            isConnecting = true;
+            IsConnecting = true;
 
             netClient.Start();
-            netClient.Connect(ipAddress, port, Constants.ConnectionKey);
+            netClient.Connect(new IPEndPoint(IPAddress, Port), Constants.ConnectionKey);
 
-            await UniTask.WaitUntil(() => !isConnecting);
+            await UniTask.WaitUntil(() => !IsConnecting);
 
-            return new ConnectResult(isConnected, previousDisconnectInfo.Reason.ToString());
+            return new ConnectResult(IsConnected, previousDisconnectInfo.Reason.ToString());
         }
 
         public void Disconnect()
@@ -89,24 +158,37 @@ namespace Exanite.Arpg.NewNetworking.Client
         {
             // call OnConnected event
 
-            isConnecting = false;
-            isConnected = true;
+            IsConnecting = false;
+            IsConnected = true;
 
             server = peer;
         }
 
         private void UnityClient_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            if (isConnected)
+            if (IsConnected)
             {
                 // call OnDisconnected event
             }
 
-            isConnecting = false;
-            isConnected = false;
+            IsConnecting = false;
+            IsConnected = false;
 
             server = null;
             previousDisconnectInfo = disconnectInfo;
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (IPAddress != null)
+            {
+                address = IPAddress.ToString();
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            IPAddress = IPAddress.Parse(address);
         }
     }
 }
