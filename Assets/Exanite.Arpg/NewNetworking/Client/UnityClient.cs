@@ -34,7 +34,9 @@ namespace Exanite.Arpg.NewNetworking.Client
             this.log = log;
         }
 
-        // ! events here
+        public event EventHandler<ConnectedEventArgs> ConnectedEvent;
+
+        public event EventHandler<DisconnectedEventArgs> DisconnectedEvent;
 
         /// <summary>
         /// The IP Address of the server the client will connect to
@@ -156,7 +158,7 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         private void UnityClient_PeerConnectedEvent(NetPeer peer)
         {
-            // call OnConnected event
+            ConnectedEvent?.Invoke(this, new ConnectedEventArgs());
 
             IsConnecting = false;
             IsConnected = true;
@@ -168,7 +170,7 @@ namespace Exanite.Arpg.NewNetworking.Client
         {
             if (IsConnected)
             {
-                // call OnDisconnected event
+                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(disconnectInfo));
             }
 
             IsConnecting = false;
