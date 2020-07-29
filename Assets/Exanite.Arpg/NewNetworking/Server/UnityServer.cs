@@ -30,9 +30,9 @@ namespace Exanite.Arpg.NewNetworking.Server
             this.log = log;
         }
 
-        public event EventHandler<ClientConnectedEventArgs> ClientConnectedEvent;
+        public event EventHandler<UnityServer, ClientConnectedEventArgs> ClientConnectedEvent;
 
-        public event EventHandler<ClientDisconnectedEventArgs> ClientDisconnectedEvent;
+        public event EventHandler<UnityServer, ClientDisconnectedEventArgs> ClientDisconnectedEvent;
 
         public ushort Port
         {

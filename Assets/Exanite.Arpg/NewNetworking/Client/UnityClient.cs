@@ -37,9 +37,9 @@ namespace Exanite.Arpg.NewNetworking.Client
             this.log = log;
         }
 
-        public event EventHandler<ConnectedEventArgs> ConnectedEvent;
+        public event EventHandler<UnityClient, ConnectedEventArgs> ConnectedEvent;
 
-        public event EventHandler<DisconnectedEventArgs> DisconnectedEvent;
+        public event EventHandler<UnityClient, DisconnectedEventArgs> DisconnectedEvent;
 
         /// <summary>
         /// The IP Address of the server the client will connect to
