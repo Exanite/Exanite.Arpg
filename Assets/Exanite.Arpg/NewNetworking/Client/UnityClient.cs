@@ -187,6 +187,24 @@ namespace Exanite.Arpg.NewNetworking.Client
             Server.Send(writer, deliveryMethod);
         }
 
+        public void SubscribePacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
+        {
+            if (receiver == null)
+            {
+                throw new ArgumentNullException(nameof(receiver));
+            }
+
+            netPacketProcessor.SubscribeReusable<T, NetPeer>((packet, sender) =>
+            {
+                receiver.Invoke(sender, packet);
+            });
+        }
+
+        public void ClearPacketReceievers<T>() where T : class, IPacket, new()
+        {
+            netPacketProcessor.RemoveSubscription<T>();
+        }
+
         void ISerializationCallbackReceiver.OnBeforeSerialize()
         {
             if (IPAddress != null)
@@ -231,7 +249,7 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-
+            netPacketProcessor.ReadAllPackets(reader, peer);
         }
 
         void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
