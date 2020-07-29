@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Exanite.Arpg.Logging;
+using Exanite.Arpg.NewNetworking.Shared;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace Exanite.Arpg.NewNetworking.Server
         private EventBasedNetListener netListener;
         private NetManager netManager;
         private NetPacketProcessor netPacketProcessor;
+
+        private NetDataWriter writer = new NetDataWriter();
 
         private ILog log;
 
@@ -118,6 +121,20 @@ namespace Exanite.Arpg.NewNetworking.Server
             netManager.Stop();
 
             IsCreated = false;
+        }
+
+        public void SendPacket(NetPeer peer, IPacket packet, DeliveryMethod deliveryMethod)
+        {
+            if (!IsCreated)
+            {
+                return;
+            }
+
+            writer.Reset();
+
+            netPacketProcessor.WriteNetSerializable(writer, packet);
+
+            peer.Send(writer, deliveryMethod);
         }
 
         private void UnityServer_ConnectionRequestEvent(ConnectionRequest request)
