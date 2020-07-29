@@ -150,6 +150,11 @@ namespace Exanite.Arpg.NewNetworking.Client
             netClient.PollEvents();
         }
 
+        private void OnDestroy()
+        {
+            Disconnect();
+        }
+
         public async UniTask<ConnectResult> ConnectAsync()
         {
             if (IsConnected)
