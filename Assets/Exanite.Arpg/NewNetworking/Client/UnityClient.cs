@@ -2,6 +2,7 @@
 using System.Net;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
+using Exanite.Arpg.NewNetworking.Shared;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using UniRx.Async;
@@ -19,12 +20,14 @@ namespace Exanite.Arpg.NewNetworking.Client
         private bool isConnected;
 
         private IPAddress ipAddress;
+        private NetPeer server;
         private DisconnectInfo previousDisconnectInfo;
 
-        private NetPeer server;
         private EventBasedNetListener netListener;
         private NetManager netClient;
         private NetPacketProcessor netPacketProcessor;
+
+        private NetDataWriter writer = new NetDataWriter();
 
         private ILog log;
 
@@ -154,6 +157,20 @@ namespace Exanite.Arpg.NewNetworking.Client
         public void Disconnect()
         {
             netClient.Stop();
+        }
+
+        public void SendPacket(IPacket packet, DeliveryMethod deliveryMethod)
+        {
+            if (!IsConnected)
+            {
+                return;
+            }
+
+            writer.Reset();
+
+            netPacketProcessor.WriteNetSerializable(writer, packet);
+
+            server.Send(writer, deliveryMethod);
         }
 
         private void UnityClient_PeerConnectedEvent(NetPeer peer)
