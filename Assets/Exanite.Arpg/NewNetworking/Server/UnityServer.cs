@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.NewNetworking.Shared;
 using LiteNetLib;
@@ -9,14 +11,13 @@ using Zenject;
 
 namespace Exanite.Arpg.NewNetworking.Server
 {
-    public class UnityServer : MonoBehaviour
+    public class UnityServer : MonoBehaviour, INetEventListener
     {
         private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
         private List<NetPeer> connectedClients = new List<NetPeer>();
 
-        private EventBasedNetListener netListener;
         private NetManager netManager;
         private NetPacketProcessor netPacketProcessor;
 
@@ -70,13 +71,8 @@ namespace Exanite.Arpg.NewNetworking.Server
 
         private void Awake()
         {
-            netListener = new EventBasedNetListener();
-            netManager = new NetManager(netListener);
+            netManager = new NetManager(this);
             netPacketProcessor = new NetPacketProcessor();
-
-            netListener.ConnectionRequestEvent += UnityServer_ConnectionRequestEvent;
-            netListener.PeerConnectedEvent += UnityServer_PeerConnectedEvent;
-            netListener.PeerDisconnectedEvent += UnityServer_PeerDisconnectedEvent;
         }
 
         private void Start() // ! temp
@@ -92,10 +88,6 @@ namespace Exanite.Arpg.NewNetworking.Server
         private void OnDestroy()
         {
             Close();
-
-            netListener.ConnectionRequestEvent -= UnityServer_ConnectionRequestEvent;
-            netListener.PeerConnectedEvent -= UnityServer_PeerConnectedEvent;
-            netListener.PeerDisconnectedEvent -= UnityServer_PeerDisconnectedEvent;
         }
 
         public void Create()
@@ -137,23 +129,43 @@ namespace Exanite.Arpg.NewNetworking.Server
             peer.Send(writer, deliveryMethod);
         }
 
-        private void UnityServer_ConnectionRequestEvent(ConnectionRequest request)
-        {
-            request.AcceptIfKey(Constants.ConnectionKey);
-        }
-
-        private void UnityServer_PeerConnectedEvent(NetPeer peer)
+        void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             connectedClients.Add(peer);
 
             ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
         }
 
-        private void UnityServer_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
+        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             connectedClients.Remove(peer);
 
             ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
+        }
+
+        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
+        {
+
+        }
+
+        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        {
+
+        }
+
+        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+        {
+
+        }
+
+        void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
+        {
+
+        }
+
+        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        {
+            request.AcceptIfKey(Constants.ConnectionKey);
         }
     }
 }

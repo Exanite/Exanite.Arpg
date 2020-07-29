@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using Exanite.Arpg.NewNetworking.Shared;
@@ -11,7 +12,7 @@ using Zenject;
 
 namespace Exanite.Arpg.NewNetworking.Client
 {
-    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver
+    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetEventListener
     {
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = Constants.DefaultPort;
@@ -23,7 +24,6 @@ namespace Exanite.Arpg.NewNetworking.Client
         private IPAddress ipAddress;
         private DisconnectInfo previousDisconnectInfo;
 
-        private EventBasedNetListener netListener;
         private NetManager netClient;
         private NetPacketProcessor netPacketProcessor;
 
@@ -121,12 +121,8 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         private void Awake()
         {
-            netListener = new EventBasedNetListener();
-            netClient = new NetManager(netListener);
+            netClient = new NetManager(this);
             netPacketProcessor = new NetPacketProcessor();
-
-            netListener.PeerConnectedEvent += UnityClient_PeerConnectedEvent;
-            netListener.PeerDisconnectedEvent += UnityClient_PeerDisconnectedEvent;
         }
 
         private void Start() // ! temp
@@ -191,7 +187,20 @@ namespace Exanite.Arpg.NewNetworking.Client
             Server.Send(writer, deliveryMethod);
         }
 
-        private void UnityClient_PeerConnectedEvent(NetPeer peer)
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (IPAddress != null)
+            {
+                address = IPAddress.ToString();
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            IPAddress = IPAddress.Parse(address);
+        }
+
+        void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             ConnectedEvent?.Invoke(this, new ConnectedEventArgs());
 
@@ -201,7 +210,7 @@ namespace Exanite.Arpg.NewNetworking.Client
             Server = peer;
         }
 
-        private void UnityClient_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
+        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             if (IsConnected)
             {
@@ -215,17 +224,29 @@ namespace Exanite.Arpg.NewNetworking.Client
             previousDisconnectInfo = disconnectInfo;
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
-            if (IPAddress != null)
-            {
-                address = IPAddress.ToString();
-            }
+
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            IPAddress = IPAddress.Parse(address);
+
+        }
+
+        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+        {
+
+        }
+
+        void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
+        {
+
+        }
+
+        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        {
+            request.Reject();
         }
     }
 }
