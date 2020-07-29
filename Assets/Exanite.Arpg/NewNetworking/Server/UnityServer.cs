@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Exanite.Arpg.Logging;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -12,6 +13,7 @@ namespace Exanite.Arpg.NewNetworking.Server
         private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
+        private List<NetPeer> connectedClients = new List<NetPeer>();
 
         private EventBasedNetListener netListener;
         private NetManager netManager;
@@ -55,6 +57,14 @@ namespace Exanite.Arpg.NewNetworking.Server
             }
         }
 
+        public IReadOnlyList<NetPeer> ConnectedClients
+        {
+            get
+            {
+                return connectedClients;
+            }
+        }
+
         private void Awake()
         {
             netListener = new EventBasedNetListener();
@@ -78,9 +88,11 @@ namespace Exanite.Arpg.NewNetworking.Server
 
         private void OnDestroy()
         {
-            netListener.ConnectionRequestEvent -= UnityServer_ConnectionRequestEvent;
-
             Close();
+
+            netListener.ConnectionRequestEvent -= UnityServer_ConnectionRequestEvent;
+            netListener.PeerConnectedEvent -= UnityServer_PeerConnectedEvent;
+            netListener.PeerDisconnectedEvent -= UnityServer_PeerDisconnectedEvent;
         }
 
         public void Create()
@@ -115,11 +127,15 @@ namespace Exanite.Arpg.NewNetworking.Server
 
         private void UnityServer_PeerConnectedEvent(NetPeer peer)
         {
+            connectedClients.Add(peer);
+
             ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
         }
 
         private void UnityServer_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
+            connectedClients.Remove(peer);
+
             ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
         }
     }
