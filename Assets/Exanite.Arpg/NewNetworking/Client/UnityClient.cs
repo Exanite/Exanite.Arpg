@@ -18,9 +18,9 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         private bool isConnecting;
         private bool isConnected;
+        private NetPeer server;
 
         private IPAddress ipAddress;
-        private NetPeer server;
         private DisconnectInfo previousDisconnectInfo;
 
         private EventBasedNetListener netListener;
@@ -106,6 +106,19 @@ namespace Exanite.Arpg.NewNetworking.Client
             }
         }
 
+        public NetPeer Server
+        {
+            get
+            {
+                return server;
+            }
+
+            private set
+            {
+                server = value;
+            }
+        }
+
         private void Awake()
         {
             netListener = new EventBasedNetListener();
@@ -170,7 +183,7 @@ namespace Exanite.Arpg.NewNetworking.Client
 
             netPacketProcessor.WriteNetSerializable(writer, packet);
 
-            server.Send(writer, deliveryMethod);
+            Server.Send(writer, deliveryMethod);
         }
 
         private void UnityClient_PeerConnectedEvent(NetPeer peer)
@@ -180,7 +193,7 @@ namespace Exanite.Arpg.NewNetworking.Client
             IsConnecting = false;
             IsConnected = true;
 
-            server = peer;
+            Server = peer;
         }
 
         private void UnityClient_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -193,7 +206,7 @@ namespace Exanite.Arpg.NewNetworking.Client
             IsConnecting = false;
             IsConnected = false;
 
-            server = null;
+            Server = null;
             previousDisconnectInfo = disconnectInfo;
         }
 
