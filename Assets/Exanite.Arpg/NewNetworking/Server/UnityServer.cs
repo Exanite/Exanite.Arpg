@@ -130,7 +130,7 @@ namespace Exanite.Arpg.NewNetworking.Server
                 throw new ArgumentNullException(nameof(receiver));
             }
 
-            netPacketProcessor.SubscribeReusable<T, NetPeer>((packet, sender) =>
+            netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
             {
                 receiver.Invoke(sender, packet);
             });
