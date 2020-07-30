@@ -156,6 +156,10 @@ namespace Exanite.Arpg.NewNetworking.Client
             {
                 throw new InvalidOperationException("Client is already connected.");
             }
+            else if (IsConnecting)
+            {
+                throw new InvalidOperationException("Client is already connecting.");
+            }
 
             IsConnecting = true;
 
