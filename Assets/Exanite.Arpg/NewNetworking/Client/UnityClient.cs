@@ -176,7 +176,7 @@ namespace Exanite.Arpg.NewNetworking.Client
             netClient.Stop();
         }
 
-        public void SendPacket(IPacket packet, DeliveryMethod deliveryMethod)
+        public void SendPacket<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
             if (!IsConnected)
             {

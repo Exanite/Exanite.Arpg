@@ -114,7 +114,7 @@ namespace Exanite.Arpg.NewNetworking.Server
             IsCreated = false;
         }
 
-        public void SendPacket(NetPeer peer, IPacket packet, DeliveryMethod deliveryMethod)
+        public void SendPacket<T>(NetPeer peer, T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
             if (!IsCreated)
             {
