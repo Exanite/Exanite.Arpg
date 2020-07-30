@@ -124,22 +124,6 @@ namespace Exanite.Arpg.NewNetworking.Client
             netPacketProcessor = new NetPacketProcessor();
         }
 
-        private void Start() // ! temp
-        {
-            ConnectAsync().ContinueWith(x =>
-            {
-                if (x.IsSuccess)
-                {
-                    log.Information("Connected to {IP} on port {Port}", IPAddress, Port);
-                }
-                else
-                {
-                    log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", IPAddress, Port, x.FailReason);
-                }
-            })
-            .Forget();
-        }
-
         private void FixedUpdate()
         {
             netClient.PollEvents();

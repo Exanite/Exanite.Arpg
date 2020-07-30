@@ -74,11 +74,6 @@ namespace Exanite.Arpg.NewNetworking.Server
             netPacketProcessor = new NetPacketProcessor();
         }
 
-        private void Start() // ! temp
-        {
-            Create();
-        }
-
         private void FixedUpdate()
         {
             netManager.PollEvents();
