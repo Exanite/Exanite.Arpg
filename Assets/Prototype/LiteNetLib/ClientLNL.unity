@@ -240,6 +240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 856146289}
   - component: {fileID: 856146290}
+  - component: {fileID: 856146291}
   m_Layer: 0
   m_Name: Client
   m_TagString: Untagged
@@ -273,6 +274,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb6e82fa875d0ba4f8e4becb89dc5e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ipAddress: 127.0.0.1
+  address: 127.0.0.1
   port: 17175
-  isConnected: 0
+--- !u!114 &856146291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856146288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b0d53c79045db42a9cf319414f3a06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  client: {fileID: 856146290}
+  id: -1
+  isDisconnecting: 0

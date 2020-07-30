@@ -5,12 +5,12 @@ namespace Prototype.DarkRift.Shared
 {
     public class Player
     {
-        public ushort id;
+        public int id;
         public Transform transform;
 
         public Vector2 movementInput;
 
-        public Player(ushort id, Scene scene)
+        public Player(int id, Scene scene)
         {
             this.id = id;
 

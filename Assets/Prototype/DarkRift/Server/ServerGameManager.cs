@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using DarkRift;
-using DarkRift.Server;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.Networking;
-using Exanite.Arpg.Networking.Server;
-using Exanite.Arpg.Networking.Shared;
+using Exanite.Arpg.NewNetworking.Server;
+using LiteNetLib;
 using Prototype.DarkRift.Shared;
+using Prototype.DarkRift.Shared.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -17,7 +15,7 @@ namespace Prototype.DarkRift.Server
     {
         public UnityServer server;
 
-        public Dictionary<IClient, Player> players = new Dictionary<IClient, Player>();
+        public Dictionary<NetPeer, Player> players = new Dictionary<NetPeer, Player>();
 
         private ILog log;
         private Scene scene;
@@ -87,11 +85,12 @@ namespace Prototype.DarkRift.Server
         {
             log.Information("Starting server");
 
-            server.Create();
+            server.SubscribePacketReceiver<PlayerInputPacket>(OnPlayerInput);
 
-            server.OnPlayerConnected += OnPlayerConnected;
-            server.OnPlayerDisconnected += OnPlayerDisconnected;
-            server.OnMessageRecieved += OnMessageReceived;
+            server.ClientConnectedEvent += OnPlayerConnected;
+            server.ClientDisconnectedEvent += OnPlayerDisconnected;
+
+            server.Create();
         }
 
         public void StopServer()
@@ -101,102 +100,55 @@ namespace Prototype.DarkRift.Server
             server.Close();
         }
 
-        private void CreateNewPlayer(IClient client)
+        private void CreateNewPlayer(NetPeer peer)
         {
-            var player = new Player(client.ID, scene);
+            var player = new Player(peer.Id, scene);
 
             float angle = Random.Range(0, 360);
 
             player.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
 
-            players.Add(client, player);
+            players.Add(peer, player);
         }
 
-        private void OnPlayerConnected(object sender, PlayerConnectedArgs e)
+        private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
         {
-            log.Information("Player {ClientID} connected", e.Connection.Client.ID);
+            log.Information("Player {ClientID} connected", e.Peer.Id);
 
-            CreateNewPlayer(e.Connection.Client);
+            server.SendPacket(e.Peer, new PlayerIDAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
 
-            using (var writer = DarkRiftWriter.Create())
+            CreateNewPlayer(e.Peer);
+
+            foreach (var peer in players.Keys)
             {
-                foreach (var player in players.Values)
-                {
-                    writer.Write(player.id);
-
-                    writer.Write(player.transform.position.x);
-                    writer.Write(player.transform.position.y);
-                }
-
-                using (var playerCreateMessage = Message.Create(MessageTag.PlayerCreate, writer))
-                {
-                    foreach (var client in players.Keys)
-                    {
-                        client.SendMessage(playerCreateMessage, SendMode.Reliable);
-                    }
-                }
+                server.SendPacket(peer, new PlayerCreatePacket(players.Values), DeliveryMethod.ReliableOrdered);
             }
         }
 
-        private void OnPlayerDisconnected(object sender, PlayerDisconnectedArgs e)
+        private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
         {
-            log.Information("Player {ClientID} disconnected", e.Connection.ID);
+            log.Information("Player {ClientID} disconnected", e.Peer.Id);
 
-            Destroy(players[e.Connection.Client].transform.gameObject);
+            Destroy(players[e.Peer].transform.gameObject);
 
-            players.Remove(e.Connection.Client);
+            players.Remove(e.Peer);
 
-            using (var writer = DarkRiftWriter.Create())
+            foreach (var peer in players.Keys)
             {
-                writer.Write(e.Connection.ID);
-
-                using (var playerDestroyMessage = Message.Create(MessageTag.PlayerDestroy, writer))
-                {
-                    foreach (var client in players.Keys)
-                    {
-                        client.SendMessage(playerDestroyMessage, SendMode.Reliable);
-                    }
-                }
+                server.SendPacket(peer, new PlayerDestroyPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
             }
         }
 
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         {
-            switch (e.Tag)
-            {
-                case MessageTag.PlayerInput: OnPlayerInput(sender, e); return;
-            }
-        }
-
-        private void OnPlayerInput(object sender, MessageReceivedEventArgs e)
-        {
-            using (var message = e.GetMessage())
-            using (var reader = message.GetReader())
-            {
-                Vector2 movementInput = reader.ReadVector2();
-
-                players[e.Client].movementInput = movementInput.normalized;
-            }
+            players[sender].movementInput = e.movementInput;
         }
 
         private void SendPositionUpdates()
         {
-            using (var writer = DarkRiftWriter.Create())
+            foreach (var peer in players.Keys)
             {
-                foreach (var player in players.Values)
-                {
-                    writer.Write(player.id);
-
-                    writer.WriteVector2(player.transform.position);
-                }
-
-                using (var message = Message.Create(MessageTag.PlayerPositionUpdate, writer))
-                {
-                    foreach (var client in players.Keys)
-                    {
-                        client.SendMessage(message, SendMode.Unreliable);
-                    }
-                }
+                server.SendPacket(peer, new PlayerPositionUpdatePacket(players.Values), DeliveryMethod.Unreliable);
             }
         }
     }

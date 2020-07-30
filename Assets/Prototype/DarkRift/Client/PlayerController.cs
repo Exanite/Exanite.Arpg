@@ -1,8 +1,8 @@
-﻿using DarkRift;
-using Exanite.Arpg.Networking;
-using Exanite.Arpg.Networking.Client;
-using Exanite.Arpg.Networking.Shared;
+﻿
+using Exanite.Arpg.NewNetworking.Client;
+using LiteNetLib;
 using Prototype.DarkRift.Shared;
+using Prototype.DarkRift.Shared.Packets;
 using UnityEngine;
 
 namespace Prototype.DarkRift.Client
@@ -60,15 +60,7 @@ namespace Prototype.DarkRift.Client
 
         public void SendMovementInput(Vector2 movementInput)
         {
-            using (var writer = DarkRiftWriter.Create())
-            {
-                writer.WriteVector2(movementInput);
-
-                using (var message = Message.Create(MessageTag.PlayerInput, writer))
-                {
-                    client.SendMessage(message, SendMode.Reliable);
-                }
-            }
+            client.SendPacket(new PlayerInputPacket() { movementInput = movementInput }, DeliveryMethod.Unreliable);
         }
     }
 }

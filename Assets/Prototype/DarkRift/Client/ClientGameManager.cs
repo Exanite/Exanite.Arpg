@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using DarkRift.Client;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.Networking;
-using Exanite.Arpg.Networking.Client;
-using Exanite.Arpg.Networking.Shared;
+using Exanite.Arpg.NewNetworking.Client;
+using LiteNetLib;
 using Prototype.DarkRift.Shared;
+using Prototype.DarkRift.Shared.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,9 +16,11 @@ namespace Prototype.DarkRift.Client
     {
         public UnityClient client;
 
+        public int id = -1;
+
         public bool isDisconnecting = false;
 
-        private Dictionary<ushort, Player> players = new Dictionary<ushort, Player>();
+        private Dictionary<int, Player> players = new Dictionary<int, Player>();
 
         private Player localPlayer;
         private PlayerController playerController;
@@ -64,20 +64,25 @@ namespace Prototype.DarkRift.Client
 
         public void Connect()
         {
-            var request = new LoginRequest()
+            client.SubscribePacketReceiver<PlayerIDAssignmentPacket>(OnPlayerIDAssignment);
+            client.SubscribePacketReceiver<PlayerCreatePacket>(OnPlayerCreate);
+            client.SubscribePacketReceiver<PlayerDestroyPacket>(OnPlayerDestroy);
+            client.SubscribePacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+
+            client.DisconnectedEvent += OnDisconnected;
+
+            client.ConnectAsync().ContinueWith(x =>
             {
-                PlayerName = $"Player {Guid.NewGuid()}",
-                GameVersion = Application.version,
-            };
-
-            client.ConnectAsync(request).Forget();
-            client.OnMessageReceived += OnMessageRecieved;
-            client.OnDisconnected += OnDisconnected;
-        }
-
-        private void OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            SceneManager.UnloadSceneAsync(scene);
+                if (x.IsSuccess)
+                {
+                    log.Information("Connected to {IP} on port {Port}", client.IPAddress, client.Port);
+                }
+                else
+                {
+                    log.Information("Failed to connect to {IP} on port {Port}. Reason: {FailReason}", client.IPAddress, client.Port, x.FailReason);
+                }
+            })
+            .Forget();
         }
 
         public void Disconnect()
@@ -85,72 +90,53 @@ namespace Prototype.DarkRift.Client
             client.Disconnect();
         }
 
-        private void OnMessageRecieved(object sender, MessageReceivedEventArgs e)
+        private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
-            switch (e.Tag)
-            {
-                case MessageTag.PlayerCreate: OnPlayerCreate(sender, e); return;
-                case MessageTag.PlayerDestroy: OnPlayerDestroy(sender, e); return;
-                case MessageTag.PlayerPositionUpdate: OnPlayerPositionUpdate(sender, e); return;
-            }
+            SceneManager.UnloadSceneAsync(scene);
         }
 
-        private void OnPlayerCreate(object sender, MessageReceivedEventArgs e)
+        private void OnPlayerIDAssignment(NetPeer sender, PlayerIDAssignmentPacket e)
         {
-            using (var message = e.GetMessage())
-            using (var reader = message.GetReader())
+            id = e.id;
+        }
+
+        private void OnPlayerCreate(NetPeer sender, PlayerCreatePacket e)
+        {
+            foreach (var playerPosition in e.playerPositions)
             {
-                while (reader.Position < reader.Length)
+                if (!players.ContainsKey(playerPosition.id))
                 {
-                    ushort id = reader.ReadUInt16();
-                    Vector2 position = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                    var player = new Player(playerPosition.id, scene);
+                    player.transform.position = playerPosition.position;
 
-                    if (!players.ContainsKey(id))
+                    players.Add(playerPosition.id, player);
+
+                    if (playerPosition.id == id)
                     {
-                        var player = new Player(id, scene);
-                        player.transform.position = position;
+                        localPlayer = player;
+                        localPlayer.transform.gameObject.name += " (Local)";
 
-                        players.Add(id, player);
-
-                        if (id == client.ID)
-                        {
-                            localPlayer = player;
-                            localPlayer.transform.gameObject.name += " (Local)";
-
-                            playerController = localPlayer.transform.gameObject.AddComponent<PlayerController>();
-                            playerController.client = client;
-                            playerController.player = localPlayer;
-                        }
+                        playerController = localPlayer.transform.gameObject.AddComponent<PlayerController>();
+                        playerController.client = client;
+                        playerController.player = localPlayer;
                     }
                 }
             }
+            
         }
 
-        private void OnPlayerDestroy(object sender, MessageReceivedEventArgs e)
+        private void OnPlayerDestroy(NetPeer sender, PlayerDestroyPacket e)
         {
-            using (var message = e.GetMessage())
-            using (var reader = message.GetReader())
-            {
-                ushort id = reader.ReadUInt16();
+            Destroy(players[e.id].transform.gameObject);
 
-                Destroy(players[id].transform.gameObject);
-
-                players.Remove(id);
-            }
+            players.Remove(e.id);
         }
 
-        private void OnPlayerPositionUpdate(object sender, MessageReceivedEventArgs e)
+        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
-            using (var message = e.GetMessage())
-            using (var reader = message.GetReader())
+            foreach (var playerPosition in e.playerPositions)
             {
-                while (reader.Position < reader.Length)
-                {
-                    ushort id = reader.ReadUInt16();
-                    Vector2 position = reader.ReadVector2();
-
-                    players[id].transform.position = position;
-                }
+                players[playerPosition.id].transform.position = playerPosition.position;
             }
         }
     }
