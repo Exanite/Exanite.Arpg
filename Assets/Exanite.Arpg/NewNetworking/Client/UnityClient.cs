@@ -223,7 +223,7 @@ namespace Exanite.Arpg.NewNetworking.Client
 
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
-            ConnectedEvent?.Invoke(this, new ConnectedEventArgs());
+            ConnectedEvent?.Invoke(this, new ConnectedEventArgs(peer));
 
             IsConnecting = false;
             IsConnected = true;
@@ -235,7 +235,7 @@ namespace Exanite.Arpg.NewNetworking.Client
         {
             if (IsConnected)
             {
-                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(disconnectInfo));
+                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(peer, disconnectInfo));
             }
 
             IsConnecting = false;
