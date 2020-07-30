@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.NewNetworking.Shared;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using UnityEngine;

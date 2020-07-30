@@ -1,6 +1,6 @@
 ﻿using LiteNetLib.Utils;
 
-namespace Exanite.Arpg.NewNetworking.Shared
+namespace Exanite.Arpg.NewNetworking
 {
     public interface IPacket : INetSerializable { }
 }

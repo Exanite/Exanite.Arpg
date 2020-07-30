@@ -32,7 +32,7 @@ namespace Exanite.Arpg.NewNetworking
         /// <summary>
         /// Writes a Vector2 (8 bytes)
         /// </summary>
-        public static void Write(this NetDataWriter writer, Vector2 value)
+        public static void Put(this NetDataWriter writer, Vector2 value)
         {
             writer.Put(value.x);
             writer.Put(value.y);
