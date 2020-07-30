@@ -32,30 +32,40 @@ namespace Prototype.DarkRift.Client
                 forceEnableControls = false;
             }
 
-            //if (Current == this)
-            {
-                Vector2 input = GetMovementInput();
+            Vector2 input;
 
-                if (input != Vector2.zero)
-                {
-                    SendMovementInput(input);
-                }
+            if (Current == this)
+            {
+                input = GetMovementInput();
             }
+            else
+            {
+                input = GetPerlinMovementInput();
+            }
+
+            SendMovementInput(input);
         }
 
         public Vector2 GetMovementInput()
+        {
+            Vector2 input = Vector2.zero;
+
+            input.x += Input.GetKey(KeyCode.D) ? 1 : 0;
+            input.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
+
+            input.y += Input.GetKey(KeyCode.W) ? 1 : 0;
+            input.y -= Input.GetKey(KeyCode.S) ? 1 : 0;
+
+            return input.normalized;
+        }
+
+        public Vector2 GetPerlinMovementInput()
         {
             float angle = Mathf.PerlinNoise(Time.time * 0.1f + seed, -Time.time * 0.1f + seed) * 360;
 
             Vector2 input = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
-            //input.x += Input.GetKey(KeyCode.D) ? 1 : 0;
-            //input.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
-
-            //input.y += Input.GetKey(KeyCode.W) ? 1 : 0;
-            //input.y -= Input.GetKey(KeyCode.S) ? 1 : 0;
-
-            return input.normalized;
+            return input * Mathf.PerlinNoise(Time.time * 0.1f + seed, 0) * 2;
         }
 
         public void SendMovementInput(Vector2 movementInput)

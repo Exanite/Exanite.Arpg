@@ -37,7 +37,7 @@ namespace Prototype.DarkRift.Server
         {
             foreach (var player in players.Values)
             {
-                player.transform.position += (Vector3)(player.movementInput * Time.deltaTime * 10);
+                player.transform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
