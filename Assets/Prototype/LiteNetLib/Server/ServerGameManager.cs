@@ -2,14 +2,14 @@
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.NewNetworking.Server;
 using LiteNetLib;
-using Prototype.DarkRift.Shared;
-using Prototype.DarkRift.Shared.Packets;
+using Prototype.LiteNetLib.Shared;
+using Prototype.LiteNetLib.Shared.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Prototype.DarkRift.Server
+namespace Prototype.LiteNetLib.Server
 {
     public class ServerGameManager : MonoBehaviour
     {

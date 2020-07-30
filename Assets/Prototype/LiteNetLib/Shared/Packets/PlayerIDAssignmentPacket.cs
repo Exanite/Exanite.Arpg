@@ -1,9 +1,9 @@
 ﻿using Exanite.Arpg.NewNetworking;
 using LiteNetLib.Utils;
 
-namespace Prototype.DarkRift.Shared.Packets
+namespace Prototype.LiteNetLib.Shared.Packets
 {
-    public class PlayerDestroyPacket : IPacket
+    public class PlayerIDAssignmentPacket : IPacket
     {
         public int id;
 

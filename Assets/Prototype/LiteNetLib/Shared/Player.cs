@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prototype.DarkRift.Shared
+namespace Prototype.LiteNetLib.Shared
 {
     public class Player
     {

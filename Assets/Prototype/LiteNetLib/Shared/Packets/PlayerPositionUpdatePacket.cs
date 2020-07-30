@@ -3,7 +3,7 @@ using Exanite.Arpg.NewNetworking;
 using LiteNetLib.Utils;
 using UnityEngine;
 
-namespace Prototype.DarkRift.Shared.Packets
+namespace Prototype.LiteNetLib.Shared.Packets
 {
     public class PlayerPositionUpdatePacket : IPacket
     {

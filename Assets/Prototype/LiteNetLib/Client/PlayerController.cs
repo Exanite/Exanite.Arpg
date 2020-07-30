@@ -1,11 +1,11 @@
 ﻿
 using Exanite.Arpg.NewNetworking.Client;
 using LiteNetLib;
-using Prototype.DarkRift.Shared;
-using Prototype.DarkRift.Shared.Packets;
+using Prototype.LiteNetLib.Shared;
+using Prototype.LiteNetLib.Shared.Packets;
 using UnityEngine;
 
-namespace Prototype.DarkRift.Client
+namespace Prototype.LiteNetLib.Client
 {
     public class PlayerController : MonoBehaviour
     {

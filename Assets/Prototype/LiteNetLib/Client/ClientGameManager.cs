@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.NewNetworking.Client;
 using LiteNetLib;
-using Prototype.DarkRift.Shared;
-using Prototype.DarkRift.Shared.Packets;
+using Prototype.LiteNetLib.Shared;
+using Prototype.LiteNetLib.Shared.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Prototype.DarkRift.Client
+namespace Prototype.LiteNetLib.Client
 {
     public class ClientGameManager : MonoBehaviour
     {
