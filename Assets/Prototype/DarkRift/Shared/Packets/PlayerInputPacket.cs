@@ -10,7 +10,7 @@ namespace Prototype.DarkRift.Shared.Packets
 
         public void Deserialize(NetDataReader reader)
         {
-            reader.GetVector2();
+            movementInput = reader.GetVector2();
 
             movementInput = Vector2.ClampMagnitude(movementInput, 1);
         }
