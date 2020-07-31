@@ -1,5 +1,4 @@
-﻿
-using Exanite.Arpg.Networking.Client;
+﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.LiteNetLib.Shared;
 using Prototype.LiteNetLib.Shared.Packets;
