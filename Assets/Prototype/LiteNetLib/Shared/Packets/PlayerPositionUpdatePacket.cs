@@ -7,27 +7,34 @@ namespace Prototype.LiteNetLib.Shared.Packets
 {
     public class PlayerPositionUpdatePacket : IPacket
     {
-        public List<(int id, Vector2 position)> playerPositions = new List<(int, Vector2)>();
+        public List<PlayerPosition> playerPositions = new List<PlayerPosition>();
 
         public PlayerPositionUpdatePacket() { }
 
-        public PlayerPositionUpdatePacket(IEnumerable<Player> players)
+        public PlayerPositionUpdatePacket(ICollection<Player> players)
         {
+            playerPositions.Capacity = players.Count;
+
             foreach (var player in players)
             {
-                playerPositions.Add((player.id, player.transform.position));
+                playerPositions.Add(new PlayerPosition(player.id, player.transform.position));
             }
         }
 
         public void Deserialize(NetDataReader reader)
         {
+            int count = reader.GetInt();
+
             playerPositions.Clear();
 
-            int count = reader.GetInt();
+            if (playerPositions.Capacity < count)
+            {
+                playerPositions.Capacity = count;
+            }
 
             for (int i = 0; i < count; i++)
             {
-                playerPositions.Add((reader.GetInt(), reader.GetVector2()));
+                playerPositions.Add(new PlayerPosition(reader.GetInt(), reader.GetVector2()));
             }
         }
 
@@ -39,6 +46,18 @@ namespace Prototype.LiteNetLib.Shared.Packets
             {
                 writer.Put(playerPositions[i].id);
                 writer.Put(playerPositions[i].position);
+            }
+        }
+
+        public struct PlayerPosition
+        {
+            public int id;
+            public Vector2 position;
+
+            public PlayerPosition(int id, Vector2 position)
+            {
+                this.id = id;
+                this.position = position;
             }
         }
     }

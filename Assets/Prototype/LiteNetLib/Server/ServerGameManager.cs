@@ -119,9 +119,11 @@ namespace Prototype.LiteNetLib.Server
 
             CreateNewPlayer(e.Peer);
 
+            var packet = new PlayerCreatePacket(players.Values);
+
             foreach (var peer in players.Keys)
             {
-                server.SendPacket(peer, new PlayerCreatePacket(players.Values), DeliveryMethod.ReliableOrdered);
+                server.SendPacket(peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }
 
@@ -133,9 +135,11 @@ namespace Prototype.LiteNetLib.Server
 
             players.Remove(e.Peer);
 
+            var packet = new PlayerDestroyPacket() { id = e.Peer.Id };
+
             foreach (var peer in players.Keys)
             {
-                server.SendPacket(peer, new PlayerDestroyPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
+                server.SendPacket(peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }
 
@@ -146,9 +150,11 @@ namespace Prototype.LiteNetLib.Server
 
         private void SendPositionUpdates()
         {
+            var packet = new PlayerPositionUpdatePacket(players.Values);
+
             foreach (var peer in players.Keys)
             {
-                server.SendPacket(peer, new PlayerPositionUpdatePacket(players.Values), DeliveryMethod.Unreliable);
+                server.SendPacket(peer, packet, DeliveryMethod.Unreliable);
             }
         }
     }
