@@ -1,4 +1,4 @@
-﻿namespace Exanite.Arpg.NewNetworking
+﻿namespace Exanite.Arpg.Networking
 {
     public static class Constants
     {

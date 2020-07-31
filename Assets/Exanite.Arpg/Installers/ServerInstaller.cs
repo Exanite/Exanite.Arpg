@@ -1,4 +1,4 @@
-﻿using Exanite.Arpg.NewNetworking.Server;
+﻿using Exanite.Arpg.Networking.Server;
 using Zenject;
 
 namespace Exanite.Arpg.Installers

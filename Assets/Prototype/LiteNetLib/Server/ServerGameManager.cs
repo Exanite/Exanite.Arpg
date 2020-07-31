@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.NewNetworking.Server;
+using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.LiteNetLib.Shared;
 using Prototype.LiteNetLib.Shared.Packets;

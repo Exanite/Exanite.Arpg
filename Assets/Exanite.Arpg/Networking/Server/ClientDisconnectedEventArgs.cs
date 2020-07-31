@@ -1,7 +1,7 @@
 ﻿using System;
 using LiteNetLib;
 
-namespace Exanite.Arpg.NewNetworking.Server
+namespace Exanite.Arpg.Networking.Server
 {
     public class ClientDisconnectedEventArgs : EventArgs
     {

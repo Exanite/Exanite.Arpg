@@ -8,7 +8,7 @@ using LiteNetLib.Utils;
 using UnityEngine;
 using Zenject;
 
-namespace Exanite.Arpg.NewNetworking.Server
+namespace Exanite.Arpg.Networking.Server
 {
     public class UnityServer : MonoBehaviour, INetEventListener
     {

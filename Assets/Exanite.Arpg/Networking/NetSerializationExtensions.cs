@@ -1,7 +1,7 @@
 ﻿using LiteNetLib.Utils;
 using UnityEngine;
 
-namespace Exanite.Arpg.NewNetworking
+namespace Exanite.Arpg.Networking
 {
     /// <summary>
     /// Extensions that simplify reading and writing to <see cref="NetDataReader"/> and <see cref="NetDataWriter"/>

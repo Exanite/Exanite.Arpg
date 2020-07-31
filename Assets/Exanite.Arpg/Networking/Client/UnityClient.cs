@@ -8,7 +8,7 @@ using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
-namespace Exanite.Arpg.NewNetworking.Client
+namespace Exanite.Arpg.Networking.Client
 {
     public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetEventListener
     {
