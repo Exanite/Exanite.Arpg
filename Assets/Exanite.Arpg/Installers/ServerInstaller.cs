@@ -1,5 +1,4 @@
 ﻿using Exanite.Arpg.Networking.Server;
-using Exanite.Arpg.Networking.Server.Authentication;
 using Zenject;
 
 namespace Exanite.Arpg.Installers
@@ -8,8 +7,8 @@ namespace Exanite.Arpg.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<PlayerManager>().AsSingle();
-            Container.Bind<Authenticator>().AsSingle();
+            //Container.Bind<PlayerManager>().AsSingle();
+            //Container.Bind<Authenticator>().AsSingle();
             Container.Bind<UnityServer>().FromComponentInHierarchy().AsSingle();
         }
     }

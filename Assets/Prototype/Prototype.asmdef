@@ -2,6 +2,7 @@
     "name": "Prototype",
     "references": [
         "Exanite.Arpg",
+        "LiteNetLib",
         "UniRx.Async",
         "Zenject"
     ],
@@ -10,9 +11,6 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "DarkRift.dll",
-        "DarkRift.Client.dll",
-        "DarkRift.Server.dll",
         "Newtonsoft.Json.dll",
         "Serilog.dll",
         "Serilog.Enrichers.Thread.dll",

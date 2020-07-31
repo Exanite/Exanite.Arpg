@@ -1,314 +1,183 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Threading;
-using System.Xml.Linq;
-using DarkRift;
-using DarkRift.Dispatching;
-using DarkRift.Server;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.Networking.Server.Authentication;
-using Exanite.Arpg.Networking.Shared;
-using UniRx.Async;
+using LiteNetLib;
+using LiteNetLib.Utils;
 using UnityEngine;
 using Zenject;
 
 namespace Exanite.Arpg.Networking.Server
 {
-    /// <summary>
-    /// Used to start a server
-    /// </summary>
-    public class UnityServer : MonoBehaviour
+    public class UnityServer : MonoBehaviour, INetEventListener
     {
-        [SerializeField] private TextAsset configuration;
-        [SerializeField] private bool useMainThreadForEvents = true;
+        private ushort port = Constants.DefaultPort;
 
-        private DarkRiftServer server;
+        private bool isCreated = false;
+        private List<NetPeer> connectedClients = new List<NetPeer>();
+
+        private NetManager netManager;
+        private NetPacketProcessor netPacketProcessor;
+
+        private NetDataWriter writer = new NetDataWriter();
 
         private ILog log;
-        private PlayerManager playerManager;
-        private Authenticator authenticator;
 
         [Inject]
-        public void Inject(ILog log, PlayerManager playerManager, Authenticator authenticator)
+        public void Inject(ILog log)
         {
             this.log = log;
-            this.playerManager = playerManager;
-            this.authenticator = authenticator;
         }
 
-        /// <summary>
-        /// Event fired when a player connects to this server
-        /// </summary>
-        public event EventHandler<PlayerConnectedArgs> OnPlayerConnected;
+        public event EventHandler<UnityServer, ClientConnectedEventArgs> ClientConnectedEvent;
 
-        /// <summary>
-        /// Event fired when a player disconnects from this server
-        /// </summary>
-        public event EventHandler<PlayerDisconnectedArgs> OnPlayerDisconnected;
+        public event EventHandler<UnityServer, ClientDisconnectedEventArgs> ClientDisconnectedEvent;
 
-        /// <summary>
-        /// Event fired when the server recieves a message from any player
-        /// </summary>
-        public event EventHandler<MessageReceivedEventArgs> OnMessageRecieved;
-
-        /// <summary>
-        /// The XML configuration file to use
-        /// </summary>
-        public TextAsset Configuration
+        public ushort Port
         {
             get
             {
-                return configuration;
+                return port;
             }
 
             set
             {
-                configuration = value;
+                port = value;
             }
         }
 
-        /// <summary>
-        /// Should events be called from the Main Thread?
-        /// </summary>
-        public bool UseMainThreadForEvents
+        public bool IsCreated
         {
             get
             {
-                return useMainThreadForEvents;
+                return isCreated;
             }
 
-            set
+            private set
             {
-                useMainThreadForEvents = value;
+                isCreated = value;
             }
         }
 
-        /// <summary>
-        /// The client manager handling all clients on this server
-        /// </summary>
-        public IClientManager ClientManager
+        public IReadOnlyList<NetPeer> ConnectedClients
         {
             get
             {
-                return server?.ClientManager;
+                return connectedClients;
             }
         }
 
-        /// <summary>
-        /// Dispatcher for running tasks on the main thread.
-        /// </summary>
-        public IDispatcher Dispatcher
+        private void Awake()
         {
-            get
-            {
-                return server?.Dispatcher;
-            }
+            netManager = new NetManager(this);
+            netPacketProcessor = new NetPacketProcessor();
         }
 
-        /// <summary>
-        /// Information about this server
-        /// </summary>
-        public DarkRiftInfo ServerInfo
+        private void FixedUpdate()
         {
-            get
-            {
-                return server?.ServerInfo;
-            }
+            netManager.PollEvents();
         }
 
-        private void Update()
-        {
-            server?.ExecuteDispatcherTasks();
-        }
-
-        private void OnDisable()
+        private void OnDestroy()
         {
             Close();
         }
 
-        private void OnApplicationQuit()
+        public void Create()
         {
-            Close();
-        }
-
-        /// <summary>
-        /// Creates the server
-        /// </summary>
-        public void Create() // Cannot use Start due to Unity
-        {
-            Create(new NameValueCollection());
-        }
-
-        /// <summary>
-        /// Creates the server with the specified variables
-        /// </summary>
-        public void Create(NameValueCollection variables)
-        {
-            if (server != null)
+            if (IsCreated)
             {
-                throw new InvalidOperationException("The server has already been created.");
+                throw new InvalidOperationException("Server has already been created.");
             }
 
-            if (Configuration == null)
+            netManager.Start(Port);
+
+            IsCreated = true;
+        }
+
+        public void Close()
+        {
+            if (!IsCreated)
             {
-                log.Error("No configuration file specified");
                 return;
             }
 
-            ServerSpawnData spawnData = ServerSpawnData.CreateFromXml(XDocument.Parse(Configuration.text), variables);
-            spawnData.DispatcherExecutorThreadID = Thread.CurrentThread.ManagedThreadId;
-            spawnData.EventsFromDispatcher = UseMainThreadForEvents;
+            netManager.DisconnectAll();
+            netManager.Stop();
 
-            server = new DarkRiftServer(spawnData);
-            server.Start();
-
-            server.ClientManager.ClientConnected += Server_OnClientConnected;
-            server.ClientManager.ClientDisconnected += Server_OnClientDisconnected;
+            IsCreated = false;
         }
 
-        /// <summary>
-        /// Closes the server
-        /// </summary>
-        public void Close()
+        public void SendPacket<T>(NetPeer peer, T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
-            if (server != null)
+            if (!IsCreated)
             {
-                server.ClientManager.ClientConnected -= Server_OnClientConnected;
-                server.ClientManager.ClientDisconnected -= Server_OnClientDisconnected;
-
-                server.Dispose();
+                return;
             }
+
+            writer.Reset();
+
+            netPacketProcessor.WriteNetSerializable(writer, packet);
+
+            peer.Send(writer, deliveryMethod);
         }
 
-        public async UniTask<WaitForMessageResult>
-            WaitForMessageWithTag(IClient client, ushort tag, int timeoutMilliseconds = Constants.DefaultTimeoutMilliseconds)
+        public void SubscribePacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
         {
-            var source = new UniTaskCompletionSource<(object sender, MessageReceivedEventArgs e)>();
-
-            EventHandler<MessageReceivedEventArgs> handler = (sender, e) =>
+            if (receiver == null)
             {
-                if (e.Tag == tag)
-                {
-                    source.TrySetResult((sender, e));
-                }
-            };
-
-            client.MessageReceived += handler;
-
-            await UniTask.WhenAny(source.Task, UniTask.Delay(timeoutMilliseconds, true));
-
-            client.MessageReceived -= handler;
-
-            if (source.Task.IsCompleted)
-            {
-                var result = source.Task.Result;
-
-                return new WaitForMessageResult(true, result.sender, result.e);
+                throw new ArgumentNullException(nameof(receiver));
             }
-            else
+
+            netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
             {
-                return new WaitForMessageResult(false, null, null);
-            }
+                receiver.Invoke(sender, packet);
+            });
         }
 
-        private void Server_OnClientConnected(object sender, ClientConnectedEventArgs e)
+        public void ClearPacketReceievers<T>() where T : class, IPacket, new()
         {
-            Server_OnClientConnectedAsync(sender, e).Forget();
+            netPacketProcessor.RemoveSubscription<T>();
         }
 
-        private async UniTask Server_OnClientConnectedAsync(object sender, ClientConnectedEventArgs e)
+        void INetEventListener.OnPeerConnected(NetPeer peer)
         {
-            var waitResult = await WaitForMessageWithTag(e.Client, MessageTag.LoginRequest, 10 * 1000);
+            connectedClients.Add(peer);
 
-            if (waitResult.IsSuccess)
-            {
-                using (var message = waitResult.E.GetMessage())
-                using (var reader = message.GetReader())
-                {
-                    var request = reader.ReadSerializable<LoginRequest>();
-
-                    var authenticationResult = authenticator.Authenticate(request);
-
-                    if (authenticationResult.IsSuccess)
-                    {
-                        var connection = new PlayerConnection()
-                        {
-                            ID = e.Client.ID,
-                            Client = e.Client,
-
-                            Name = request.PlayerName,
-                        };
-
-                        playerManager.AddPlayer(connection);
-
-                        SendLoginRequestAccepted(e.Client);
-
-                        e.Client.MessageReceived += OnMessageRecieved;
-                        OnPlayerConnected?.Invoke(connection.Client, new PlayerConnectedArgs(connection));
-                    }
-                    else
-                    {
-                        SendLoginRequestDenied(e.Client, authenticationResult.FailReason);
-
-                        await UniTask.Delay(250); // ! fix to make sure the client receives the Response message
-
-                        e.Client.Disconnect();
-                    }
-                }
-            }
-            else
-            {
-                SendLoginRequestDenied(e.Client, $"Login request timed out");
-
-                e.Client.Disconnect();
-            }
+            ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
         }
 
-        private void SendLoginRequestAccepted(IClient client)
+        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            var response = new LoginRequestReponse()
-            {
-                IsSuccess = true,
-            };
+            connectedClients.Remove(peer);
 
-            SendLoginRequestResponse(client, response);
+            ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
         }
 
-        private void SendLoginRequestDenied(IClient client, string reason = Constants.DefaultReason)
+        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
-            var response = new LoginRequestReponse()
-            {
-                IsSuccess = false,
-                DisconnectReason = reason,
-            };
 
-            SendLoginRequestResponse(client, response);
         }
 
-        private void SendLoginRequestResponse(IClient client, LoginRequestReponse response)
+        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            using (var writer = DarkRiftWriter.Create())
-            {
-                writer.Write(response);
-
-                using (var message = Message.Create(MessageTag.LoginRequestResponse, writer))
-                {
-                    client.SendMessage(message, SendMode.Reliable);
-                }
-            }
+            netPacketProcessor.ReadAllPackets(reader, peer);
         }
 
-        private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
         {
-            if (playerManager.Contains(e.Client.ID))
-            {
-                var connection = playerManager.GetPlayerConnection(e.Client.ID);
 
-                OnPlayerDisconnected?.Invoke(e.Client, new PlayerDisconnectedArgs(connection));
-                e.Client.MessageReceived -= OnMessageRecieved;
+        }
 
-                playerManager.RemovePlayer(connection);
-            }
+        void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
+        {
+
+        }
+
+        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        {
+            request.AcceptIfKey(Constants.ConnectionKey);
         }
     }
 }
