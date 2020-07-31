@@ -163,6 +163,7 @@ namespace Exanite.Arpg.Networking.Server
         void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
             netPacketProcessor.ReadAllPackets(reader, peer);
+            reader.Recycle();
         }
 
         void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
