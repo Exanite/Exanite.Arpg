@@ -8,6 +8,7 @@ using Exanite.Arpg.Networking.Shared;
 using UniRx.Async;
 using UnityEngine;
 using Zenject;
+using ConnectResult = Exanite.Arpg.NewNetworking.Client.ConnectResult;
 
 namespace Exanite.Arpg.Networking.Client
 {

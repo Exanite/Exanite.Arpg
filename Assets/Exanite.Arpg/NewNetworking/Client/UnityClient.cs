@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using Exanite.Arpg.Logging;
-using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using UniRx.Async;

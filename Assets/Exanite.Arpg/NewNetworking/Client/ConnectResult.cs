@@ -1,4 +1,4 @@
-﻿namespace Exanite.Arpg.Networking.Client
+﻿namespace Exanite.Arpg.NewNetworking.Client
 {
     public class ConnectResult
     {
