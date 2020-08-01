@@ -12,9 +12,11 @@ namespace Exanite.Arpg.Networking.Client
 {
     public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetEventListener
     {
+        [Header("Settings:")]
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = Constants.DefaultPort;
 
+        [Header("Debug:")]
         [SerializeField] private bool enableDebug = false;
         [SerializeField] private int minLatency = 25;
         [SerializeField] private int maxLatency = 100;

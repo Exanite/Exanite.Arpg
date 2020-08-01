@@ -12,6 +12,7 @@ namespace Exanite.Arpg.Networking.Server
 {
     public class UnityServer : MonoBehaviour, INetEventListener
     {
+        [Header("Settings:")]
         [SerializeField] private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
