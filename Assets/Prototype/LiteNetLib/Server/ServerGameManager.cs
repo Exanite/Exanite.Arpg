@@ -26,6 +26,7 @@ namespace Prototype.LiteNetLib.Server
         {
             this.log = log;
             this.scene = scene;
+            this.physics = physics;
         }
 
         private void Start()
