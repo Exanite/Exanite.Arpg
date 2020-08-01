@@ -122,7 +122,7 @@ namespace Prototype.LiteNetLib.Client
                     }
                 }
             }
-            
+
         }
 
         private void OnPlayerDestroy(NetPeer sender, PlayerDestroyPacket e)
@@ -136,7 +136,10 @@ namespace Prototype.LiteNetLib.Client
         {
             foreach (var playerPosition in e.playerPositions)
             {
-                players[playerPosition.id].transform.position = playerPosition.position;
+                if (players.ContainsKey(playerPosition.id))
+                {
+                    players[playerPosition.id].transform.position = playerPosition.position;
+                }
             }
         }
     }
