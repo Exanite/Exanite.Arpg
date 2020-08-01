@@ -10,7 +10,7 @@ using Zenject;
 
 namespace Exanite.Arpg.Networking.Client
 {
-    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetEventListener
+    public class UnityClient : MonoBehaviour, INetEventListener, ISerializationCallbackReceiver
     {
         [Header("Settings:")]
         [SerializeField] private string address = IPAddress.Loopback.ToString();
@@ -203,19 +203,6 @@ namespace Exanite.Arpg.Networking.Client
             netPacketProcessor.RemoveSubscription<T>();
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-            if (IPAddress != null)
-            {
-                address = IPAddress.ToString();
-            }
-        }
-
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            IPAddress = IPAddress.Parse(address);
-        }
-
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
             ConnectedEvent?.Invoke(this, new ConnectedEventArgs(peer));
@@ -264,6 +251,19 @@ namespace Exanite.Arpg.Networking.Client
         void INetEventListener.OnConnectionRequest(ConnectionRequest request)
         {
             request.Reject();
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (IPAddress != null)
+            {
+                address = IPAddress.ToString();
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            IPAddress = IPAddress.Parse(address);
         }
     }
 }
