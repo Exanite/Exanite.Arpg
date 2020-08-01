@@ -276,6 +276,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   address: 127.0.0.1
   port: 17175
+  enableDebug: 1
+  minLatency: 25
+  maxLatency: 100
+  packetLoss: 0
 --- !u!114 &856146291
 MonoBehaviour:
   m_ObjectHideFlags: 0

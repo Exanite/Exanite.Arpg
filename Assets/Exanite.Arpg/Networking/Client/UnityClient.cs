@@ -15,6 +15,11 @@ namespace Exanite.Arpg.Networking.Client
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = Constants.DefaultPort;
 
+        [SerializeField] private bool enableDebug = false;
+        [SerializeField] private int minLatency = 25;
+        [SerializeField] private int maxLatency = 100;
+        [SerializeField] private int packetLoss = 0;
+
         private bool isConnecting;
         private bool isConnected;
         private NetPeer server;
@@ -121,6 +126,11 @@ namespace Exanite.Arpg.Networking.Client
         {
             netClient = new NetManager(this);
             netPacketProcessor = new NetPacketProcessor();
+
+            netClient.SimulateLatency = enableDebug;
+            netClient.SimulationMinLatency = minLatency;
+            netClient.SimulationMaxLatency = maxLatency;
+            netClient.SimulationPacketLossChance = packetLoss;
         }
 
         private void FixedUpdate()
