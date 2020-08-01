@@ -143,13 +143,15 @@ namespace Exanite.Arpg.Networking.Server
                 throw new ArgumentNullException(nameof(receiver));
             }
 
+            ClearPacketReceiever<T>();
+
             netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
             {
                 receiver.Invoke(sender, packet);
             });
         }
 
-        public void ClearPacketReceievers<T>() where T : class, IPacket, new()
+        public void ClearPacketReceiever<T>() where T : class, IPacket, new()
         {
             netPacketProcessor.RemoveSubscription<T>();
         }
