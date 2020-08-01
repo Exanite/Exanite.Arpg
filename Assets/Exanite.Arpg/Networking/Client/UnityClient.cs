@@ -130,6 +130,7 @@ namespace Exanite.Arpg.Networking.Client
             netPacketProcessor = new NetPacketProcessor();
 
             netManager.SimulateLatency = enableDebug;
+            netManager.SimulatePacketLoss = enableDebug;
             netManager.SimulationMinLatency = minLatency;
             netManager.SimulationMaxLatency = maxLatency;
             netManager.SimulationPacketLossChance = packetLoss;
