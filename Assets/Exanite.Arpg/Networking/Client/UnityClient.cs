@@ -29,7 +29,7 @@ namespace Exanite.Arpg.Networking.Client
         private IPAddress ipAddress;
         private DisconnectInfo previousDisconnectInfo;
 
-        private NetManager netClient;
+        private NetManager netManager;
         private NetPacketProcessor netPacketProcessor;
 
         private NetDataWriter writer = new NetDataWriter();
@@ -126,18 +126,18 @@ namespace Exanite.Arpg.Networking.Client
 
         private void Awake()
         {
-            netClient = new NetManager(this);
+            netManager = new NetManager(this);
             netPacketProcessor = new NetPacketProcessor();
 
-            netClient.SimulateLatency = enableDebug;
-            netClient.SimulationMinLatency = minLatency;
-            netClient.SimulationMaxLatency = maxLatency;
-            netClient.SimulationPacketLossChance = packetLoss;
+            netManager.SimulateLatency = enableDebug;
+            netManager.SimulationMinLatency = minLatency;
+            netManager.SimulationMaxLatency = maxLatency;
+            netManager.SimulationPacketLossChance = packetLoss;
         }
 
         private void FixedUpdate()
         {
-            netClient.PollEvents();
+            netManager.PollEvents();
         }
 
         private void OnDestroy()
@@ -158,8 +158,8 @@ namespace Exanite.Arpg.Networking.Client
 
             IsConnecting = true;
 
-            netClient.Start();
-            netClient.Connect(new IPEndPoint(IPAddress, Port), Constants.ConnectionKey);
+            netManager.Start();
+            netManager.Connect(new IPEndPoint(IPAddress, Port), Constants.ConnectionKey);
 
             await UniTask.WaitUntil(() => !IsConnecting);
 
@@ -168,7 +168,7 @@ namespace Exanite.Arpg.Networking.Client
 
         public void Disconnect()
         {
-            netClient.Stop();
+            netManager.Stop();
         }
 
         public void SendPacket<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
