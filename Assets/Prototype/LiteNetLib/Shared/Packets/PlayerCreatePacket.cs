@@ -7,17 +7,17 @@ namespace Prototype.LiteNetLib.Shared.Packets
 {
     public class PlayerCreatePacket : IPacket
     {
-        public List<PlayerPosition> playerPositions = new List<PlayerPosition>();
+        public List<NewPlayer> newPlayers = new List<NewPlayer>();
 
         public PlayerCreatePacket() { }
 
         public PlayerCreatePacket(ICollection<Player> players)
         {
-            playerPositions.Capacity = players.Count;
+            newPlayers.Capacity = players.Count;
 
             foreach (var player in players)
             {
-                playerPositions.Add(new PlayerPosition(player.id, player.transform.position));
+                newPlayers.Add(new NewPlayer(player.Id, player.transform.position));
             }
         }
 
@@ -25,36 +25,36 @@ namespace Prototype.LiteNetLib.Shared.Packets
         {
             int count = reader.GetInt();
 
-            playerPositions.Clear();
+            newPlayers.Clear();
             
-            if(playerPositions.Capacity < count)
+            if(newPlayers.Capacity < count)
             {
-                playerPositions.Capacity = count;
+                newPlayers.Capacity = count;
             }
 
             for (int i = 0; i < count; i++)
             {
-                playerPositions.Add(new PlayerPosition(reader.GetInt(), reader.GetVector2()));
+                newPlayers.Add(new NewPlayer(reader.GetInt(), reader.GetVector2()));
             }
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.Put(playerPositions.Count);
+            writer.Put(newPlayers.Count);
 
-            for (int i = 0; i < playerPositions.Count; i++)
+            for (int i = 0; i < newPlayers.Count; i++)
             {
-                writer.Put(playerPositions[i].id);
-                writer.Put(playerPositions[i].position);
+                writer.Put(newPlayers[i].id);
+                writer.Put(newPlayers[i].position);
             }
         }
 
-        public struct PlayerPosition
+        public struct NewPlayer
         {
             public int id;
             public Vector2 position;
 
-            public PlayerPosition(int id, Vector2 position)
+            public NewPlayer(int id, Vector2 position)
             {
                 this.id = id;
                 this.position = position;

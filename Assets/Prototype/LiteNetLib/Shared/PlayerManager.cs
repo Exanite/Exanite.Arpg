@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using Prototype.LiteNetLib.Server;
 
 namespace Prototype.LiteNetLib.Shared
 {
     public class PlayerManager
     {
-        private Dictionary<int, PlayerConnection> playersById = new Dictionary<int, PlayerConnection>();
+        private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public ICollection<PlayerConnection> ConnectedPlayers
+        public ICollection<Player> Players
         {
             get
             {
@@ -15,22 +14,27 @@ namespace Prototype.LiteNetLib.Shared
             }
         }
 
-        public void AddPlayer(PlayerConnection connection)
+        public void AddPlayer(Player player)
         {
-            playersById.Add(connection.Id, connection);
+            playersById.Add(player.Id, player);
         }
 
-        public void RemovePlayer(PlayerConnection connection)
+        public void RemovePlayer(Player player)
         {
-            playersById.Remove(connection.Id);
+            playersById.Remove(player.Id);
         }
 
-        public bool Contains(ushort id)
+        public void RemovePlayer(int id)
+        {
+            playersById.Remove(id);
+        }
+
+        public bool Contains(int id)
         {
             return playersById.ContainsKey(id);
         }
 
-        public PlayerConnection GetPlayerConnection(ushort id)
+        public Player GetPlayer(int id)
         {
             return playersById[id];
         }

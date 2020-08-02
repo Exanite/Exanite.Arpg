@@ -15,7 +15,7 @@ namespace Prototype.LiteNetLib.Server
     {
         public UnityServer server;
 
-        public Dictionary<NetPeer, Player> players = new Dictionary<NetPeer, Player>();
+        public PlayerManager playerManager = new PlayerManager();
 
         private ILog log;
         private Scene scene;
@@ -36,7 +36,7 @@ namespace Prototype.LiteNetLib.Server
 
         private void Update() // replace with server tick loop
         {
-            foreach (var player in players.Values)
+            foreach (var player in playerManager.Players)
             {
                 player.transform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
 
@@ -74,7 +74,7 @@ namespace Prototype.LiteNetLib.Server
 
         private void OnDrawGizmos()
         {
-            foreach (var player in players.Values)
+            foreach (var player in playerManager.Players)
             {
                 Gizmos.color = Color.red;
 
@@ -103,13 +103,13 @@ namespace Prototype.LiteNetLib.Server
 
         private void CreateNewPlayer(NetPeer peer)
         {
-            var player = new Player(peer.Id, scene);
+            var connection = new PlayerConnection() { Id = peer.Id, Peer = peer };
+            var player = new Player(connection, scene);
 
             float angle = Random.Range(0, 360);
-
             player.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
 
-            players.Add(peer, player);
+            playerManager.AddPlayer(player);
         }
 
         private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
@@ -120,11 +120,11 @@ namespace Prototype.LiteNetLib.Server
 
             CreateNewPlayer(e.Peer);
 
-            var packet = new PlayerCreatePacket(players.Values);
+            var packet = new PlayerCreatePacket(playerManager.Players);
 
-            foreach (var peer in players.Keys)
+            foreach (var player in playerManager.Players)
             {
-                server.SendPacket(peer, packet, DeliveryMethod.ReliableOrdered);
+                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }
 
@@ -132,30 +132,31 @@ namespace Prototype.LiteNetLib.Server
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            Destroy(players[e.Peer].transform.gameObject);
+            Destroy(playerManager.GetPlayer(e.Peer.Id).transform.gameObject);
 
-            players.Remove(e.Peer);
+            playerManager.RemovePlayer(e.Peer.Id);
 
             var packet = new PlayerDestroyPacket() { id = e.Peer.Id };
 
-            foreach (var peer in players.Keys)
+            foreach (var player in playerManager.Players)
             {
-                server.SendPacket(peer, packet, DeliveryMethod.ReliableOrdered);
+                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }
 
         private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         {
-            players[sender].movementInput = e.movementInput;
+            var player = playerManager.GetPlayer(sender.Id);
+            player.movementInput = e.movementInput;
         }
 
         private void SendPositionUpdates()
         {
-            var packet = new PlayerPositionUpdatePacket(players.Values);
+            var packet = new PlayerPositionUpdatePacket(playerManager.Players);
 
-            foreach (var peer in players.Keys)
+            foreach (var player in playerManager.Players)
             {
-                server.SendPacket(peer, packet, DeliveryMethod.Unreliable);
+                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.Unreliable);
             }
         }
     }

@@ -20,7 +20,7 @@ namespace Prototype.LiteNetLib.Client
 
         public bool isDisconnecting = false;
 
-        private Dictionary<int, Player> players = new Dictionary<int, Player>();
+        private PlayerManager playerManager = new PlayerManager();
 
         private Player localPlayer;
         private PlayerController playerController;
@@ -54,7 +54,7 @@ namespace Prototype.LiteNetLib.Client
 
         private void OnDrawGizmos()
         {
-            foreach (var player in players.Values)
+            foreach (var player in playerManager.Players)
             {
                 Gizmos.color = Color.red * 0.1f;
 
@@ -102,16 +102,18 @@ namespace Prototype.LiteNetLib.Client
 
         private void OnPlayerCreate(NetPeer sender, PlayerCreatePacket e)
         {
-            foreach (var playerPosition in e.playerPositions)
+            foreach (var newPlayer in e.newPlayers)
             {
-                if (!players.ContainsKey(playerPosition.id))
+                if (!playerManager.Contains(newPlayer.id))
                 {
-                    var player = new Player(playerPosition.id, scene);
-                    player.transform.position = playerPosition.position;
+                    var connection = new PlayerConnection() { Id = newPlayer.id };
+                    var player = new Player(connection, scene);
 
-                    players.Add(playerPosition.id, player);
+                    player.transform.position = newPlayer.position;
 
-                    if (playerPosition.id == id)
+                    playerManager.AddPlayer(player);
+
+                    if (newPlayer.id == id)
                     {
                         localPlayer = player;
                         localPlayer.transform.gameObject.name += " (Local)";
@@ -127,18 +129,20 @@ namespace Prototype.LiteNetLib.Client
 
         private void OnPlayerDestroy(NetPeer sender, PlayerDestroyPacket e)
         {
-            Destroy(players[e.id].transform.gameObject);
+            var player = playerManager.GetPlayer(e.id);
 
-            players.Remove(e.id);
+            Destroy(player.transform.gameObject);
+            playerManager.RemovePlayer(player);
         }
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
             foreach (var playerPosition in e.playerPositions)
             {
-                if (players.ContainsKey(playerPosition.id))
+                if (playerManager.Contains(playerPosition.id))
                 {
-                    players[playerPosition.id].transform.position = playerPosition.position;
+                    var player = playerManager.GetPlayer(playerPosition.id);
+                    player.transform.position = playerPosition.position;
                 }
             }
         }

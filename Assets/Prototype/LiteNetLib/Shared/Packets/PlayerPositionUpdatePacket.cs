@@ -17,7 +17,7 @@ namespace Prototype.LiteNetLib.Shared.Packets
 
             foreach (var player in players)
             {
-                playerPositions.Add(new PlayerPosition(player.id, player.transform.position));
+                playerPositions.Add(new PlayerPosition(player.Id, player.transform.position));
             }
         }
 

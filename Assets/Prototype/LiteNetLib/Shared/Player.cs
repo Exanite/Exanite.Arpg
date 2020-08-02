@@ -5,17 +5,43 @@ namespace Prototype.LiteNetLib.Shared
 {
     public class Player
     {
-        public int id;
-        public Transform transform;
+        private PlayerConnection connection;
 
-        public Vector2 movementInput;
+        public Transform transform; // todo Replace with reference to PlayerCharacter class
+        public Vector2 movementInput; // todo better impl
 
-        public Player(int id, Scene scene)
+        public Player(PlayerConnection connection, Scene scene)
         {
-            this.id = id;
+            Connection = connection;
 
+            CreatePlayerCharacter(Id, scene); // todo should not be automatically called later on
+        }
+
+        public void CreatePlayerCharacter(int id, Scene scene)
+        {
             transform = new GameObject($"Player {id.ToString()}").transform;
             SceneManager.MoveGameObjectToScene(transform.gameObject, scene);
         }
-    } 
+
+        public PlayerConnection Connection
+        {
+            get
+            {
+                return connection;
+            }
+
+            set
+            {
+                connection = value;
+            }
+        }
+
+        public int Id
+        {
+            get
+            {
+                return connection.Id;
+            }
+        }
+    }
 }
