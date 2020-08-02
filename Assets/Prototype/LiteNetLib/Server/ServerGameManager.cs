@@ -114,9 +114,9 @@ namespace Prototype.LiteNetLib.Server
 
         private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
         {
-            log.Information("Player {ClientID} connected", e.Peer.Id);
+            log.Information("Player {Id} connected", e.Peer.Id);
 
-            server.SendPacket(e.Peer, new PlayerIDAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
 
             CreateNewPlayer(e.Peer);
 
@@ -130,7 +130,7 @@ namespace Prototype.LiteNetLib.Server
 
         private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
         {
-            log.Information("Player {ClientID} disconnected", e.Peer.Id);
+            log.Information("Player {Id} disconnected", e.Peer.Id);
 
             Destroy(players[e.Peer].transform.gameObject);
 

@@ -3,7 +3,7 @@ using LiteNetLib.Utils;
 
 namespace Prototype.LiteNetLib.Shared.Packets
 {
-    public class PlayerIDAssignmentPacket : IPacket
+    public class PlayerIdAssignmentPacket : IPacket
     {
         public int id;
 

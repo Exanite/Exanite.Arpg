@@ -64,7 +64,7 @@ namespace Prototype.LiteNetLib.Client
 
         public void Connect()
         {
-            client.SubscribePacketReceiver<PlayerIDAssignmentPacket>(OnPlayerIDAssignment);
+            client.SubscribePacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
             client.SubscribePacketReceiver<PlayerCreatePacket>(OnPlayerCreate);
             client.SubscribePacketReceiver<PlayerDestroyPacket>(OnPlayerDestroy);
             client.SubscribePacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
@@ -95,7 +95,7 @@ namespace Prototype.LiteNetLib.Client
             SceneManager.UnloadSceneAsync(scene);
         }
 
-        private void OnPlayerIDAssignment(NetPeer sender, PlayerIDAssignmentPacket e)
+        private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
             id = e.id;
         }

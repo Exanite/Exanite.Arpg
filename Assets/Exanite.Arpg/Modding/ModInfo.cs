@@ -10,22 +10,22 @@ namespace Exanite.Arpg.Modding
         public const string BundlesFolderName = "Bundles";
         public const string SourceCodeFolderName = "Source";
 
-        [SerializeField, HideInInspector] private string modID;
+        [SerializeField, HideInInspector] private string modId;
         [SerializeField, HideInInspector] private string modName;
         [SerializeField, HideInInspector] private string modDescription;
         [SerializeField, HideInInspector] private string modVersion;
 
         [JsonProperty]
-        public string ModID
+        public string ModId
         {
             get
             {
-                return modID;
+                return modId;
             }
 
             set
             {
-                modID = value;
+                modId = value;
             }
         }
 

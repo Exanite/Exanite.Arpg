@@ -5,34 +5,34 @@ namespace Prototype.LiteNetLib.Shared
 {
     public class PlayerManager
     {
-        private Dictionary<int, PlayerConnection> playersByID = new Dictionary<int, PlayerConnection>();
+        private Dictionary<int, PlayerConnection> playersById = new Dictionary<int, PlayerConnection>();
 
         public ICollection<PlayerConnection> ConnectedPlayers
         {
             get
             {
-                return playersByID.Values;
+                return playersById.Values;
             }
         }
 
         public void AddPlayer(PlayerConnection connection)
         {
-            playersByID.Add(connection.ID, connection);
+            playersById.Add(connection.Id, connection);
         }
 
         public void RemovePlayer(PlayerConnection connection)
         {
-            playersByID.Remove(connection.ID);
+            playersById.Remove(connection.Id);
         }
 
         public bool Contains(ushort id)
         {
-            return playersByID.ContainsKey(id);
+            return playersById.ContainsKey(id);
         }
 
         public PlayerConnection GetPlayerConnection(ushort id)
         {
-            return playersByID[id];
+            return playersById[id];
         }
     }
 }

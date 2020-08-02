@@ -13,9 +13,9 @@ namespace Prototype.LiteNetLib.Shared
         private string name;
 
         /// <summary>
-        /// Network ID of the connected player
+        /// Network Id of the connected player
         /// </summary>
-        public int ID
+        public int Id
         {
             get
             {
