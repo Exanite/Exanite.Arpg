@@ -8,7 +8,7 @@ namespace Prototype.LiteNetLib.Server
     public class PlayerConnection
     {
         private int id;
-        private NetPeer client;
+        private NetPeer peer;
 
         private string name;
 
@@ -31,16 +31,16 @@ namespace Prototype.LiteNetLib.Server
         /// <summary>
         /// The <see cref="NetPeer"/> of the connected player
         /// </summary>
-        public NetPeer Client
+        public NetPeer Peer
         {
             get
             {
-                return client;
+                return peer;
             }
 
             set
             {
-                client = value;
+                peer = value;
             }
         }
 
