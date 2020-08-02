@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.LiteNetLib.Shared;
-using Prototype.LiteNetLib.Shared.Packets;
+using Prototype.LiteNetLib.Players;
+using Prototype.LiteNetLib.Players.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,10 +34,8 @@ namespace Prototype.LiteNetLib.Client
             this.scene = scene;
         }
 
-        private IEnumerator Start()
+        private void Start()
         {
-            yield return new WaitForSeconds(1);
-
             Connect();
         }
 

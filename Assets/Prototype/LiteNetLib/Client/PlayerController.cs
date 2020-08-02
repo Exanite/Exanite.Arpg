@@ -1,7 +1,7 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.LiteNetLib.Shared;
-using Prototype.LiteNetLib.Shared.Packets;
+using Prototype.LiteNetLib.Players;
+using Prototype.LiteNetLib.Players.Packets;
 using UnityEngine;
 
 namespace Prototype.LiteNetLib.Client

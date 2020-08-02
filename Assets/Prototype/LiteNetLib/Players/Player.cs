@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prototype.LiteNetLib.Shared
+namespace Prototype.LiteNetLib.Players
 {
     public class Player
     {

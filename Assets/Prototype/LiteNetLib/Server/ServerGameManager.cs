@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Exanite.Arpg.Logging;
+﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
-using Prototype.LiteNetLib.Shared;
-using Prototype.LiteNetLib.Shared.Packets;
+using Prototype.LiteNetLib.Players;
+using Prototype.LiteNetLib.Players.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;

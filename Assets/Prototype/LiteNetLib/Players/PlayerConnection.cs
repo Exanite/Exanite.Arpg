@@ -1,6 +1,6 @@
 ﻿using LiteNetLib;
 
-namespace Prototype.LiteNetLib.Shared
+namespace Prototype.LiteNetLib.Players
 {
     /// <summary>
     /// Represents a player connected to the server<para/>
