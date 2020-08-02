@@ -37,34 +37,36 @@ namespace Prototype.LiteNetLib.Server
         {
             foreach (var player in playerManager.Players)
             {
-                player.transform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
+                var playerTransform = player.character.transform;
+
+                playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
 
-                if (player.transform.position.x > horizontalExtents)
+                if (playerTransform.position.x > horizontalExtents)
                 {
-                    Vector2 newPosition = player.transform.position;
+                    Vector2 newPosition = playerTransform.position;
                     newPosition.x -= horizontalExtents * 2;
-                    player.transform.position = newPosition;
+                    playerTransform.position = newPosition;
                 }
-                else if (player.transform.position.x < -horizontalExtents)
+                else if (playerTransform.position.x < -horizontalExtents)
                 {
-                    Vector2 newPosition = player.transform.position;
+                    Vector2 newPosition = playerTransform.position;
                     newPosition.x += horizontalExtents * 2;
-                    player.transform.position = newPosition;
+                    playerTransform.position = newPosition;
                 }
-                else if (player.transform.position.y > verticalExtents)
+                else if (playerTransform.position.y > verticalExtents)
                 {
-                    Vector2 newPosition = player.transform.position;
+                    Vector2 newPosition = playerTransform.position;
                     newPosition.y -= verticalExtents * 2;
-                    player.transform.position = newPosition;
+                    playerTransform.position = newPosition;
                 }
-                else if (player.transform.position.y < -verticalExtents)
+                else if (playerTransform.position.y < -verticalExtents)
                 {
-                    Vector2 newPosition = player.transform.position;
+                    Vector2 newPosition = playerTransform.position;
                     newPosition.y += verticalExtents * 2;
-                    player.transform.position = newPosition;
+                    playerTransform.position = newPosition;
                 }
 
                 SendPositionUpdates();
@@ -77,7 +79,7 @@ namespace Prototype.LiteNetLib.Server
             {
                 Gizmos.color = Color.red;
 
-                Gizmos.DrawSphere(player.transform.position, 0.5f);
+                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
             }
         }
 
@@ -106,7 +108,7 @@ namespace Prototype.LiteNetLib.Server
             var player = new Player(connection, scene);
 
             float angle = Random.Range(0, 360);
-            player.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
+            player.character.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
 
             playerManager.AddPlayer(player);
         }
@@ -131,9 +133,10 @@ namespace Prototype.LiteNetLib.Server
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            Destroy(playerManager.GetPlayer(e.Peer.Id).transform.gameObject);
+            var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
 
-            playerManager.RemovePlayer(e.Peer.Id);
+            Destroy(disconnectedPlayer.character.transform.gameObject);
+            playerManager.RemovePlayer(disconnectedPlayer);
 
             var packet = new PlayerDestroyPacket() { id = e.Peer.Id };
 

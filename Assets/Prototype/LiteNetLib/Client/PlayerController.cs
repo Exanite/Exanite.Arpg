@@ -8,12 +8,12 @@ namespace Prototype.LiteNetLib.Client
 {
     public class PlayerController : MonoBehaviour
     {
-        public static PlayerController Current; //! hack for making sure only 1 player is locally controlled at a time
+        public static PlayerController Current; // ! hack for making sure only 1 player is locally controlled at a time
 
-        public UnityClient client;
+        public UnityClient client; // inject this later
         public Player player;
 
-        public bool forceEnableControls = false;
+        public bool forceEnableControls = false; // used for debug
 
         private float seed;
 

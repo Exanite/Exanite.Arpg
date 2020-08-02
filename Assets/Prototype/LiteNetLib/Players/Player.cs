@@ -7,20 +7,15 @@ namespace Prototype.LiteNetLib.Players
     {
         private PlayerConnection connection;
 
-        public Transform transform; // todo Replace with reference to PlayerCharacter class
+        public PlayerCharacter character;
+
         public Vector2 movementInput; // todo better impl
 
         public Player(PlayerConnection connection, Scene scene)
         {
             Connection = connection;
 
-            CreatePlayerCharacter(Id, scene); // todo should not be automatically called later on
-        }
-
-        public void CreatePlayerCharacter(int id, Scene scene)
-        {
-            transform = new GameObject($"Player {id.ToString()}").transform;
-            SceneManager.MoveGameObjectToScene(transform.gameObject, scene);
+            CreatePlayerCharacter(scene); // todo should not be automatically called later on
         }
 
         public PlayerConnection Connection
@@ -42,6 +37,14 @@ namespace Prototype.LiteNetLib.Players
             {
                 return connection.Id;
             }
+        }
+
+        public void CreatePlayerCharacter(Scene scene)
+        {
+            character = new GameObject($"Player {Id}").AddComponent<PlayerCharacter>();
+            character.player = this;
+
+            SceneManager.MoveGameObjectToScene(character.gameObject, scene);
         }
     }
 }

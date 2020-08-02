@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Exanite.Arpg.Logging;
+﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.LiteNetLib.Players;
@@ -55,7 +54,7 @@ namespace Prototype.LiteNetLib.Client
             {
                 Gizmos.color = Color.red * 0.1f;
 
-                Gizmos.DrawSphere(player.transform.position, 0.5f);
+                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
             }
         }
 
@@ -106,16 +105,16 @@ namespace Prototype.LiteNetLib.Client
                     var connection = new PlayerConnection() { Id = newPlayer.id };
                     var player = new Player(connection, scene);
 
-                    player.transform.position = newPlayer.position;
+                    player.character.transform.position = newPlayer.position;
 
                     playerManager.AddPlayer(player);
 
                     if (newPlayer.id == id)
                     {
                         localPlayer = player;
-                        localPlayer.transform.gameObject.name += " (Local)";
+                        localPlayer.character.transform.gameObject.name += " (Local)";
 
-                        playerController = localPlayer.transform.gameObject.AddComponent<PlayerController>();
+                        playerController = localPlayer.character.transform.gameObject.AddComponent<PlayerController>();
                         playerController.client = client;
                         playerController.player = localPlayer;
                     }
@@ -128,7 +127,7 @@ namespace Prototype.LiteNetLib.Client
         {
             var player = playerManager.GetPlayer(e.id);
 
-            Destroy(player.transform.gameObject);
+            Destroy(player.character.transform.gameObject);
             playerManager.RemovePlayer(player);
         }
 
@@ -139,7 +138,8 @@ namespace Prototype.LiteNetLib.Client
                 if (playerManager.Contains(playerPosition.id))
                 {
                     var player = playerManager.GetPlayer(playerPosition.id);
-                    player.transform.position = playerPosition.position;
+
+                    player.character.transform.position = playerPosition.position;
                 }
             }
         }
