@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Prototype.LiteNetLib.Server;
 
-namespace Prototype.LiteNetLib.Server
+namespace Prototype.LiteNetLib.Shared
 {
     public class PlayerManager
     {
