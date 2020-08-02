@@ -34,7 +34,7 @@ namespace Prototype.LiteNetLib.Server
             StartServer();
         }
 
-        private void Update() // replace with server tick loop
+        private void FixedUpdate()
         {
             foreach (var player in playerManager.Players)
             {

@@ -22,7 +22,7 @@ namespace Prototype.LiteNetLib.Client
             seed = Random.Range(-1000f, 1000f);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (forceEnableControls)
             {
