@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-public class SceneLoader : MonoBehaviour
+public class GameLoader : MonoBehaviour
 {
     public string serverSceneName = "Server";
     public string clientSceneName = "Client";
