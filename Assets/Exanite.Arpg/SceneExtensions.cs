@@ -5,6 +5,16 @@ namespace Exanite.Arpg
 {
     public static class SceneExtensions
     {
+        public static GameObject Instantiate(this Scene scene, GameObject original)
+        {
+            return scene.Instantiate(original, Vector3.zero, Quaternion.identity);
+        }
+
+        public static T Instantiate<T>(this Scene scene, T original) where T : Component
+        {
+            return scene.Instantiate(original, Vector3.zero, Quaternion.identity);
+        }
+
         public static GameObject Instantiate(this Scene scene, GameObject original, Vector3 position, Quaternion rotation)
         {
             var gameObject = Object.Instantiate(original, position, rotation);
