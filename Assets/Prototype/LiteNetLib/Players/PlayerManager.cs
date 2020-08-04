@@ -19,6 +19,14 @@ namespace Prototype.LiteNetLib.Players
             }
         }
 
+        public int PlayerCount
+        {
+            get
+            {
+                return playersById.Count;
+            }
+        }
+
         public void AddPlayer(Player player)
         {
             playersById.Add(player.Id, player);
