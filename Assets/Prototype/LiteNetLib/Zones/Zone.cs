@@ -8,9 +8,9 @@ namespace Prototype.LiteNetLib.Zones
     public class Zone
     {
         public Guid guid;
-        public Transform root;
 
-        private Scene scene;
+        public Transform root;
+        public Scene scene;
 
         public Zone(GameObject zonePrefab)
         {

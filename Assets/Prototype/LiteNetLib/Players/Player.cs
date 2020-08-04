@@ -1,4 +1,5 @@
 ﻿using Exanite.Arpg;
+using Prototype.LiteNetLib.Zones;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,11 +13,9 @@ namespace Prototype.LiteNetLib.Players
 
         public Vector2 movementInput; // todo better impl
 
-        public Player(PlayerConnection connection, Scene scene)
+        public Player(PlayerConnection connection)
         {
             Connection = connection;
-
-            CreatePlayerCharacter(scene); // todo should not be automatically called later on
         }
 
         public PlayerConnection Connection
@@ -40,9 +39,9 @@ namespace Prototype.LiteNetLib.Players
             }
         }
 
-        public void CreatePlayerCharacter(Scene scene)
+        public void CreatePlayerCharacter(Zone zone)
         {
-            character = scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
+            character = zone.scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
             character.player = this;
         }
     }

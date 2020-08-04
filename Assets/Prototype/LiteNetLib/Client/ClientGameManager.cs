@@ -103,7 +103,7 @@ namespace Prototype.LiteNetLib.Client
                 if (!playerManager.Contains(newPlayer.id))
                 {
                     var connection = new PlayerConnection() { Id = newPlayer.id };
-                    var player = new Player(connection, scene);
+                    var player = new Player(connection);
 
                     player.character.transform.position = newPlayer.position;
 

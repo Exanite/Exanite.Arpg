@@ -103,7 +103,7 @@ namespace Prototype.LiteNetLib.Server
         private void CreateNewPlayer(NetPeer peer)
         {
             var connection = new PlayerConnection() { Id = peer.Id, Peer = peer };
-            var player = new Player(connection, scene);
+            var player = new Player(connection);
 
             float angle = Random.Range(0, 360);
             player.character.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
