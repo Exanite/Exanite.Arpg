@@ -27,13 +27,26 @@ public class GameLoader : MonoBehaviour
 
     private void Start()
     {
-        var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-
-        SceneManager.LoadScene(serverSceneName, loadSceneParameters);
+        CreateServer();
 
         for (int i = 0; i < numberOfClients; i++)
         {
-            SceneManager.LoadScene(clientSceneName, loadSceneParameters);
+            CreateClient();
         }
+    }
+
+    public void CreateServer()
+    {
+        var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+
+        SceneManager.LoadScene(serverSceneName, loadSceneParameters);
+    }
+
+    [ContextMenu("Create new Client")]
+    public void CreateClient()
+    {
+        var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+
+        SceneManager.LoadScene(clientSceneName, loadSceneParameters);
     }
 }
