@@ -26,10 +26,10 @@ namespace Prototype.LiteNetLib.Server
             this.playerManager = playerManager;
         }
 
-        private void Start()
-        {
-            StartServer();
-        }
+        //private void Start()
+        //{
+        //    StartServer();
+        //}
 
         private void FixedUpdate()
         {

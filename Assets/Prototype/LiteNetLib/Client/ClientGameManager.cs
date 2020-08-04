@@ -33,10 +33,10 @@ namespace Prototype.LiteNetLib.Client
             this.playerManager = playerManager;
         }
 
-        private void Start()
-        {
-            Connect();
-        }
+        //private void Start()
+        //{
+        //    Connect();
+        //}
 
         private void Update()
         {
