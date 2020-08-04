@@ -116,11 +116,9 @@ namespace Prototype.LiteNetLib.Server
             log.Information("Player {Id} connected", e.Peer.Id);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-
             CreateNewPlayer(e.Peer);
 
             var packet = new PlayerCreatePacket(playerManager.Players);
-
             foreach (var player in playerManager.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
@@ -132,12 +130,10 @@ namespace Prototype.LiteNetLib.Server
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
             var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
-
             Destroy(disconnectedPlayer.character.transform.gameObject);
             playerManager.RemovePlayer(disconnectedPlayer);
 
             var packet = new PlayerDestroyPacket() { id = e.Peer.Id };
-
             foreach (var player in playerManager.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
@@ -146,8 +142,10 @@ namespace Prototype.LiteNetLib.Server
 
         private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         {
-            var player = playerManager.GetPlayer(sender.Id);
-            player.movementInput = e.movementInput;
+            if(playerManager.TryGetPlayer(sender.Id, out Player player))
+            {
+                player.movementInput = e.movementInput;
+            }
         }
 
         private void SendPositionUpdates()

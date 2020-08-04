@@ -58,5 +58,19 @@ namespace Prototype.LiteNetLib.Players
         {
             return playersById[id];
         }
+
+        public bool TryGetPlayer(int id, out Player player)
+        {
+            player = null;
+
+            if (Contains(id))
+            {
+                player = playersById[id];
+
+                return true;
+            }
+
+            return false;
+        }
     }
 }

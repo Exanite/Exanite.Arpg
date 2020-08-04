@@ -135,10 +135,8 @@ namespace Prototype.LiteNetLib.Client
         {
             foreach (var playerPosition in e.playerPositions)
             {
-                if (playerManager.Contains(playerPosition.id))
+                if (playerManager.TryGetPlayer(playerPosition.id, out Player player))
                 {
-                    var player = playerManager.GetPlayer(playerPosition.id);
-
                     player.character.transform.position = playerPosition.position;
                 }
             }
