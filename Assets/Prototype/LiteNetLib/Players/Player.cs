@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Exanite.Arpg;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Prototype.LiteNetLib.Players
@@ -41,10 +42,8 @@ namespace Prototype.LiteNetLib.Players
 
         public void CreatePlayerCharacter(Scene scene)
         {
-            character = new GameObject($"Player {Id}").AddComponent<PlayerCharacter>();
+            character = scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
             character.player = this;
-
-            SceneManager.MoveGameObjectToScene(character.gameObject, scene);
         }
     }
 }
