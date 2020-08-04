@@ -14,18 +14,16 @@ namespace Prototype.LiteNetLib.Server
     {
         public UnityServer server;
 
-        public PlayerManager playerManager = new PlayerManager();
-
         private ILog log;
         private Scene scene;
-        private PhysicsScene physics;
+        public PlayerManager playerManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, PhysicsScene physics)
+        public void Inject(ILog log, Scene scene, PlayerManager playerManager)
         {
             this.log = log;
             this.scene = scene;
-            this.physics = physics;
+            this.playerManager = playerManager;
         }
 
         private void Start()

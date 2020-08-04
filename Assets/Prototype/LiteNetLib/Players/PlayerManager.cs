@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg.Networking;
+using UnityEngine;
 
 namespace Prototype.LiteNetLib.Players
 {
-    public class PlayerManager
+    public class PlayerManager : MonoBehaviour
     {
         private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 

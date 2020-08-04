@@ -18,19 +18,19 @@ namespace Prototype.LiteNetLib.Client
 
         public bool isDisconnecting = false;
 
-        private PlayerManager playerManager = new PlayerManager();
-
         private Player localPlayer;
         private PlayerController playerController;
 
         private ILog log;
         private Scene scene;
+        private PlayerManager playerManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene)
+        public void Inject(ILog log, Scene scene, PlayerManager playerManager)
         {
             this.log = log;
             this.scene = scene;
+            this.playerManager = playerManager;
         }
 
         private void Start()
