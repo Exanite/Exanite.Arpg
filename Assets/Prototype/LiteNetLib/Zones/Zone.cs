@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Exanite.Arpg;
+using Exanite.Arpg.Networking;
+using Prototype.LiteNetLib.Players;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,21 +15,41 @@ namespace Prototype.LiteNetLib.Zones
         public Transform root;
         public Scene scene;
 
+        public HashSet<Player> players = new HashSet<Player>();
+
         public Zone(GameObject zonePrefab)
         {
             guid = Guid.NewGuid();
 
+            CreateZone(zonePrefab);
+        }
+
+        public event EventHandler<Zone, Player> PlayerEnteredEvent;
+
+        public event EventHandler<Zone, Player> PlayerLeftEvent;
+
+        private void CreateZone(GameObject levelPrefab)
+        {
             var createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
             scene = SceneManager.CreateScene(guid.ToString(), createSceneParameters);
 
-            root = CreateZone(zonePrefab);
+            root = scene.Instantiate(levelPrefab).transform;
         }
 
-        private Transform CreateZone(GameObject levelPrefab)
+        public void AddPlayer(Player player)
         {
-            var levelGameObject = scene.Instantiate(levelPrefab, Vector3.zero, Quaternion.identity);
+            if (players.Add(player))
+            {
+                PlayerEnteredEvent?.Invoke(this, player);
+            }
+        }
 
-            return levelGameObject.transform;
+        public void RemovePlayer(Player player)
+        {
+            if (players.Remove(player))
+            {
+                PlayerLeftEvent?.Invoke(this, player);
+            }
         }
     }
 }
