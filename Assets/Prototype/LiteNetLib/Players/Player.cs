@@ -1,7 +1,6 @@
 ﻿using Exanite.Arpg;
 using Prototype.LiteNetLib.Zones;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Prototype.LiteNetLib.Players
 {

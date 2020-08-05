@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Exanite.Arpg.Networking;
+using Exanite.Arpg;
 using UnityEngine;
 
 namespace Prototype.LiteNetLib.Players

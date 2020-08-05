@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Exanite.Arpg;
-using Exanite.Arpg.Networking;
 using Prototype.LiteNetLib.Players;
 using UnityEngine;
 using UnityEngine.SceneManagement;
