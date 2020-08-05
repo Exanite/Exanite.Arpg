@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Prototype.LiteNetLib.Players
+namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {

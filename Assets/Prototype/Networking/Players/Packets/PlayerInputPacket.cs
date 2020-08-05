@@ -2,7 +2,7 @@
 using LiteNetLib.Utils;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Players.Packets
+namespace Prototype.Networking.Players.Packets
 {
     public class PlayerInputPacket : IPacket
     {

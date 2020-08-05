@@ -1,38 +1,41 @@
-﻿using Prototype.LiteNetLib.Players;
+﻿using Prototype.Networking.Players;
 using UnityEditor;
 
-[CustomEditor(typeof(PlayerManager))]
-public class PlayerManagerEditor : Editor
+namespace Prototype.Editor
 {
-    public PlayerManager TypedTarget;
-
-    public bool isPlayersFoldoutOpen = false;
-
-    private void OnEnable()
+    [CustomEditor(typeof(PlayerManager))]
+    public class PlayerManagerEditor : UnityEditor.Editor
     {
-        TypedTarget = (PlayerManager)target;
-    }
+        public PlayerManager TypedTarget;
 
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
+        public bool isPlayersFoldoutOpen = false;
 
-        EditorGUILayout.IntField("Player Count", TypedTarget.PlayerCount);
-
-        if (TypedTarget.PlayerCount > 0)
+        private void OnEnable()
         {
-            isPlayersFoldoutOpen = EditorGUILayout.Foldout(isPlayersFoldoutOpen, "Players");
-            if (isPlayersFoldoutOpen)
+            TypedTarget = (PlayerManager)target;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            EditorGUILayout.IntField("Player Count", TypedTarget.PlayerCount);
+
+            if (TypedTarget.PlayerCount > 0)
             {
-                EditorGUI.indentLevel++;
-
-                foreach (var player in TypedTarget.Players)
+                isPlayersFoldoutOpen = EditorGUILayout.Foldout(isPlayersFoldoutOpen, "Players");
+                if (isPlayersFoldoutOpen)
                 {
-                    EditorGUILayout.TextField("Name", player.Id.ToString());
-                }
+                    EditorGUI.indentLevel++;
 
-                EditorGUI.indentLevel--;
+                    foreach (var player in TypedTarget.Players)
+                    {
+                        EditorGUILayout.TextField("Name", player.Id.ToString());
+                    }
+
+                    EditorGUI.indentLevel--;
+                }
             }
         }
-    }
+    } 
 }

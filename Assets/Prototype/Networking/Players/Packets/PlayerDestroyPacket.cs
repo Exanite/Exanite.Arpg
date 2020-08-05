@@ -1,9 +1,9 @@
 ﻿using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
 
-namespace Prototype.LiteNetLib.Players.Packets
+namespace Prototype.Networking.Players.Packets
 {
-    public class PlayerIdAssignmentPacket : IPacket
+    public class PlayerDestroyPacket : IPacket
     {
         public int id;
 

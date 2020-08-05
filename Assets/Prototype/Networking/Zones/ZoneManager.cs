@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Zones
+namespace Prototype.Networking.Zones
 {
     public class ZoneManager : MonoBehaviour
     {

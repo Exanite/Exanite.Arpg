@@ -1,10 +1,10 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.LiteNetLib.Players;
-using Prototype.LiteNetLib.Players.Packets;
+using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Client
+namespace Prototype.Networking.Client
 {
     public class PlayerController : MonoBehaviour
     {

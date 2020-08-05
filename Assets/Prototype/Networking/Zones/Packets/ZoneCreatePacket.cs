@@ -2,7 +2,7 @@
 using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
 
-namespace Prototype.LiteNetLib.Zones.Packets
+namespace Prototype.Networking.Zones.Packets
 {
     public class ZoneCreatePacket : IPacket
     {

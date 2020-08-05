@@ -2,7 +2,7 @@
 using Exanite.Arpg;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Players
+namespace Prototype.Networking.Players
 {
     public class PlayerManager : MonoBehaviour
     {

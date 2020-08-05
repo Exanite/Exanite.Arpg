@@ -3,7 +3,7 @@ using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Players.Packets
+namespace Prototype.Networking.Players.Packets
 {
     public class PlayerCreatePacket : IPacket
     {

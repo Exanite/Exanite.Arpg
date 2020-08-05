@@ -1,14 +1,14 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.LiteNetLib.Players;
-using Prototype.LiteNetLib.Players.Packets;
+using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Prototype.LiteNetLib.Client
+namespace Prototype.Networking.Client
 {
     public class ClientGameManager : MonoBehaviour
     {

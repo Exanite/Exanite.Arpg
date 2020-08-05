@@ -1,14 +1,14 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
-using Prototype.LiteNetLib.Players;
-using Prototype.LiteNetLib.Players.Packets;
+using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Prototype.LiteNetLib.Server
+namespace Prototype.Networking.Server
 {
     public class ServerGameManager : MonoBehaviour
     {
@@ -142,7 +142,7 @@ namespace Prototype.LiteNetLib.Server
 
         private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         {
-            if(playerManager.TryGetPlayer(sender.Id, out Player player))
+            if (playerManager.TryGetPlayer(sender.Id, out Player player))
             {
                 player.movementInput = e.movementInput;
             }

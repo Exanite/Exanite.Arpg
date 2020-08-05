@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Exanite.Arpg;
-using Prototype.LiteNetLib.Players;
+using Prototype.Networking.Players;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prototype.LiteNetLib.Zones
+namespace Prototype.Networking.Zones
 {
     public class Zone
     {

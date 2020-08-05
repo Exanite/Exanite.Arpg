@@ -1,8 +1,8 @@
 ﻿using Exanite.Arpg;
-using Prototype.LiteNetLib.Zones;
+using Prototype.Networking.Zones;
 using UnityEngine;
 
-namespace Prototype.LiteNetLib.Players
+namespace Prototype.Networking.Players
 {
     public class Player
     {
