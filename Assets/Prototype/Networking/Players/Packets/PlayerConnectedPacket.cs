@@ -5,13 +5,16 @@ using UnityEngine;
 
 namespace Prototype.Networking.Players.Packets
 {
-    public class PlayerCreatePacket : IPacket
+    /// <summary>
+    /// Server to Client - Sent when a player connects to the server
+    /// </summary>
+    public class PlayerConnectedPacket : IPacket
     {
-        public List<NewPlayer> newPlayers = new List<NewPlayer>();
+        public List<NewPlayer> newPlayers = new List<NewPlayer>(); // todo Change to only include one player
 
-        public PlayerCreatePacket() { }
+        public PlayerConnectedPacket() { }
 
-        public PlayerCreatePacket(ICollection<Player> players)
+        public PlayerConnectedPacket(ICollection<Player> players)
         {
             newPlayers.Capacity = players.Count;
 

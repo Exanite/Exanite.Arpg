@@ -118,7 +118,7 @@ namespace Prototype.Networking.Server
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
             CreateNewPlayer(e.Peer);
 
-            var packet = new PlayerCreatePacket(playerManager.Players);
+            var packet = new PlayerConnectedPacket(playerManager.Players);
             foreach (var player in playerManager.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
@@ -133,7 +133,7 @@ namespace Prototype.Networking.Server
             Destroy(disconnectedPlayer.character.transform.gameObject);
             playerManager.RemovePlayer(disconnectedPlayer);
 
-            var packet = new PlayerDestroyPacket() { id = e.Peer.Id };
+            var packet = new PlayerDisconnectedPacket() { id = e.Peer.Id };
             foreach (var player in playerManager.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);

@@ -61,8 +61,8 @@ namespace Prototype.Networking.Client
         public void Connect()
         {
             client.SubscribePacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.SubscribePacketReceiver<PlayerCreatePacket>(OnPlayerCreate);
-            client.SubscribePacketReceiver<PlayerDestroyPacket>(OnPlayerDestroy);
+            client.SubscribePacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
+            client.SubscribePacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
             client.SubscribePacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
 
             client.DisconnectedEvent += OnDisconnected;
@@ -96,7 +96,7 @@ namespace Prototype.Networking.Client
             id = e.id;
         }
 
-        private void OnPlayerCreate(NetPeer sender, PlayerCreatePacket e)
+        private void OnPlayerConnected(NetPeer sender, PlayerConnectedPacket e)
         {
             foreach (var newPlayer in e.newPlayers)
             {
@@ -123,7 +123,7 @@ namespace Prototype.Networking.Client
 
         }
 
-        private void OnPlayerDestroy(NetPeer sender, PlayerDestroyPacket e)
+        private void OnPlayerDisconnected(NetPeer sender, PlayerDisconnectedPacket e)
         {
             var player = playerManager.GetPlayer(e.id);
 

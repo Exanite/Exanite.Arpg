@@ -3,7 +3,10 @@ using LiteNetLib.Utils;
 
 namespace Prototype.Networking.Players.Packets
 {
-    public class PlayerDestroyPacket : IPacket
+    /// <summary>
+    /// Server to Client - Sent when a player disconnects from the server
+    /// </summary>
+    public class PlayerDisconnectedPacket : IPacket
     {
         public int id;
 
