@@ -14,10 +14,10 @@ namespace Prototype.Networking.Server
 
         private ILog log;
         private Scene scene;
-        public PlayerManager playerManager;
+        public ServerPlayerManager playerManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, PlayerManager playerManager)
+        public void Inject(ILog log, Scene scene, ServerPlayerManager playerManager)
         {
             this.log = log;
             this.scene = scene;

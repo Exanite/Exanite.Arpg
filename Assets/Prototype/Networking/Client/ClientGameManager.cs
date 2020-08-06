@@ -1,6 +1,8 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
+using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,14 +23,12 @@ namespace Prototype.Networking.Client
 
         private ILog log;
         private Scene scene;
-        private PlayerManager playerManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, PlayerManager playerManager)
+        public void Inject(ILog log, Scene scene)
         {
             this.log = log;
             this.scene = scene;
-            this.playerManager = playerManager;
         }
 
         //private void Start()
@@ -46,24 +46,9 @@ namespace Prototype.Networking.Client
             }
         }
 
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying)
-            {
-                return;
-            }
-
-            foreach (var player in playerManager.Players)
-            {
-                Gizmos.color = Color.red * 0.1f;
-
-                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
-            }
-        }
-
         public void Connect()
         {
-            //client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
+            client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
             //client.RegisterPacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
             //client.RegisterPacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
             //client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
@@ -94,10 +79,10 @@ namespace Prototype.Networking.Client
             SceneManager.UnloadSceneAsync(scene);
         }
 
-        //private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
-        //{
-        //    id = e.id;
-        //}
+        private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
+        {
+            id = e.id;
+        }
 
         //private void OnPlayerConnected(NetPeer sender, PlayerConnectedPacket e)
         //{

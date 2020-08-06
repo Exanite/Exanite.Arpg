@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
+using Prototype.Networking.Players;
 using UnityEngine;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Server
 {
-    public class PlayerManager : MonoBehaviour
+    public class ServerPlayerManager : MonoBehaviour
     {
         private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public event EventHandler<PlayerManager, Player> PlayerAddedEvent;
-        public event EventHandler<PlayerManager, Player> PlayerRemovedEvent;
+        public event EventHandler<ServerPlayerManager, Player> PlayerAddedEvent;
+        public event EventHandler<ServerPlayerManager, Player> PlayerRemovedEvent;
 
         public ICollection<Player> Players
         {

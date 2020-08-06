@@ -1,18 +1,18 @@
-﻿using Prototype.Networking.Players;
+﻿using Prototype.Networking.Server;
 using UnityEditor;
 
 namespace Prototype.Editor
 {
-    [CustomEditor(typeof(PlayerManager))]
-    public class PlayerManagerEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ServerPlayerManager))]
+    public class ServerPlayerManagerEditor : UnityEditor.Editor
     {
-        public PlayerManager TypedTarget;
+        public ServerPlayerManager TypedTarget;
 
         public bool isPlayersFoldoutOpen = false;
 
         private void OnEnable()
         {
-            TypedTarget = (PlayerManager)target;
+            TypedTarget = (ServerPlayerManager)target;
         }
 
         public override void OnInspectorGUI()
