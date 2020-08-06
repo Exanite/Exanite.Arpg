@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Prototype.Networking.Zones
 {
-    public class ZoneManager : MonoBehaviour
+    public class ServerZoneManager : MonoBehaviour
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
