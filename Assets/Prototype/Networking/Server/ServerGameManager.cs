@@ -73,6 +73,11 @@ namespace Prototype.Networking.Server
 
         private void OnDrawGizmos()
         {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             foreach (var player in playerManager.Players)
             {
                 Gizmos.color = Color.red;
