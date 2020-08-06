@@ -69,7 +69,7 @@ namespace Prototype.Networking.Client
 
         public void SendMovementInput(Vector2 movementInput)
         {
-            client.SendPacket(new PlayerInputPacket() { movementInput = movementInput }, DeliveryMethod.Unreliable);
+            client.SendPacketToServer(new PlayerInputPacket() { movementInput = movementInput }, DeliveryMethod.Unreliable);
         }
     }
 }
