@@ -65,7 +65,7 @@ namespace Exanite.Arpg.Networking
                 throw new ArgumentNullException(nameof(receiver));
             }
 
-            ClearPacketReceiever<T>();
+            ClearPacketReceiver<T>();
 
             netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
             {
@@ -73,7 +73,7 @@ namespace Exanite.Arpg.Networking
             });
         }
 
-        public void ClearPacketReceiever<T>() where T : class, IPacket, new()
+        public void ClearPacketReceiver<T>() where T : class, IPacket, new()
         {
             netPacketProcessor.RemoveSubscription<T>();
         }
