@@ -58,7 +58,7 @@ namespace Exanite.Arpg.Networking
             peer.Send(writer, deliveryMethod);
         }
 
-        public void SubscribePacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
+        public void RegisterPacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
         {
             if (receiver == null)
             {

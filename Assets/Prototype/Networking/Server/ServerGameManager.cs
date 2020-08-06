@@ -90,7 +90,7 @@ namespace Prototype.Networking.Server
         {
             log.Information("Starting server");
 
-            server.SubscribePacketReceiver<PlayerInputPacket>(OnPlayerInput);
+            server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
 
             server.ClientConnectedEvent += OnPlayerConnected;
             server.ClientDisconnectedEvent += OnPlayerDisconnected;

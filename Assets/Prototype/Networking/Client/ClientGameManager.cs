@@ -65,10 +65,10 @@ namespace Prototype.Networking.Client
 
         public void Connect()
         {
-            client.SubscribePacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.SubscribePacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
-            client.SubscribePacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
-            client.SubscribePacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+            client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
+            client.RegisterPacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
+            client.RegisterPacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
+            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
 
             client.DisconnectedEvent += OnDisconnected;
 
