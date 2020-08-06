@@ -1,8 +1,6 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
-using LiteNetLib;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -65,10 +63,10 @@ namespace Prototype.Networking.Client
 
         public void Connect()
         {
-            client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.RegisterPacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
-            client.RegisterPacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
-            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+            //client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
+            //client.RegisterPacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
+            //client.RegisterPacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
+            //client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
 
             client.DisconnectedEvent += OnDisconnected;
 
@@ -96,55 +94,54 @@ namespace Prototype.Networking.Client
             SceneManager.UnloadSceneAsync(scene);
         }
 
-        private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
-        {
-            id = e.id;
-        }
+        //private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
+        //{
+        //    id = e.id;
+        //}
 
-        private void OnPlayerConnected(NetPeer sender, PlayerConnectedPacket e)
-        {
-            foreach (var newPlayer in e.newPlayers)
-            {
-                if (!playerManager.Contains(newPlayer.id))
-                {
-                    var connection = new PlayerConnection() { Id = newPlayer.id };
-                    var player = new Player(connection);
+        //private void OnPlayerConnected(NetPeer sender, PlayerConnectedPacket e)
+        //{
+        //    foreach (var newPlayer in e.newPlayers)
+        //    {
+        //        if (!playerManager.Contains(newPlayer.id))
+        //        {
+        //            var connection = new PlayerConnection() { Id = newPlayer.id };
+        //            var player = new Player(connection);
 
-                    player.character.transform.position = newPlayer.position;
+        //            player.character.transform.position = newPlayer.position;
 
-                    playerManager.AddPlayer(player);
+        //            playerManager.AddPlayer(player);
 
-                    if (newPlayer.id == id)
-                    {
-                        localPlayer = player;
-                        localPlayer.character.transform.gameObject.name += " (Local)";
+        //            if (newPlayer.id == id)
+        //            {
+        //                localPlayer = player;
+        //                localPlayer.character.transform.gameObject.name += " (Local)";
 
-                        playerController = localPlayer.character.transform.gameObject.AddComponent<PlayerController>();
-                        playerController.client = client;
-                        playerController.player = localPlayer;
-                    }
-                }
-            }
+        //                playerController = localPlayer.character.transform.gameObject.AddComponent<PlayerController>();
+        //                playerController.client = client;
+        //                playerController.player = localPlayer;
+        //            }
+        //        }
+        //    }
+        //}
 
-        }
+        //private void OnPlayerDisconnected(NetPeer sender, PlayerDisconnectedPacket e)
+        //{
+        //    var player = playerManager.GetPlayer(e.id);
 
-        private void OnPlayerDisconnected(NetPeer sender, PlayerDisconnectedPacket e)
-        {
-            var player = playerManager.GetPlayer(e.id);
+        //    Destroy(player.character.transform.gameObject);
+        //    playerManager.RemovePlayer(player);
+        //}
 
-            Destroy(player.character.transform.gameObject);
-            playerManager.RemovePlayer(player);
-        }
-
-        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
-        {
-            foreach (var playerPosition in e.playerPositions)
-            {
-                if (playerManager.TryGetPlayer(playerPosition.id, out Player player))
-                {
-                    player.character.transform.position = playerPosition.position;
-                }
-            }
-        }
+        //private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
+        //{
+        //    foreach (var playerPosition in e.playerPositions)
+        //    {
+        //        if (playerManager.TryGetPlayer(playerPosition.id, out Player player))
+        //        {
+        //            player.character.transform.position = playerPosition.position;
+        //        }
+        //    }
+        //}
     }
 }

@@ -1,12 +1,10 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
-using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Server
 {
@@ -31,45 +29,45 @@ namespace Prototype.Networking.Server
         //    StartServer();
         //}
 
-        private void FixedUpdate()
-        {
-            foreach (var player in playerManager.Players)
-            {
-                var playerTransform = player.character.transform;
+        //private void FixedUpdate()
+        //{
+        //    foreach (var player in playerManager.Players)
+        //    {
+        //        var playerTransform = player.character.transform;
 
-                playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
+        //        playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
 
-                float verticalExtents = Camera.main.orthographicSize;
-                float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
+        //        float verticalExtents = Camera.main.orthographicSize;
+        //        float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
 
-                if (playerTransform.position.x > horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x -= horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.x < -horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x += horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y > verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y -= verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y < -verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y += verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
+        //        if (playerTransform.position.x > horizontalExtents)
+        //        {
+        //            Vector2 newPosition = playerTransform.position;
+        //            newPosition.x -= horizontalExtents * 2;
+        //            playerTransform.position = newPosition;
+        //        }
+        //        else if (playerTransform.position.x < -horizontalExtents)
+        //        {
+        //            Vector2 newPosition = playerTransform.position;
+        //            newPosition.x += horizontalExtents * 2;
+        //            playerTransform.position = newPosition;
+        //        }
+        //        else if (playerTransform.position.y > verticalExtents)
+        //        {
+        //            Vector2 newPosition = playerTransform.position;
+        //            newPosition.y -= verticalExtents * 2;
+        //            playerTransform.position = newPosition;
+        //        }
+        //        else if (playerTransform.position.y < -verticalExtents)
+        //        {
+        //            Vector2 newPosition = playerTransform.position;
+        //            newPosition.y += verticalExtents * 2;
+        //            playerTransform.position = newPosition;
+        //        }
 
-                SendPositionUpdates();
-            }
-        }
+        //        SendPositionUpdates();
+        //    }
+        //}
 
         private void OnDrawGizmos()
         {
@@ -90,10 +88,10 @@ namespace Prototype.Networking.Server
         {
             log.Information("Starting server");
 
-            server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
+            //server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
 
-            server.ClientConnectedEvent += OnPlayerConnected;
-            server.ClientDisconnectedEvent += OnPlayerDisconnected;
+            //server.ClientConnectedEvent += OnPlayerConnected;
+            //server.ClientDisconnectedEvent += OnPlayerDisconnected;
 
             server.Create();
         }
@@ -105,62 +103,62 @@ namespace Prototype.Networking.Server
             server.Close();
         }
 
-        private void CreateNewPlayer(NetPeer peer)
-        {
-            var connection = new PlayerConnection() { Id = peer.Id, Peer = peer };
-            var player = new Player(connection);
+        //private void CreateNewPlayer(NetPeer peer)
+        //{
+        //    var connection = new PlayerConnection() { Id = peer.Id, Peer = peer };
+        //    var player = new Player(connection);
 
-            float angle = Random.Range(0, 360);
-            player.character.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
+        //    float angle = Random.Range(0, 360);
+        //    player.character.transform.position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 5;
 
-            playerManager.AddPlayer(player);
-        }
+        //    playerManager.AddPlayer(player);
+        //}
 
-        private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
-        {
-            log.Information("Player {Id} connected", e.Peer.Id);
+        //private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
+        //{
+        //    log.Information("Player {Id} connected", e.Peer.Id);
 
-            server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            CreateNewPlayer(e.Peer);
+        //    server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
+        //    CreateNewPlayer(e.Peer);
 
-            var packet = new PlayerConnectedPacket(playerManager.Players);
-            foreach (var player in playerManager.Players)
-            {
-                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-            }
-        }
+        //    var packet = new PlayerConnectedPacket(playerManager.Players);
+        //    foreach (var player in playerManager.Players)
+        //    {
+        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+        //    }
+        //}
 
-        private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
-        {
-            log.Information("Player {Id} disconnected", e.Peer.Id);
+        //private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
+        //{
+        //    log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
-            Destroy(disconnectedPlayer.character.transform.gameObject);
-            playerManager.RemovePlayer(disconnectedPlayer);
+        //    var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
+        //    Destroy(disconnectedPlayer.character.transform.gameObject);
+        //    playerManager.RemovePlayer(disconnectedPlayer);
 
-            var packet = new PlayerDisconnectedPacket() { id = e.Peer.Id };
-            foreach (var player in playerManager.Players)
-            {
-                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-            }
-        }
+        //    var packet = new PlayerDisconnectedPacket() { id = e.Peer.Id };
+        //    foreach (var player in playerManager.Players)
+        //    {
+        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+        //    }
+        //}
 
-        private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
-        {
-            if (playerManager.TryGetPlayer(sender.Id, out Player player))
-            {
-                player.movementInput = e.movementInput;
-            }
-        }
+        //private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
+        //{
+        //    if (playerManager.TryGetPlayer(sender.Id, out Player player))
+        //    {
+        //        player.movementInput = e.movementInput;
+        //    }
+        //}
 
-        private void SendPositionUpdates()
-        {
-            var packet = new PlayerPositionUpdatePacket(playerManager.Players);
+        //private void SendPositionUpdates()
+        //{
+        //    var packet = new PlayerPositionUpdatePacket(playerManager.Players);
 
-            foreach (var player in playerManager.Players)
-            {
-                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.Unreliable);
-            }
-        }
+        //    foreach (var player in playerManager.Players)
+        //    {
+        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.Unreliable);
+        //    }
+        //}
     }
 }
