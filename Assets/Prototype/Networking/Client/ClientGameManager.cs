@@ -16,10 +16,7 @@ namespace Prototype.Networking.Client
 
         public int id = -1;
 
-        public bool isDisconnecting = false;
-
         private Player localPlayer;
-        private PlayerController playerController;
 
         private ILog log;
         private Scene scene;
@@ -35,16 +32,6 @@ namespace Prototype.Networking.Client
         //{
         //    Connect();
         //}
-
-        private void Update()
-        {
-            if (isDisconnecting)
-            {
-                Disconnect();
-
-                isDisconnecting = false;
-            }
-        }
 
         public void Connect()
         {
