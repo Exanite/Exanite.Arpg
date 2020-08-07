@@ -1,30 +1,18 @@
-﻿using LiteNetLib;
+﻿using System;
+using LiteNetLib;
 
 namespace Prototype.Networking.Players
 {
     /// <summary>
-    /// Represents a player connected to the server<para/>
-    /// Can be used in both the Client and the Server
+    /// Represents a player connected to the server
     /// </summary>
     public class PlayerConnection
     {
-        private int id;
         private NetPeer peer;
 
-        /// <summary>
-        /// Network Id of the connected player
-        /// </summary>
-        public int Id
+        public PlayerConnection(NetPeer peer)
         {
-            get
-            {
-                return id;
-            }
-
-            set
-            {
-                id = value;
-            }
+            Peer = peer ?? throw new ArgumentNullException(nameof(peer));
         }
 
         /// <summary>
@@ -41,6 +29,17 @@ namespace Prototype.Networking.Players
             set
             {
                 peer = value;
+            }
+        }
+
+        /// <summary>
+        /// Network Id of the connected player
+        /// </summary>
+        public int Id
+        {
+            get
+            {
+                return peer.Id;
             }
         }
     }
