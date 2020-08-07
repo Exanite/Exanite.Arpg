@@ -4,6 +4,7 @@ using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones;
+using Prototype.Networking.Zones.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,9 +39,10 @@ namespace Prototype.Networking.Client
         public void Connect()
         {
             client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            //client.RegisterPacketReceiver<PlayerConnectedPacket>(OnPlayerConnected);
-            //client.RegisterPacketReceiver<PlayerDisconnectedPacket>(OnPlayerDisconnected);
-            //client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+
+            client.RegisterPacketReceiver<ZoneCreatePacket>(OnZoneCreate);
+            client.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
+            client.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
 
             client.DisconnectedEvent += OnDisconnected;
 
@@ -56,6 +58,21 @@ namespace Prototype.Networking.Client
                 }
             })
             .Forget();
+        }
+
+        private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
+        {
+            log.Information("OnZoneCreate");
+        }
+
+        private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
+        {
+            log.Information("OnZonePlayerEnter");
+        }
+
+        private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
+        {
+            log.Information("OnZonePlayerLeave");
         }
 
         public void Disconnect()
