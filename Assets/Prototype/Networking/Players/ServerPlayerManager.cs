@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
+using LiteNetLib;
 using UnityEngine;
 
 namespace Prototype.Networking.Players
@@ -27,24 +28,21 @@ namespace Prototype.Networking.Players
             }
         }
 
-        public void AddPlayer(Player player)
+        public void CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
         {
-            playersById.Add(player.Id, player);
+            var player = new Player(new PlayerConnection(peer));
 
+            playersById.Add(player.Id, player);
             PlayerAddedEvent?.Invoke(this, player);
         }
 
-        public void RemovePlayer(Player player)
+        public void RemoveFor(NetPeer peer)
         {
-            RemovePlayer(player.Id);
-        }
+            int id = peer.Id;
 
-        public void RemovePlayer(int id)
-        {
             if (playersById.TryGetValue(id, out Player player))
             {
                 playersById.Remove(id);
-
                 PlayerRemovedEvent?.Invoke(this, player);
             }
         }

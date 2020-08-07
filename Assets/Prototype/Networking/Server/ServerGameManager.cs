@@ -104,8 +104,7 @@ namespace Prototype.Networking.Server
         {
             log.Information("Player {Id} connected", e.Peer.Id);
 
-            var newPlayer = new Player(new PlayerConnection(e.Peer));
-            playerManager.AddPlayer(newPlayer);
+            playerManager.CreateFor(e.Peer);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
         }
@@ -114,8 +113,7 @@ namespace Prototype.Networking.Server
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
-            playerManager.RemovePlayer(disconnectedPlayer);
+            playerManager.RemoveFor(e.Peer);
         }
 
         //private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
