@@ -3,6 +3,7 @@ using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Zones;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,7 @@ namespace Prototype.Networking.Client
         public int id = -1;
 
         private Player localPlayer;
+        private Zone currentZone;
 
         private ILog log;
         private Scene scene;
