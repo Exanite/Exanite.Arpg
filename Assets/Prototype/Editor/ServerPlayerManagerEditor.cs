@@ -1,4 +1,4 @@
-﻿using Prototype.Networking.Server;
+﻿using Prototype.Networking.Players;
 using UnityEditor;
 
 namespace Prototype.Editor

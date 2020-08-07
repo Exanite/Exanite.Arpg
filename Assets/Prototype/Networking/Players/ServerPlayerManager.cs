@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
-using Prototype.Networking.Players;
 using UnityEngine;
 
-namespace Prototype.Networking.Server
+namespace Prototype.Networking.Players
 {
     public class ServerPlayerManager : MonoBehaviour
     {

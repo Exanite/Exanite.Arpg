@@ -1,7 +1,6 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
