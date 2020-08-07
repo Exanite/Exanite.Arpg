@@ -1,6 +1,8 @@
 ﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
+using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -23,10 +25,10 @@ namespace Prototype.Networking.Server
             this.playerManager = playerManager;
         }
 
-        //private void Start()
-        //{
-        //    StartServer();
-        //}
+        private void Start()
+        {
+            StartServer();
+        }
 
         //private void FixedUpdate()
         //{
@@ -68,29 +70,14 @@ namespace Prototype.Networking.Server
         //    }
         //}
 
-        private void OnDrawGizmos()
-        {
-            if (!Application.isPlaying)
-            {
-                return;
-            }
-
-            foreach (var player in playerManager.Players)
-            {
-                Gizmos.color = Color.red;
-
-                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
-            }
-        }
-
         public void StartServer()
         {
             log.Information("Starting server");
 
             //server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
 
-            //server.ClientConnectedEvent += OnPlayerConnected;
-            //server.ClientDisconnectedEvent += OnPlayerDisconnected;
+            server.ClientConnectedEvent += OnPlayerConnected;
+            server.ClientDisconnectedEvent += OnPlayerDisconnected;
 
             server.Create();
         }
@@ -113,34 +100,23 @@ namespace Prototype.Networking.Server
         //    playerManager.AddPlayer(player);
         //}
 
-        //private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
-        //{
-        //    log.Information("Player {Id} connected", e.Peer.Id);
+        private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
+        {
+            log.Information("Player {Id} connected", e.Peer.Id);
 
-        //    server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-        //    CreateNewPlayer(e.Peer);
+            var newPlayer = new Player(new PlayerConnection(e.Peer));
+            playerManager.AddPlayer(newPlayer);
 
-        //    var packet = new PlayerConnectedPacket(playerManager.Players);
-        //    foreach (var player in playerManager.Players)
-        //    {
-        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-        //    }
-        //}
+            server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
+        }
 
-        //private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
-        //{
-        //    log.Information("Player {Id} disconnected", e.Peer.Id);
+        private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
+        {
+            log.Information("Player {Id} disconnected", e.Peer.Id);
 
-        //    var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
-        //    Destroy(disconnectedPlayer.character.transform.gameObject);
-        //    playerManager.RemovePlayer(disconnectedPlayer);
-
-        //    var packet = new PlayerDisconnectedPacket() { id = e.Peer.Id };
-        //    foreach (var player in playerManager.Players)
-        //    {
-        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-        //    }
-        //}
+            var disconnectedPlayer = playerManager.GetPlayer(e.Peer.Id);
+            playerManager.RemovePlayer(disconnectedPlayer);
+        }
 
         //private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         //{

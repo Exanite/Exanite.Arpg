@@ -31,10 +31,10 @@ namespace Prototype.Networking.Client
             this.scene = scene;
         }
 
-        //private void Start()
-        //{
-        //    Connect();
-        //}
+        private void Start()
+        {
+            Connect();
+        }
 
         public void Connect()
         {
