@@ -147,7 +147,17 @@ namespace Exanite.Arpg.Networking.Client
 
         public void Disconnect()
         {
-            netManager?.Stop();
+            if (netManager == null)
+            {
+                return;
+            }
+
+            netManager.DisconnectAll();
+            netManager.PollEvents();
+            netManager.Stop();
+
+            isConnected = false;
+            isConnecting = false;
         }
 
         public void SendPacketToServer<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()

@@ -94,6 +94,7 @@ namespace Exanite.Arpg.Networking.Server
             }
 
             netManager.DisconnectAll();
+            netManager.PollEvents();
             netManager.Stop();
 
             IsCreated = false;
