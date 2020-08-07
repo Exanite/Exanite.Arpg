@@ -4,16 +4,9 @@ using UnityEditor;
 namespace Prototype.Editor
 {
     [CustomEditor(typeof(ServerPlayerManager))]
-    public class ServerPlayerManagerEditor : UnityEditor.Editor
+    public class ServerPlayerManagerEditor : TypedEditor<ServerPlayerManager>
     {
-        public ServerPlayerManager TypedTarget;
-
         public bool isPlayersFoldoutOpen = false;
-
-        private void OnEnable()
-        {
-            TypedTarget = (ServerPlayerManager)target;
-        }
 
         public override void OnInspectorGUI()
         {
