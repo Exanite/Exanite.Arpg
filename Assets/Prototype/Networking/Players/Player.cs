@@ -4,9 +4,11 @@ using UnityEngine;
 
 namespace Prototype.Networking.Players
 {
-    public class Player
+    public class Player // add ServerPlayer class
     {
-        private PlayerConnection connection;
+        private PlayerConnection connection; // move to ServerPlayer
+
+        // add IsCurrentlyLoadingZone property and Zone property
 
         public PlayerCharacter character;
 
