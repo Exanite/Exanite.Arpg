@@ -18,6 +18,8 @@ namespace Prototype.Networking.Client
 
         public int id = -1;
 
+        public GameObject tempZonePrefab;
+
         private Player localPlayer;
         private Zone currentZone;
 
@@ -62,17 +64,21 @@ namespace Prototype.Networking.Client
 
         private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
         {
-            log.Information("OnZoneCreate");
+            var newZone = new Zone(e.guid, tempZonePrefab);
+
+            currentZone = newZone;
+
+            client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
         {
-            log.Information("OnZonePlayerEnter");
+            log.Information("Player {Id} entered zone", e.playerId);
         }
 
         private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
         {
-            log.Information("OnZonePlayerLeave");
+            log.Information("Player {Id} left zone", e.playerId);
         }
 
         public void Disconnect()
@@ -89,50 +95,5 @@ namespace Prototype.Networking.Client
         {
             id = e.id;
         }
-
-        //private void OnPlayerConnected(NetPeer sender, PlayerConnectedPacket e)
-        //{
-        //    foreach (var newPlayer in e.newPlayers)
-        //    {
-        //        if (!playerManager.Contains(newPlayer.id))
-        //        {
-        //            var connection = new PlayerConnection() { Id = newPlayer.id };
-        //            var player = new Player(connection);
-
-        //            player.character.transform.position = newPlayer.position;
-
-        //            playerManager.AddPlayer(player);
-
-        //            if (newPlayer.id == id)
-        //            {
-        //                localPlayer = player;
-        //                localPlayer.character.transform.gameObject.name += " (Local)";
-
-        //                playerController = localPlayer.character.transform.gameObject.AddComponent<PlayerController>();
-        //                playerController.client = client;
-        //                playerController.player = localPlayer;
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void OnPlayerDisconnected(NetPeer sender, PlayerDisconnectedPacket e)
-        //{
-        //    var player = playerManager.GetPlayer(e.id);
-
-        //    Destroy(player.character.transform.gameObject);
-        //    playerManager.RemovePlayer(player);
-        //}
-
-        //private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
-        //{
-        //    foreach (var playerPosition in e.playerPositions)
-        //    {
-        //        if (playerManager.TryGetPlayer(playerPosition.id, out Player player))
-        //        {
-        //            player.character.transform.position = playerPosition.position;
-        //        }
-        //    }
-        //}
     }
 }
