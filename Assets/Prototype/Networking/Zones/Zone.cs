@@ -12,19 +12,17 @@ namespace Prototype.Networking.Zones
         private static int counter = 0; // ! hack to prevent scenes from having the same name
 
         public Guid guid;
-
-        public Transform root;
         public Scene scene;
 
         public HashSet<Player> players = new HashSet<Player>();
 
-        public Zone(GameObject zonePrefab) : this(Guid.NewGuid(), zonePrefab) { }
+        public Zone() : this(Guid.NewGuid()) { }
 
-        public Zone(Guid guid, GameObject zonePrefab)
+        public Zone(Guid guid)
         {
             this.guid = guid;
 
-            CreateZone(zonePrefab);
+            CreateZone();
         }
 
         public event EventHandler<Zone, Player> PlayerEnteredEvent;
@@ -47,12 +45,10 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void CreateZone(GameObject levelPrefab)
+        private void CreateZone()
         {
             var createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
             scene = SceneManager.CreateScene($"{guid.ToString()} ({counter})", createSceneParameters);
-
-            root = scene.Instantiate(levelPrefab).transform;
 
             counter++;
         }

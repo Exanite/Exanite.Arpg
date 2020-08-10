@@ -16,7 +16,6 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
 
-        public GameObject tempZonePrefab;
         public Guid tempMainZoneGuid;
 
         private ILog log;
@@ -90,7 +89,7 @@ namespace Prototype.Networking.Server
             server.Create();
 
             // ! Move zone creation somewhere else
-            var zone = new Zone(tempZonePrefab);
+            var zone = new Zone();
             tempMainZoneGuid = zone.guid;
             zoneManager.zones.Add(zone.guid, zone);
         }

@@ -18,8 +18,6 @@ namespace Prototype.Networking.Client
 
         public int id = -1;
 
-        public GameObject tempZonePrefab;
-
         private Player localPlayer;
         private Zone currentZone;
 
@@ -64,7 +62,7 @@ namespace Prototype.Networking.Client
 
         private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
         {
-            var newZone = new Zone(e.guid, tempZonePrefab);
+            var newZone = new Zone(e.guid);
 
             currentZone = newZone;
 
