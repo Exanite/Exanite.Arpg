@@ -1,8 +1,11 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Zones;
+using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -13,16 +16,21 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
 
+        public GameObject tempZonePrefab;
+        public Guid tempMainZoneGuid;
+
         private ILog log;
         private Scene scene;
-        public ServerPlayerManager playerManager;
+        private ServerPlayerManager playerManager;
+        private ServerZoneManager zoneManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, ServerPlayerManager playerManager)
+        public void Inject(ILog log, Scene scene, ServerPlayerManager playerManager, ServerZoneManager zoneManager)
         {
             this.log = log;
             this.scene = scene;
             this.playerManager = playerManager;
+            this.zoneManager = zoneManager;
         }
 
         private void Start()
@@ -74,12 +82,17 @@ namespace Prototype.Networking.Server
         {
             log.Information("Starting server");
 
-            //server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
-
             server.ClientConnectedEvent += OnPlayerConnected;
             server.ClientDisconnectedEvent += OnPlayerDisconnected;
 
+            zoneManager.RegisterPackets(server);
+
             server.Create();
+
+            // ! Move zone creation somewhere else
+            var zone = new Zone(tempZonePrefab);
+            tempMainZoneGuid = zone.guid;
+            zoneManager.zones.Add(zone.guid, zone);
         }
 
         public void StopServer()
@@ -87,6 +100,11 @@ namespace Prototype.Networking.Server
             log.Information("Stopping server");
 
             server.Close();
+
+            zoneManager.UnregisterPackets(server);
+
+            server.ClientDisconnectedEvent -= OnPlayerDisconnected;
+            server.ClientConnectedEvent-= OnPlayerConnected;
         }
 
         private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
@@ -96,6 +114,7 @@ namespace Prototype.Networking.Server
             playerManager.CreateFor(e.Peer);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZoneGuid }, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
