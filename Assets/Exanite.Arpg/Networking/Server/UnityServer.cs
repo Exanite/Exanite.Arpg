@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Exanite.Arpg.Networking.Server
 {
-    public class UnityServer : UnityNetBase
+    public class UnityServer : UnityNetwork
     {
         [Header("Settings:")]
         [SerializeField] private ushort port = Constants.DefaultPort;

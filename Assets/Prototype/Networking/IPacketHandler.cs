@@ -4,8 +4,8 @@ namespace Prototype.Networking
 {
     public interface IPacketHandler
     {
-        void RegisterPackets(UnityNetBase netBase);
+        void RegisterPackets(UnityNetwork network);
 
-        void UnregisterPackets(UnityNetBase netBase);
+        void UnregisterPackets(UnityNetwork network);
     }
 }

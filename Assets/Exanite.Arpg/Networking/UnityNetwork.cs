@@ -12,7 +12,7 @@ namespace Exanite.Arpg.Networking
     /// <summary>
     /// Base class used by <see cref="UnityClient"/> and <see cref="UnityServer"/>
     /// </summary>
-    public abstract class UnityNetBase : MonoBehaviour, INetEventListener
+    public abstract class UnityNetwork : MonoBehaviour, INetEventListener
     {
         [Header("Debug:")]
         [SerializeField] private bool enableDebug = false;

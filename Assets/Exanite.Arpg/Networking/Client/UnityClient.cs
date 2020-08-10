@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Exanite.Arpg.Networking.Client
 {
-    public class UnityClient : UnityNetBase, ISerializationCallbackReceiver
+    public class UnityClient : UnityNetwork, ISerializationCallbackReceiver
     {
         [Header("Settings:")]
         [SerializeField] private string address = IPAddress.Loopback.ToString();
