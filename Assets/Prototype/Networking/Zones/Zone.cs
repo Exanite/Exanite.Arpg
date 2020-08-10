@@ -27,14 +27,6 @@ namespace Prototype.Networking.Zones
 
         public event EventHandler<Zone, Player> PlayerLeftEvent;
 
-        private void CreateZone(GameObject levelPrefab)
-        {
-            var createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
-            scene = SceneManager.CreateScene(guid.ToString(), createSceneParameters);
-
-            root = scene.Instantiate(levelPrefab).transform;
-        }
-
         public void AddPlayer(Player player)
         {
             if (players.Add(player))
@@ -49,6 +41,14 @@ namespace Prototype.Networking.Zones
             {
                 PlayerLeftEvent?.Invoke(this, player);
             }
+        }
+
+        private void CreateZone(GameObject levelPrefab)
+        {
+            var createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
+            scene = SceneManager.CreateScene(guid.ToString(), createSceneParameters);
+
+            root = scene.Instantiate(levelPrefab).transform;
         }
     }
 }
