@@ -294,4 +294,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   client: {fileID: 856146290}
   id: -1
-  isDisconnecting: 0
+  tempZonePrefab: {fileID: 4938829201175275096, guid: 421aadf177fbf19458bd18e510646df4,
+    type: 3}
