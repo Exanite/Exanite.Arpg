@@ -119,6 +119,17 @@ namespace Prototype.Networking.Server
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
+            if (tempMainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
+            {
+                foreach (ServerPlayer playerInZone in tempMainZone.playersById.Values)
+                {
+                    if (playerInZone != player)
+                    {
+                        server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
+                    }
+                }
+            }
+
             playerManager.RemoveFor(e.Peer);
         }
 
