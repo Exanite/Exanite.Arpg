@@ -7,12 +7,12 @@ namespace Prototype.Networking.Players
 {
     public class ServerPlayerManager : MonoBehaviour
     {
-        private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
+        private Dictionary<int, ServerPlayer> playersById = new Dictionary<int, ServerPlayer>();
 
-        public event EventHandler<ServerPlayerManager, Player> PlayerAddedEvent;
-        public event EventHandler<ServerPlayerManager, Player> PlayerRemovedEvent;
+        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
+        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
 
-        public ICollection<Player> Players
+        public ICollection<ServerPlayer> Players
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Prototype.Networking.Players
 
         public void CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
         {
-            var player = new Player(new PlayerConnection(peer));
+            var player = new ServerPlayer(new PlayerConnection(peer));
 
             playersById.Add(player.Id, player);
             PlayerAddedEvent?.Invoke(this, player);
@@ -40,7 +40,7 @@ namespace Prototype.Networking.Players
         {
             int id = peer.Id;
 
-            if (playersById.TryGetValue(id, out Player player))
+            if (playersById.TryGetValue(id, out ServerPlayer player))
             {
                 playersById.Remove(id);
                 PlayerRemovedEvent?.Invoke(this, player);
@@ -52,12 +52,12 @@ namespace Prototype.Networking.Players
             return playersById.ContainsKey(id);
         }
 
-        public Player GetPlayer(int id)
+        public ServerPlayer GetPlayer(int id)
         {
             return playersById[id];
         }
 
-        public bool TryGetPlayer(int id, out Player player)
+        public bool TryGetPlayer(int id, out ServerPlayer player)
         {
             player = null;
 

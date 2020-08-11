@@ -4,39 +4,25 @@ using UnityEngine;
 
 namespace Prototype.Networking.Players
 {
-    public class Player // add ServerPlayer class
+    public class Player
     {
-        private PlayerConnection connection; // move to ServerPlayer
+        private readonly int id;
 
         // add IsCurrentlyLoadingZone property and Zone property
 
         public PlayerCharacter character;
-
         public Vector2 movementInput; // todo better impl
 
-        public Player(PlayerConnection connection)
+        public Player(int id)
         {
-            Connection = connection;
-        }
-
-        public PlayerConnection Connection
-        {
-            get
-            {
-                return connection;
-            }
-
-            set
-            {
-                connection = value;
-            }
+            this.id = id;
         }
 
         public int Id
         {
             get
             {
-                return connection.Id;
+                return id;
             }
         }
 

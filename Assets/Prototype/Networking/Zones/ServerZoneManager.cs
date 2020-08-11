@@ -33,7 +33,7 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
         {
-            if (playerManager.TryGetPlayer(sender.Id, out Player player))
+            if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
                 player.CreatePlayerCharacter(zones[e.guid]); // ! should check if player is loading zone on server or not first
 
