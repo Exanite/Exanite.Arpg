@@ -1,4 +1,5 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
@@ -44,6 +45,8 @@ namespace Prototype.Networking.Client
             client.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
             client.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
 
+            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+
             client.DisconnectedEvent += OnDisconnected;
 
             client.ConnectAsync().ContinueWith(x =>
@@ -81,7 +84,11 @@ namespace Prototype.Networking.Client
 
                 if (e.playerId == id)
                 {
-                    // player.character.gameObject.AddComponent<PlayerController>();
+                    var controller = player.character.gameObject.AddComponent<PlayerController>();
+                    controller.player = player;
+                    controller.client = client;
+
+                    player.character.name += " (Local)";
                 }
             }
         }
@@ -92,6 +99,17 @@ namespace Prototype.Networking.Client
             {
                 Destroy(player.character.gameObject);
                 currentZone.RemovePlayer(player);
+            }
+        }
+
+        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
+        {
+            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            {
+                if (player.character)
+                {
+                    player.character.transform.position = e.playerPosition;
+                }
             }
         }
 

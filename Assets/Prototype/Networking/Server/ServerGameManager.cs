@@ -37,45 +37,60 @@ namespace Prototype.Networking.Server
             StartServer();
         }
 
-        //private void FixedUpdate()
-        //{
-        //    foreach (var player in playerManager.Players)
-        //    {
-        //        var playerTransform = player.character.transform;
+        private void FixedUpdate()
+        {
+            foreach (var player in playerManager.Players)
+            {
+                if (!player.character)
+                {
+                    continue;
+                }
 
-        //        playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
+                var playerTransform = player.character.transform;
 
-        //        float verticalExtents = Camera.main.orthographicSize;
-        //        float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
+                playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
 
-        //        if (playerTransform.position.x > horizontalExtents)
-        //        {
-        //            Vector2 newPosition = playerTransform.position;
-        //            newPosition.x -= horizontalExtents * 2;
-        //            playerTransform.position = newPosition;
-        //        }
-        //        else if (playerTransform.position.x < -horizontalExtents)
-        //        {
-        //            Vector2 newPosition = playerTransform.position;
-        //            newPosition.x += horizontalExtents * 2;
-        //            playerTransform.position = newPosition;
-        //        }
-        //        else if (playerTransform.position.y > verticalExtents)
-        //        {
-        //            Vector2 newPosition = playerTransform.position;
-        //            newPosition.y -= verticalExtents * 2;
-        //            playerTransform.position = newPosition;
-        //        }
-        //        else if (playerTransform.position.y < -verticalExtents)
-        //        {
-        //            Vector2 newPosition = playerTransform.position;
-        //            newPosition.y += verticalExtents * 2;
-        //            playerTransform.position = newPosition;
-        //        }
+                float verticalExtents = Camera.main.orthographicSize;
+                float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
 
-        //        SendPositionUpdates();
-        //    }
-        //}
+                if (playerTransform.position.x > horizontalExtents)
+                {
+                    Vector2 newPosition = playerTransform.position;
+                    newPosition.x -= horizontalExtents * 2;
+                    playerTransform.position = newPosition;
+                }
+                else if (playerTransform.position.x < -horizontalExtents)
+                {
+                    Vector2 newPosition = playerTransform.position;
+                    newPosition.x += horizontalExtents * 2;
+                    playerTransform.position = newPosition;
+                }
+                else if (playerTransform.position.y > verticalExtents)
+                {
+                    Vector2 newPosition = playerTransform.position;
+                    newPosition.y -= verticalExtents * 2;
+                    playerTransform.position = newPosition;
+                }
+                else if (playerTransform.position.y < -verticalExtents)
+                {
+                    Vector2 newPosition = playerTransform.position;
+                    newPosition.y += verticalExtents * 2;
+                    playerTransform.position = newPosition;
+                }
+
+                SendPositionUpdates();
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+
+            foreach (var player in tempMainZone.playersById.Values)
+            {
+                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
+            }
+        }
 
         public void StartServer()
         {
@@ -85,6 +100,8 @@ namespace Prototype.Networking.Server
             server.ClientDisconnectedEvent += OnPlayerDisconnected;
 
             zoneManager.RegisterPackets(server);
+
+            server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
 
             server.Create();
 
@@ -98,6 +115,8 @@ namespace Prototype.Networking.Server
             log.Information("Stopping server");
 
             server.Close();
+
+            server.ClearPacketReceiver<PlayerInputPacket>();
 
             zoneManager.UnregisterPackets(server);
 
@@ -133,22 +152,33 @@ namespace Prototype.Networking.Server
             playerManager.RemoveFor(e.Peer);
         }
 
-        //private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
-        //{
-        //    if (playerManager.TryGetPlayer(sender.Id, out Player player))
-        //    {
-        //        player.movementInput = e.movementInput;
-        //    }
-        //}
+        private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
+        {
+            if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
+            {
+                player.movementInput = e.movementInput;
+            }
+        }
 
-        //private void SendPositionUpdates()
-        //{
-        //    var packet = new PlayerPositionUpdatePacket(playerManager.Players);
-
-        //    foreach (var player in playerManager.Players)
-        //    {
-        //        server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.Unreliable);
-        //    }
-        //}
+        private void SendPositionUpdates()
+        {
+            foreach (Zone zone in zoneManager.zones.Values)
+            {
+                foreach (ServerPlayer target in zone.playersById.Values)
+                {
+                    foreach (ServerPlayer current in zone.playersById.Values)
+                    {
+                        server.SendPacket(
+                            target.Connection.Peer, 
+                            new PlayerPositionUpdatePacket()
+                            {
+                                playerId = current.Id,
+                                playerPosition = current.character.transform.position,
+                            }, 
+                            DeliveryMethod.Unreliable);
+                    }
+                }
+            }
+        }
     }
 }
