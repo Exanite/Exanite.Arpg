@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 1963829739}
   - component: {fileID: 1963829740}
   - component: {fileID: 1963829741}
+  - component: {fileID: 1963829742}
   m_Layer: 0
   m_Name: Server
   m_TagString: Untagged
@@ -361,8 +362,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   server: {fileID: 1963829740}
-  tempZonePrefab: {fileID: 4938829201175275096, guid: 421aadf177fbf19458bd18e510646df4,
-    type: 3}
+--- !u!114 &1963829742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963829738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _components:
+  - {fileID: 1963829740}
+  - {fileID: 1963829741}
+  _identifier: 
+  _useSceneContext: 1
+  _context: {fileID: 0}
+  _bindType: 0
 --- !u!1001 &8480785036279327791
 PrefabInstance:
   m_ObjectHideFlags: 0
