@@ -31,7 +31,7 @@ jobs:
     - uses: actions/cache@v1.1.0
       with:
         path: Library
-        key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('.github/cacheversion.txt') }}
+        key: Library-${{ matrix.targetPlatform }}
         restore-keys: |
           Library-
     # Build
