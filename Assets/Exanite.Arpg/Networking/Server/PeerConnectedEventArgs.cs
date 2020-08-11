@@ -3,11 +3,11 @@ using LiteNetLib;
 
 namespace Exanite.Arpg.Networking.Server
 {
-    public class ClientConnectedEventArgs : EventArgs
+    public class PeerConnectedEventArgs : EventArgs
     {
         private NetPeer peer;
 
-        public ClientConnectedEventArgs(NetPeer peer)
+        public PeerConnectedEventArgs(NetPeer peer)
         {
             Peer = peer;
         }

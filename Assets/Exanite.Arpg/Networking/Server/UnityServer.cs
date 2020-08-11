@@ -23,9 +23,9 @@ namespace Exanite.Arpg.Networking.Server
             this.log = log;
         }
 
-        public event EventHandler<UnityServer, ClientConnectedEventArgs> ClientConnectedEvent;
+        public event EventHandler<UnityServer, PeerConnectedEventArgs> ClientConnectedEvent;
 
-        public event EventHandler<UnityServer, ClientDisconnectedEventArgs> ClientDisconnectedEvent;
+        public event EventHandler<UnityServer, PeerDisconnectedEventArgs> ClientDisconnectedEvent;
 
         public ushort Port
         {
@@ -104,14 +104,14 @@ namespace Exanite.Arpg.Networking.Server
         {
             connectedClients.Add(peer);
 
-            ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
+            ClientConnectedEvent?.Invoke(this, new PeerConnectedEventArgs(peer));
         }
 
         protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             connectedClients.Remove(peer);
 
-            ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
+            ClientDisconnectedEvent?.Invoke(this, new PeerDisconnectedEventArgs(peer, disconnectInfo));
         }
 
         protected override void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)

@@ -3,12 +3,12 @@ using LiteNetLib;
 
 namespace Exanite.Arpg.Networking.Server
 {
-    public class ClientDisconnectedEventArgs : EventArgs
+    public class PeerDisconnectedEventArgs : EventArgs
     {
         private NetPeer peer;
         private DisconnectInfo disconnectInfo;
 
-        public ClientDisconnectedEventArgs(NetPeer peer, DisconnectInfo disconnectInfo)
+        public PeerDisconnectedEventArgs(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             Peer = peer;
             DisconnectInfo = disconnectInfo;

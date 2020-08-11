@@ -124,7 +124,7 @@ namespace Prototype.Networking.Server
             server.ClientConnectedEvent -= OnPlayerConnected;
         }
 
-        private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
+        private void OnPlayerConnected(UnityServer sender, PeerConnectedEventArgs e)
         {
             log.Information("Player {Id} connected", e.Peer.Id);
 
@@ -134,7 +134,7 @@ namespace Prototype.Networking.Server
             server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZone.guid }, DeliveryMethod.ReliableOrdered);
         }
 
-        private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
+        private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
