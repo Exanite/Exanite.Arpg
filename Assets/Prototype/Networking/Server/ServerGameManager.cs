@@ -16,7 +16,7 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
 
-        public Guid tempMainZoneGuid;
+        public Zone tempMainZone;
 
         private ILog log;
         private Scene scene;
@@ -89,9 +89,8 @@ namespace Prototype.Networking.Server
             server.Create();
 
             // ! Move zone creation somewhere else
-            var zone = new Zone();
-            tempMainZoneGuid = zone.guid;
-            zoneManager.zones.Add(zone.guid, zone);
+            tempMainZone = new Zone();
+            zoneManager.zones.Add(tempMainZone.guid, tempMainZone);
         }
 
         public void StopServer()
@@ -103,7 +102,7 @@ namespace Prototype.Networking.Server
             zoneManager.UnregisterPackets(server);
 
             server.ClientDisconnectedEvent -= OnPlayerDisconnected;
-            server.ClientConnectedEvent-= OnPlayerConnected;
+            server.ClientConnectedEvent -= OnPlayerConnected;
         }
 
         private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
@@ -113,7 +112,7 @@ namespace Prototype.Networking.Server
             playerManager.CreateFor(e.Peer);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZoneGuid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZone.guid }, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
