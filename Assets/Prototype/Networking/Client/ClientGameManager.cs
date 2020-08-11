@@ -71,12 +71,28 @@ namespace Prototype.Networking.Client
 
         private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
         {
-            log.Information("Player {Id} entered zone", e.playerId);
+            if (!currentZone.playersById.ContainsKey(e.playerId))
+            {
+                var player = new Player(e.playerId);
+                currentZone.AddPlayer(player);
+
+                player.CreatePlayerCharacter(currentZone);
+                player.character.transform.position = e.playerPosition;
+
+                if (e.playerId == id)
+                {
+                    // player.character.gameObject.AddComponent<PlayerController>();
+                }
+            }
         }
 
         private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
         {
-            log.Information("Player {Id} left zone", e.playerId);
+            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            {
+                Destroy(player.character.gameObject);
+                currentZone.RemovePlayer(player);
+            }
         }
 
         public void Disconnect()
