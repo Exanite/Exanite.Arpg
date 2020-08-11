@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Prototype.Networking.Zones
@@ -14,7 +13,7 @@ namespace Prototype.Networking.Zones
         public Guid guid;
         public Scene scene;
 
-        public HashSet<Player> players = new HashSet<Player>();
+        public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
         public Zone() : this(Guid.NewGuid()) { }
 
@@ -31,15 +30,16 @@ namespace Prototype.Networking.Zones
 
         public void AddPlayer(Player player)
         {
-            if (players.Add(player))
+            if (!playersById.ContainsKey(player.Id))
             {
+                playersById.Add(player.Id, player);
                 PlayerEnteredEvent?.Invoke(this, player);
             }
         }
 
         public void RemovePlayer(Player player)
         {
-            if (players.Remove(player))
+            if (playersById.Remove(player.Id))
             {
                 PlayerLeftEvent?.Invoke(this, player);
             }
