@@ -31,7 +31,9 @@ jobs:
     - uses: actions/cache@v1.1.0
       with:
         path: Library
-        key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('.github/cache_version') }}
+        key: Library-${{ matrix.targetPlatform }}
+        restore-keys: |
+          Library-
     # Build
     - uses: webbertakken/unity-builder@v1.1
       with:
