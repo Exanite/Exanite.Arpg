@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Exanite.Arpg.Networking;
+using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
@@ -13,11 +14,13 @@ namespace Prototype.Networking.Zones
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
+        private UnityServer server;
         private ServerPlayerManager playerManager;
 
         [Inject]
-        public void Inject(ServerPlayerManager playerManager)
+        public void Inject(UnityServer server, ServerPlayerManager playerManager)
         {
+            this.server = server;
             this.playerManager = playerManager;
         }
 
@@ -33,13 +36,33 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
         {
-            if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
+            if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer newPlayer))
             {
-                player.CreatePlayerCharacter(zones[e.guid]); // ! should check if player is loading zone on server or not first
+                var zone = zones[e.guid];
 
-                // send ZonePlayerEnter packets to all in zone
-                // this should one packet to player already in the zone and
-                // many packets to the player that just entered the zone
+                newPlayer.CreatePlayerCharacter(zone); // ! should check if player is loading zone on server or not first
+                zone.AddPlayer(newPlayer);
+
+                foreach (ServerPlayer playerInZone in zone.playersById.Values) // needs refactoring
+                {
+                    server.SendPacket(
+                        playerInZone.Connection.Peer,
+                        new ZonePlayerEnterPacket()
+                        {
+                            playerId = newPlayer.Id,
+                            playerPosition = newPlayer.character.transform.position,
+                        },
+                        DeliveryMethod.ReliableOrdered);
+
+                    server.SendPacket(
+                        newPlayer.Connection.Peer,
+                        new ZonePlayerEnterPacket()
+                        {
+                            playerId = playerInZone.Id,
+                            playerPosition = playerInZone.character.transform.position,
+                        },
+                        DeliveryMethod.ReliableOrdered);
+                }
             }
         }
     }
