@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Net;
-using System.Net.Sockets;
 using Exanite.Arpg.Logging;
 using LiteNetLib;
-using LiteNetLib.Utils;
 using UniRx.Async;
 using UnityEngine;
 using Zenject;
 
 namespace Exanite.Arpg.Networking.Client
 {
-    public class UnityClient : MonoBehaviour, ISerializationCallbackReceiver, INetEventListener
+    public class UnityClient : UnityNetwork, ISerializationCallbackReceiver
     {
+        [Header("Settings:")]
         [SerializeField] private string address = IPAddress.Loopback.ToString();
         [SerializeField] private ushort port = Constants.DefaultPort;
 
@@ -21,11 +20,6 @@ namespace Exanite.Arpg.Networking.Client
 
         private IPAddress ipAddress;
         private DisconnectInfo previousDisconnectInfo;
-
-        private NetManager netClient;
-        private NetPacketProcessor netPacketProcessor;
-
-        private NetDataWriter writer = new NetDataWriter();
 
         private ILog log;
 
@@ -117,15 +111,12 @@ namespace Exanite.Arpg.Networking.Client
             }
         }
 
-        private void Awake()
+        protected override bool IsReady
         {
-            netClient = new NetManager(this);
-            netPacketProcessor = new NetPacketProcessor();
-        }
-
-        private void FixedUpdate()
-        {
-            netClient.PollEvents();
+            get
+            {
+                return IsConnected;
+            }
         }
 
         private void OnDestroy()
@@ -146,8 +137,8 @@ namespace Exanite.Arpg.Networking.Client
 
             IsConnecting = true;
 
-            netClient.Start();
-            netClient.Connect(new IPEndPoint(IPAddress, Port), Constants.ConnectionKey);
+            netManager.Start();
+            netManager.Connect(new IPEndPoint(IPAddress, Port), Constants.ConnectionKey);
 
             await UniTask.WaitUntil(() => !IsConnecting);
 
@@ -156,55 +147,25 @@ namespace Exanite.Arpg.Networking.Client
 
         public void Disconnect()
         {
-            netClient.Stop();
-        }
-
-        public void SendPacket<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
-        {
-            if (!IsConnected)
+            if (netManager == null)
             {
                 return;
             }
 
-            writer.Reset();
+            netManager.DisconnectAll();
+            netManager.PollEvents();
+            netManager.Stop();
 
-            netPacketProcessor.WriteNetSerializable(writer, packet);
-
-            Server.Send(writer, deliveryMethod);
+            isConnected = false;
+            isConnecting = false;
         }
 
-        public void SubscribePacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
+        public void SendPacketToServer<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
-            if (receiver == null)
-            {
-                throw new ArgumentNullException(nameof(receiver));
-            }
-
-            netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
-            {
-                receiver.Invoke(sender, packet);
-            });
+            SendPacket(Server, packet, deliveryMethod);
         }
 
-        public void ClearPacketReceievers<T>() where T : class, IPacket, new()
-        {
-            netPacketProcessor.RemoveSubscription<T>();
-        }
-
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-            if (IPAddress != null)
-            {
-                address = IPAddress.ToString();
-            }
-        }
-
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            IPAddress = IPAddress.Parse(address);
-        }
-
-        void INetEventListener.OnPeerConnected(NetPeer peer)
+        protected override void OnPeerConnected(NetPeer peer)
         {
             ConnectedEvent?.Invoke(this, new ConnectedEventArgs(peer));
 
@@ -214,7 +175,7 @@ namespace Exanite.Arpg.Networking.Client
             Server = peer;
         }
 
-        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             if (IsConnected)
             {
@@ -228,29 +189,28 @@ namespace Exanite.Arpg.Networking.Client
             previousDisconnectInfo = disconnectInfo;
         }
 
-        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
-        {
-
-        }
-
-        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        protected override void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
             netPacketProcessor.ReadAllPackets(reader, peer);
+            reader.Recycle();
         }
 
-        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-        {
-
-        }
-
-        void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-
-        }
-
-        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        protected override void OnConnectionRequest(ConnectionRequest request)
         {
             request.Reject();
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (IPAddress != null)
+            {
+                address = IPAddress.ToString();
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            IPAddress = IPAddress.Parse(address);
         }
     }
 }

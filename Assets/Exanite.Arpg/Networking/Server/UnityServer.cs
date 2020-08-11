@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using Exanite.Arpg.Logging;
 using LiteNetLib;
-using LiteNetLib.Utils;
 using UnityEngine;
 using Zenject;
 
 namespace Exanite.Arpg.Networking.Server
 {
-    public class UnityServer : MonoBehaviour, INetEventListener
+    public class UnityServer : UnityNetwork
     {
-        private ushort port = Constants.DefaultPort;
+        [Header("Settings:")]
+        [SerializeField] private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
         private List<NetPeer> connectedClients = new List<NetPeer>();
-
-        private NetManager netManager;
-        private NetPacketProcessor netPacketProcessor;
-
-        private NetDataWriter writer = new NetDataWriter();
 
         private ILog log;
 
@@ -68,15 +61,12 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
-        private void Awake()
+        protected override bool IsReady
         {
-            netManager = new NetManager(this);
-            netPacketProcessor = new NetPacketProcessor();
-        }
-
-        private void FixedUpdate()
-        {
-            netManager.PollEvents();
+            get
+            {
+                return IsCreated;
+            }
         }
 
         private void OnDestroy()
@@ -104,78 +94,33 @@ namespace Exanite.Arpg.Networking.Server
             }
 
             netManager.DisconnectAll();
+            netManager.PollEvents();
             netManager.Stop();
 
             IsCreated = false;
         }
 
-        public void SendPacket<T>(NetPeer peer, T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
-        {
-            if (!IsCreated)
-            {
-                return;
-            }
-
-            writer.Reset();
-
-            netPacketProcessor.WriteNetSerializable(writer, packet);
-
-            peer.Send(writer, deliveryMethod);
-        }
-
-        public void SubscribePacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
-        {
-            if (receiver == null)
-            {
-                throw new ArgumentNullException(nameof(receiver));
-            }
-
-            netPacketProcessor.SubscribeNetSerializable<T, NetPeer>((packet, sender) =>
-            {
-                receiver.Invoke(sender, packet);
-            });
-        }
-
-        public void ClearPacketReceievers<T>() where T : class, IPacket, new()
-        {
-            netPacketProcessor.RemoveSubscription<T>();
-        }
-
-        void INetEventListener.OnPeerConnected(NetPeer peer)
+        protected override void OnPeerConnected(NetPeer peer)
         {
             connectedClients.Add(peer);
 
             ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
         }
 
-        void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             connectedClients.Remove(peer);
 
             ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
         }
 
-        void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
-        {
-
-        }
-
-        void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        protected override void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
             netPacketProcessor.ReadAllPackets(reader, peer);
+            reader.Recycle();
         }
 
-        void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-        {
-
-        }
-
-        void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-
-        }
-
-        void INetEventListener.OnConnectionRequest(ConnectionRequest request)
+        protected override void OnConnectionRequest(ConnectionRequest request)
         {
             request.AcceptIfKey(Constants.ConnectionKey);
         }
