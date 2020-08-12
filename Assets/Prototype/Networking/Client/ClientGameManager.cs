@@ -62,6 +62,13 @@ namespace Prototype.Networking.Client
         public void Disconnect()
         {
             client.Disconnect();
+
+            zoneManager.UnregisterPackets(client);
+
+            client.ClearPacketReceiver<PlayerPositionUpdatePacket>();
+            client.ClearPacketReceiver<PlayerIdAssignmentPacket>();
+
+            client.DisconnectedEvent -= OnDisconnected;
         }
 
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
