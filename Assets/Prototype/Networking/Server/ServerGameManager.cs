@@ -15,8 +15,6 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
 
-        public Zone tempMainZone;
-
         private ILog log;
         private Scene scene;
         private ServerPlayerManager playerManager;
@@ -85,7 +83,7 @@ namespace Prototype.Networking.Server
         {
             Gizmos.color = Color.red;
 
-            foreach (var player in tempMainZone.playersById.Values)
+            foreach (var player in zoneManager.GetMainZone().playersById.Values)
             {
                 Gizmos.DrawSphere(player.character.transform.position, 0.5f);
             }
@@ -99,9 +97,7 @@ namespace Prototype.Networking.Server
 
             server.Create();
 
-            // ! Move zone creation somewhere else
-            tempMainZone = new Zone();
-            zoneManager.zones.Add(tempMainZone.guid, tempMainZone);
+            
         }
 
         public void StopServer()
@@ -140,16 +136,18 @@ namespace Prototype.Networking.Server
             playerManager.CreateFor(e.Peer);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZone.guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zoneManager.GetMainZone().guid }, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            if (tempMainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
+            var mainZone = zoneManager.GetMainZone();
+
+            if (mainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
             {
-                foreach (ServerPlayer playerInZone in tempMainZone.playersById.Values)
+                foreach (ServerPlayer playerInZone in mainZone.playersById.Values)
                 {
                     if (playerInZone != player)
                     {
@@ -162,7 +160,7 @@ namespace Prototype.Networking.Server
                     Destroy(player.character.gameObject);
                 }
 
-                tempMainZone.RemovePlayer(player);
+                mainZone.RemovePlayer(player);
                 playerManager.RemoveFor(e.Peer);
             }
 

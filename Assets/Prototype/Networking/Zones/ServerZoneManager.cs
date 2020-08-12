@@ -14,6 +14,8 @@ namespace Prototype.Networking.Zones
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
+        public Zone mainZone;
+
         private UnityServer server;
         private ServerPlayerManager playerManager;
 
@@ -22,6 +24,17 @@ namespace Prototype.Networking.Zones
         {
             this.server = server;
             this.playerManager = playerManager;
+        }
+
+        public Zone GetMainZone()
+        {
+            if (mainZone == null)
+            {
+                mainZone = new Zone();
+                zones.Add(mainZone.guid, mainZone);
+            }
+
+            return mainZone;
         }
 
         public void RegisterPackets(UnityNetwork network)
