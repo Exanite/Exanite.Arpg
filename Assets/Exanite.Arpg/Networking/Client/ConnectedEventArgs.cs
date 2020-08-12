@@ -5,23 +5,23 @@ namespace Exanite.Arpg.Networking.Client
 {
     public class ConnectedEventArgs : EventArgs
     {
-        private NetPeer peer;
+        private NetPeer server;
 
-        public ConnectedEventArgs(NetPeer peer)
+        public ConnectedEventArgs(NetPeer server)
         {
-            Peer = peer;
+            Server = server;
         }
 
-        public NetPeer Peer
+        public NetPeer Server
         {
             get
             {
-                return peer;
+                return server;
             }
 
             set
             {
-                peer = value;
+                server = value;
             }
         }
     }

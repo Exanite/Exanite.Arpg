@@ -5,25 +5,25 @@ namespace Exanite.Arpg.Networking.Client
 {
     public class DisconnectedEventArgs : EventArgs
     {
-        private NetPeer peer;
+        private NetPeer server;
         private DisconnectInfo disconnectInfo;
 
-        public DisconnectedEventArgs(NetPeer peer, DisconnectInfo disconnectInfo)
+        public DisconnectedEventArgs(NetPeer server, DisconnectInfo disconnectInfo)
         {
-            Peer = peer;
+            Server = server;
             DisconnectInfo = disconnectInfo;
         }
 
-        public NetPeer Peer
+        public NetPeer Server
         {
             get
             {
-                return peer;
+                return server;
             }
 
             set
             {
-                peer = value;
+                server = value;
             }
         }
 

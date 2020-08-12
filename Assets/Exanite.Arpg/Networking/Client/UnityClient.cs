@@ -165,21 +165,21 @@ namespace Exanite.Arpg.Networking.Client
             SendPacket(Server, packet, deliveryMethod);
         }
 
-        protected override void OnPeerConnected(NetPeer peer)
+        protected override void OnPeerConnected(NetPeer server)
         {
-            ConnectedEvent?.Invoke(this, new ConnectedEventArgs(peer));
+            ConnectedEvent?.Invoke(this, new ConnectedEventArgs(server));
 
             IsConnecting = false;
             IsConnected = true;
 
-            Server = peer;
+            Server = server;
         }
 
-        protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        protected override void OnPeerDisconnected(NetPeer server, DisconnectInfo disconnectInfo)
         {
             if (IsConnected)
             {
-                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(peer, disconnectInfo));
+                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(server, disconnectInfo));
             }
 
             IsConnecting = false;
