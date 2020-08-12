@@ -38,12 +38,7 @@ namespace Prototype.Networking.Client
 
         public void Connect()
         {
-            client.DisconnectedEvent += OnDisconnected;
-
-            client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
-
-            zoneManager.RegisterPackets(client);
+            RegisterEvents();
 
             client.ConnectAsync().ContinueWith(x =>
             {
@@ -62,7 +57,21 @@ namespace Prototype.Networking.Client
         public void Disconnect()
         {
             client.Disconnect();
+            UnregisterEvents();
+        }
 
+        private void RegisterEvents()
+        {
+            client.DisconnectedEvent += OnDisconnected;
+
+            client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
+            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+
+            zoneManager.RegisterPackets(client);
+        }
+
+        private void UnregisterEvents()
+        {
             zoneManager.UnregisterPackets(client);
 
             client.ClearPacketReceiver<PlayerPositionUpdatePacket>();
