@@ -1,5 +1,4 @@
-﻿using System;
-using Exanite.Arpg.Logging;
+﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
@@ -147,6 +146,14 @@ namespace Prototype.Networking.Server
                         server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
                     }
                 }
+
+                if (player.character)
+                {
+                    Destroy(player.character.gameObject);
+                }
+
+                tempMainZone.RemovePlayer(player);
+                playerManager.RemoveFor(e.Peer);
             }
 
             playerManager.RemoveFor(e.Peer);
@@ -169,12 +176,12 @@ namespace Prototype.Networking.Server
                     foreach (ServerPlayer current in zone.playersById.Values)
                     {
                         server.SendPacket(
-                            target.Connection.Peer, 
+                            target.Connection.Peer,
                             new PlayerPositionUpdatePacket()
                             {
                                 playerId = current.Id,
                                 playerPosition = current.character.transform.position,
-                            }, 
+                            },
                             DeliveryMethod.Unreliable);
                     }
                 }
