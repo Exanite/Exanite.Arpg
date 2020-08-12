@@ -8,14 +8,14 @@ namespace Exanite.Arpg.Networking.Server
     /// </summary>
     public class PeerConnectedEventArgs : EventArgs
     {
-        private NetPeer peer;
+        private readonly NetPeer peer;
 
         /// <summary>
         /// Creates a new <see cref="PeerConnectedEventArgs"/>
         /// </summary>
         public PeerConnectedEventArgs(NetPeer peer)
         {
-            Peer = peer;
+            this.peer = peer;
         }
 
         /// <summary>
@@ -26,11 +26,6 @@ namespace Exanite.Arpg.Networking.Server
             get
             {
                 return peer;
-            }
-
-            set
-            {
-                peer = value;
             }
         }
     }

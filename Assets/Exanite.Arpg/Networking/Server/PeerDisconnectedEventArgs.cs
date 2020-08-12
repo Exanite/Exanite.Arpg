@@ -8,16 +8,16 @@ namespace Exanite.Arpg.Networking.Server
     /// </summary>
     public class PeerDisconnectedEventArgs : EventArgs
     {
-        private NetPeer peer;
-        private DisconnectInfo disconnectInfo;
+        private readonly NetPeer peer;
+        private readonly DisconnectInfo disconnectInfo;
 
         /// <summary>
         /// Creates a new <see cref="PeerDisconnectedEventArgs"/>
         /// </summary>
         public PeerDisconnectedEventArgs(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            Peer = peer;
-            DisconnectInfo = disconnectInfo;
+            this.peer = peer;
+            this.disconnectInfo = disconnectInfo;
         }
 
         /// <summary>
@@ -29,11 +29,6 @@ namespace Exanite.Arpg.Networking.Server
             {
                 return peer;
             }
-
-            set
-            {
-                peer = value;
-            }
         }
 
         /// <summary>
@@ -44,11 +39,6 @@ namespace Exanite.Arpg.Networking.Server
             get
             {
                 return disconnectInfo;
-            }
-
-            set
-            {
-                disconnectInfo = value;
             }
         }
     }
