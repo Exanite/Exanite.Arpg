@@ -59,17 +59,6 @@ namespace Prototype.Networking.Client
             .Forget();
         }
 
-        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
-        {
-            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
-            {
-                if (player.character)
-                {
-                    player.character.transform.position = e.playerPosition;
-                }
-            }
-        }
-
         public void Disconnect()
         {
             client.Disconnect();
@@ -84,6 +73,17 @@ namespace Prototype.Networking.Client
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
             id = e.id;
+        }
+
+        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
+        {
+            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            {
+                if (player.character)
+                {
+                    player.character.transform.position = e.playerPosition;
+                }
+            }
         }
     }
 }
