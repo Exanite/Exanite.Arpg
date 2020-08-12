@@ -96,8 +96,6 @@ namespace Prototype.Networking.Server
             RegisterEvents();
 
             server.Create();
-
-            
         }
 
         public void StopServer()
