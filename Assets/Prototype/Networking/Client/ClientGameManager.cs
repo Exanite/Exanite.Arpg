@@ -38,12 +38,12 @@ namespace Prototype.Networking.Client
 
         public void Connect()
         {
+            client.DisconnectedEvent += OnDisconnected;
+
             client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
             client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
 
             zoneManager.RegisterPackets(client);
-
-            client.DisconnectedEvent += OnDisconnected;
 
             client.ConnectAsync().ContinueWith(x =>
             {

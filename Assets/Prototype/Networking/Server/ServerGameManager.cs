@@ -98,9 +98,9 @@ namespace Prototype.Networking.Server
             server.ClientConnectedEvent += OnPlayerConnected;
             server.ClientDisconnectedEvent += OnPlayerDisconnected;
 
-            zoneManager.RegisterPackets(server);
-
             server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
+
+            zoneManager.RegisterPackets(server);
 
             server.Create();
 
@@ -115,9 +115,9 @@ namespace Prototype.Networking.Server
 
             server.Close();
 
-            server.ClearPacketReceiver<PlayerInputPacket>();
-
             zoneManager.UnregisterPackets(server);
+
+            server.ClearPacketReceiver<PlayerInputPacket>();
 
             server.ClientDisconnectedEvent -= OnPlayerDisconnected;
             server.ClientConnectedEvent -= OnPlayerConnected;
