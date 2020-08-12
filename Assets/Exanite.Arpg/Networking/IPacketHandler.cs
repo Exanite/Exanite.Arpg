@@ -1,6 +1,4 @@
-﻿using Exanite.Arpg.Networking;
-
-namespace Prototype.Networking
+﻿namespace Exanite.Arpg.Networking
 {
     public interface IPacketHandler
     {

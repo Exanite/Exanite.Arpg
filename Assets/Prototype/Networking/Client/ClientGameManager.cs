@@ -1,5 +1,4 @@
-﻿using System;
-using Exanite.Arpg.Logging;
+﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
