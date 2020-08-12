@@ -47,7 +47,7 @@ namespace Prototype.Networking.Server
 
                 var playerTransform = player.character.transform;
 
-                playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
+                playerTransform.position += (Vector3)(player.character.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
@@ -163,7 +163,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.movementInput = e.movementInput;
+                player.character.movementInput = e.movementInput;
             }
         }
 
