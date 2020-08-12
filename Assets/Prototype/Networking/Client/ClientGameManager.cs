@@ -4,7 +4,6 @@ using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones;
-using Prototype.Networking.Zones.Packets;
 using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,16 +18,17 @@ namespace Prototype.Networking.Client
         public int id = -1;
 
         private Player localPlayer;
-        private Zone currentZone;
 
         private ILog log;
         private Scene scene;
+        private ClientZoneManager zoneManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene)
+        public void Inject(ILog log, Scene scene, ClientZoneManager zoneManager)
         {
             this.log = log;
             this.scene = scene;
+            this.zoneManager = zoneManager;
         }
 
         private void Start()
@@ -39,12 +39,9 @@ namespace Prototype.Networking.Client
         public void Connect()
         {
             client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-
-            client.RegisterPacketReceiver<ZoneCreatePacket>(OnZoneCreate);
-            client.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
-            client.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
-
             client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+
+            zoneManager.RegisterPackets(client);
 
             client.DisconnectedEvent += OnDisconnected;
 
@@ -62,48 +59,9 @@ namespace Prototype.Networking.Client
             .Forget();
         }
 
-        private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
-        {
-            var newZone = new Zone(e.guid);
-
-            currentZone = newZone;
-
-            client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
-        }
-
-        private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
-        {
-            if (!currentZone.playersById.ContainsKey(e.playerId))
-            {
-                var player = new Player(e.playerId);
-                currentZone.AddPlayer(player);
-
-                player.CreatePlayerCharacter(currentZone);
-                player.character.transform.position = e.playerPosition;
-
-                if (e.playerId == id)
-                {
-                    var controller = player.character.gameObject.AddComponent<PlayerController>();
-                    controller.player = player;
-                    controller.client = client;
-
-                    player.character.name += " (Local)";
-                }
-            }
-        }
-
-        private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
-        {
-            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
-            {
-                Destroy(player.character.gameObject);
-                currentZone.RemovePlayer(player);
-            }
-        }
-
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
-            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
                 if (player.character)
                 {
@@ -120,7 +78,7 @@ namespace Prototype.Networking.Client
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
             SceneManager.UnloadSceneAsync(scene);
-            SceneManager.UnloadSceneAsync(currentZone.scene);
+            SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
         }
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
