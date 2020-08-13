@@ -81,6 +81,11 @@ namespace Prototype.Networking.Server
 
         private void OnDrawGizmos()
         {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             Gizmos.color = Color.red;
 
             foreach (var player in zoneManager.GetMainZone().playersById.Values)
