@@ -8,6 +8,9 @@ using Zenject;
 
 namespace Exanite.Arpg.Networking.Client
 {
+    /// <summary>
+    /// Client that can be used to connect to a <see cref="Server.UnityServer"/>
+    /// </summary>
     public class UnityClient : UnityNetwork, ISerializationCallbackReceiver
     {
         [Header("Settings:")]
@@ -29,8 +32,14 @@ namespace Exanite.Arpg.Networking.Client
             this.log = log;
         }
 
+        /// <summary>
+        /// Event fired when the <see cref="UnityClient"/> is connected to the server
+        /// </summary>
         public event EventHandler<UnityClient, ConnectedEventArgs> ConnectedEvent;
 
+        /// <summary>
+        /// Event fired when the client is disconnected from the server
+        /// </summary>
         public event EventHandler<UnityClient, DisconnectedEventArgs> DisconnectedEvent;
 
         /// <summary>
@@ -98,6 +107,9 @@ namespace Exanite.Arpg.Networking.Client
             }
         }
 
+        /// <summary>
+        /// The <see cref="NetPeer"/> representing the server
+        /// </summary>
         public NetPeer Server
         {
             get
@@ -124,6 +136,9 @@ namespace Exanite.Arpg.Networking.Client
             Disconnect();
         }
 
+        /// <summary>
+        /// Connects to the server asynchronously
+        /// </summary>
         public async UniTask<ConnectResult> ConnectAsync()
         {
             if (IsConnected)
@@ -145,6 +160,9 @@ namespace Exanite.Arpg.Networking.Client
             return new ConnectResult(IsConnected, previousDisconnectInfo.Reason.ToString());
         }
 
+        /// <summary>
+        /// Disconnects from the server
+        /// </summary>
         public void Disconnect()
         {
             if (netManager == null)
@@ -160,26 +178,29 @@ namespace Exanite.Arpg.Networking.Client
             isConnecting = false;
         }
 
+        /// <summary>
+        /// Sends a packet to the server
+        /// </summary>
         public void SendPacketToServer<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
             SendPacket(Server, packet, deliveryMethod);
         }
 
-        protected override void OnPeerConnected(NetPeer peer)
+        protected override void OnPeerConnected(NetPeer server)
         {
-            ConnectedEvent?.Invoke(this, new ConnectedEventArgs(peer));
+            ConnectedEvent?.Invoke(this, new ConnectedEventArgs(server));
 
             IsConnecting = false;
             IsConnected = true;
 
-            Server = peer;
+            Server = server;
         }
 
-        protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+        protected override void OnPeerDisconnected(NetPeer server, DisconnectInfo disconnectInfo)
         {
             if (IsConnected)
             {
-                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(peer, disconnectInfo));
+                DisconnectedEvent?.Invoke(this, new DisconnectedEventArgs(server, disconnectInfo));
             }
 
             IsConnecting = false;

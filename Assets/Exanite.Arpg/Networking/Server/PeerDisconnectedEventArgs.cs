@@ -1,33 +1,33 @@
 ﻿using System;
 using LiteNetLib;
 
-namespace Exanite.Arpg.Networking.Client
+namespace Exanite.Arpg.Networking.Server
 {
     /// <summary>
-    /// Arguments for client Disconnected events
+    /// Arguments for server PeerDisconnected events
     /// </summary>
-    public class DisconnectedEventArgs : EventArgs
+    public class PeerDisconnectedEventArgs : EventArgs
     {
-        private readonly NetPeer server;
+        private readonly NetPeer peer;
         private readonly DisconnectInfo disconnectInfo;
 
         /// <summary>
-        /// Creates a new <see cref="DisconnectedEventArgs"/>
+        /// Creates a new <see cref="PeerDisconnectedEventArgs"/>
         /// </summary>
-        public DisconnectedEventArgs(NetPeer server, DisconnectInfo disconnectInfo)
+        public PeerDisconnectedEventArgs(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            this.server = server;
+            this.peer = peer;
             this.disconnectInfo = disconnectInfo;
         }
 
         /// <summary>
-        /// The <see cref="NetPeer"/> of the server the client disconnected from
+        /// The <see cref="NetPeer"/> that disconnected from the server
         /// </summary>
-        public NetPeer Server
+        public NetPeer Peer
         {
             get
             {
-                return server;
+                return peer;
             }
         }
 

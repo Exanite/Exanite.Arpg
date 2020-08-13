@@ -1,5 +1,4 @@
-﻿using System;
-using Exanite.Arpg.Logging;
+﻿using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
@@ -15,8 +14,6 @@ namespace Prototype.Networking.Server
     public class ServerGameManager : MonoBehaviour
     {
         public UnityServer server;
-
-        public Zone tempMainZone;
 
         private ILog log;
         private Scene scene;
@@ -48,7 +45,7 @@ namespace Prototype.Networking.Server
 
                 var playerTransform = player.character.transform;
 
-                playerTransform.position += (Vector3)(player.movementInput * Time.deltaTime * 5);
+                playerTransform.position += (Vector3)(player.character.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
@@ -84,9 +81,14 @@ namespace Prototype.Networking.Server
 
         private void OnDrawGizmos()
         {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             Gizmos.color = Color.red;
 
-            foreach (var player in tempMainZone.playersById.Values)
+            foreach (var player in zoneManager.GetMainZone().playersById.Values)
             {
                 Gizmos.DrawSphere(player.character.transform.position, 0.5f);
             }
@@ -96,18 +98,9 @@ namespace Prototype.Networking.Server
         {
             log.Information("Starting server");
 
-            server.ClientConnectedEvent += OnPlayerConnected;
-            server.ClientDisconnectedEvent += OnPlayerDisconnected;
-
-            zoneManager.RegisterPackets(server);
-
-            server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
+            RegisterEvents();
 
             server.Create();
-
-            // ! Move zone creation somewhere else
-            tempMainZone = new Zone();
-            zoneManager.zones.Add(tempMainZone.guid, tempMainZone);
         }
 
         public void StopServer()
@@ -116,37 +109,62 @@ namespace Prototype.Networking.Server
 
             server.Close();
 
-            server.ClearPacketReceiver<PlayerInputPacket>();
+            UnregisterEvents();
+        }
 
+        private void RegisterEvents()
+        {
+            server.ClientConnectedEvent += OnPlayerConnected;
+            server.ClientDisconnectedEvent += OnPlayerDisconnected;
+
+            server.RegisterPacketReceiver<PlayerInputPacket>(OnPlayerInput);
+
+            zoneManager.RegisterPackets(server);
+        }
+
+        private void UnregisterEvents()
+        {
             zoneManager.UnregisterPackets(server);
+
+            server.ClearPacketReceiver<PlayerInputPacket>();
 
             server.ClientDisconnectedEvent -= OnPlayerDisconnected;
             server.ClientConnectedEvent -= OnPlayerConnected;
         }
 
-        private void OnPlayerConnected(UnityServer sender, ClientConnectedEventArgs e)
+        private void OnPlayerConnected(UnityServer sender, PeerConnectedEventArgs e)
         {
             log.Information("Player {Id} connected", e.Peer.Id);
 
             playerManager.CreateFor(e.Peer);
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = tempMainZone.guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zoneManager.GetMainZone().guid }, DeliveryMethod.ReliableOrdered);
         }
 
-        private void OnPlayerDisconnected(UnityServer sender, ClientDisconnectedEventArgs e)
+        private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            if (tempMainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
+            var mainZone = zoneManager.GetMainZone();
+
+            if (mainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
             {
-                foreach (ServerPlayer playerInZone in tempMainZone.playersById.Values)
+                foreach (ServerPlayer playerInZone in mainZone.playersById.Values)
                 {
                     if (playerInZone != player)
                     {
                         server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
                     }
                 }
+
+                if (player.character)
+                {
+                    Destroy(player.character.gameObject);
+                }
+
+                mainZone.RemovePlayer(player);
+                playerManager.RemoveFor(e.Peer);
             }
 
             playerManager.RemoveFor(e.Peer);
@@ -156,7 +174,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.movementInput = e.movementInput;
+                player.character.movementInput = e.movementInput;
             }
         }
 
@@ -169,12 +187,12 @@ namespace Prototype.Networking.Server
                     foreach (ServerPlayer current in zone.playersById.Values)
                     {
                         server.SendPacket(
-                            target.Connection.Peer, 
+                            target.Connection.Peer,
                             new PlayerPositionUpdatePacket()
                             {
                                 playerId = current.Id,
                                 playerPosition = current.character.transform.position,
-                            }, 
+                            },
                             DeliveryMethod.Unreliable);
                     }
                 }

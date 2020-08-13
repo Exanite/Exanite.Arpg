@@ -3,25 +3,29 @@ using LiteNetLib;
 
 namespace Exanite.Arpg.Networking.Client
 {
+    /// <summary>
+    /// Arguments for client Connected events
+    /// </summary>
     public class ConnectedEventArgs : EventArgs
     {
-        private NetPeer peer;
+        private readonly NetPeer server;
 
-        public ConnectedEventArgs(NetPeer peer)
+        /// <summary>
+        /// Creates a new <see cref="ConnectedEventArgs"/>
+        /// </summary>
+        public ConnectedEventArgs(NetPeer server)
         {
-            Peer = peer;
+            this.server = server;
         }
 
-        public NetPeer Peer
+        /// <summary>
+        /// The <see cref="NetPeer"/> of the server the client connected to
+        /// </summary>
+        public NetPeer Server
         {
             get
             {
-                return peer;
-            }
-
-            set
-            {
-                peer = value;
+                return server;
             }
         }
     }

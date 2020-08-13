@@ -14,6 +14,8 @@ namespace Prototype.Networking.Zones
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
+        public Zone mainZone;
+
         private UnityServer server;
         private ServerPlayerManager playerManager;
 
@@ -22,6 +24,17 @@ namespace Prototype.Networking.Zones
         {
             this.server = server;
             this.playerManager = playerManager;
+        }
+
+        public Zone GetMainZone()
+        {
+            if (mainZone == null)
+            {
+                mainZone = new Zone();
+                zones.Add(mainZone.guid, mainZone);
+            }
+
+            return mainZone;
         }
 
         public void RegisterPackets(UnityNetwork network)
@@ -43,25 +56,17 @@ namespace Prototype.Networking.Zones
                 newPlayer.CreatePlayerCharacter(zone); // ! should check if player is loading zone on server or not first
                 zone.AddPlayer(newPlayer);
 
-                foreach (ServerPlayer playerInZone in zone.playersById.Values) // needs refactoring
-                {
-                    server.SendPacket(
-                        playerInZone.Connection.Peer,
-                        new ZonePlayerEnterPacket()
-                        {
-                            playerId = newPlayer.Id,
-                            playerPosition = newPlayer.character.transform.position,
-                        },
-                        DeliveryMethod.ReliableOrdered);
+                var packet = new ZonePlayerEnterPacket();
 
-                    server.SendPacket(
-                        newPlayer.Connection.Peer,
-                        new ZonePlayerEnterPacket()
-                        {
-                            playerId = playerInZone.Id,
-                            playerPosition = playerInZone.character.transform.position,
-                        },
-                        DeliveryMethod.ReliableOrdered);
+                foreach (ServerPlayer playerInZone in zone.playersById.Values)
+                {
+                    packet.playerId = newPlayer.Id;
+                    packet.playerPosition = newPlayer.character.transform.position;
+                    server.SendPacket(playerInZone.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+
+                    packet.playerId = playerInZone.Id;
+                    packet.playerPosition = playerInZone.character.transform.position;
+                    server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
                 }
             }
         }

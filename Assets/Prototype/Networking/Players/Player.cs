@@ -1,6 +1,5 @@
 ﻿using Exanite.Arpg;
 using Prototype.Networking.Zones;
-using UnityEngine;
 
 namespace Prototype.Networking.Players
 {
@@ -11,8 +10,7 @@ namespace Prototype.Networking.Players
         // add IsCurrentlyLoadingZone property and Zone property
 
         public PlayerCharacter character;
-        public Vector2 movementInput; // todo better impl
-
+        
         public Player(int id)
         {
             this.id = id;

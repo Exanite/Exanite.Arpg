@@ -20,11 +20,23 @@ namespace Exanite.Arpg.Networking
         [SerializeField] private int maxLatency = 100;
         [SerializeField] private int packetLoss = 0;
 
+        /// <summary>
+        /// <see cref="NetManager"/> used by the <see cref="UnityNetwork"/>
+        /// </summary>
         protected NetManager netManager;
+        /// <summary>
+        /// <see cref="NetPacketProcessor"/> used by the <see cref="UnityNetwork"/> to serialize and deserialize packets
+        /// </summary>
         protected NetPacketProcessor netPacketProcessor;
 
+        /// <summary>
+        /// Cached writer used to write data to packets
+        /// </summary>
         protected NetDataWriter writer = new NetDataWriter();
 
+        /// <summary>
+        /// Is the <see cref="UnityNetwork"/> ready to send packets?
+        /// </summary>
         protected abstract bool IsReady { get; }
 
         private void Awake()
@@ -44,6 +56,9 @@ namespace Exanite.Arpg.Networking
             netManager.PollEvents();
         }
 
+        /// <summary>
+        /// Sends a packet to the specified <paramref name="peer"/>
+        /// </summary>
         public void SendPacket<T>(NetPeer peer, T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
             if (!IsReady)
@@ -58,6 +73,11 @@ namespace Exanite.Arpg.Networking
             peer.Send(writer, deliveryMethod);
         }
 
+        /// <summary>
+        /// Registers a packet receiver that will handle a packet when it is received from the network
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="receiver"></param>
         public void RegisterPacketReceiver<T>(EventHandler<NetPeer, T> receiver) where T : class, IPacket, new()
         {
             if (receiver == null)
@@ -73,6 +93,9 @@ namespace Exanite.Arpg.Networking
             });
         }
 
+        /// <summary>
+        /// Clears a packet receiver of the specified type
+        /// </summary>
         public void ClearPacketReceiver<T>() where T : class, IPacket, new()
         {
             netPacketProcessor.RemoveSubscription<T>();

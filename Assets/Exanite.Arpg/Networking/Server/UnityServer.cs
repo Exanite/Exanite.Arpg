@@ -7,13 +7,16 @@ using Zenject;
 
 namespace Exanite.Arpg.Networking.Server
 {
+    /// <summary>
+    /// Server that can accept connections from <see cref="Client.UnityClient"/>s
+    /// </summary>
     public class UnityServer : UnityNetwork
     {
         [Header("Settings:")]
         [SerializeField] private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
-        private List<NetPeer> connectedClients = new List<NetPeer>();
+        private List<NetPeer> connectedPeers = new List<NetPeer>();
 
         private ILog log;
 
@@ -23,10 +26,19 @@ namespace Exanite.Arpg.Networking.Server
             this.log = log;
         }
 
-        public event EventHandler<UnityServer, ClientConnectedEventArgs> ClientConnectedEvent;
+        /// <summary>
+        /// Event fired when a <see cref="NetPeer"/> connects to the server
+        /// </summary>
+        public event EventHandler<UnityServer, PeerConnectedEventArgs> ClientConnectedEvent;
 
-        public event EventHandler<UnityServer, ClientDisconnectedEventArgs> ClientDisconnectedEvent;
+        /// <summary>
+        /// Event fired when a <see cref="NetPeer"/> disconnects from the server
+        /// </summary>
+        public event EventHandler<UnityServer, PeerDisconnectedEventArgs> ClientDisconnectedEvent;
 
+        /// <summary>
+        /// Port the server will listen on
+        /// </summary>
         public ushort Port
         {
             get
@@ -40,6 +52,9 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
+        /// <summary>
+        /// Is the server created and ready for connections?
+        /// </summary>
         public bool IsCreated
         {
             get
@@ -53,11 +68,14 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
-        public IReadOnlyList<NetPeer> ConnectedClients
+        /// <summary>
+        /// List of all the <see cref="NetPeer"/>s connected to the server
+        /// </summary>
+        public IReadOnlyList<NetPeer> ConnectedPeers
         {
             get
             {
-                return connectedClients;
+                return connectedPeers;
             }
         }
 
@@ -74,6 +92,9 @@ namespace Exanite.Arpg.Networking.Server
             Close();
         }
 
+        /// <summary>
+        /// Creates the server
+        /// </summary>
         public void Create()
         {
             if (IsCreated)
@@ -86,6 +107,9 @@ namespace Exanite.Arpg.Networking.Server
             IsCreated = true;
         }
 
+        /// <summary>
+        /// Closes the server
+        /// </summary>
         public void Close()
         {
             if (!IsCreated)
@@ -102,16 +126,16 @@ namespace Exanite.Arpg.Networking.Server
 
         protected override void OnPeerConnected(NetPeer peer)
         {
-            connectedClients.Add(peer);
+            connectedPeers.Add(peer);
 
-            ClientConnectedEvent?.Invoke(this, new ClientConnectedEventArgs(peer));
+            ClientConnectedEvent?.Invoke(this, new PeerConnectedEventArgs(peer));
         }
 
         protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            connectedClients.Remove(peer);
+            connectedPeers.Remove(peer);
 
-            ClientDisconnectedEvent?.Invoke(this, new ClientDisconnectedEventArgs(peer, disconnectInfo));
+            ClientDisconnectedEvent?.Invoke(this, new PeerDisconnectedEventArgs(peer, disconnectInfo));
         }
 
         protected override void OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
