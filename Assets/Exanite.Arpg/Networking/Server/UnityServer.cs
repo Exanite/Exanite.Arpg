@@ -13,7 +13,7 @@ namespace Exanite.Arpg.Networking.Server
         [SerializeField] private ushort port = Constants.DefaultPort;
 
         private bool isCreated = false;
-        private List<NetPeer> connectedClients = new List<NetPeer>();
+        private List<NetPeer> connectedPeers = new List<NetPeer>();
 
         private ILog log;
 
@@ -53,11 +53,11 @@ namespace Exanite.Arpg.Networking.Server
             }
         }
 
-        public IReadOnlyList<NetPeer> ConnectedClients
+        public IReadOnlyList<NetPeer> ConnectedPeers
         {
             get
             {
-                return connectedClients;
+                return connectedPeers;
             }
         }
 
@@ -102,14 +102,14 @@ namespace Exanite.Arpg.Networking.Server
 
         protected override void OnPeerConnected(NetPeer peer)
         {
-            connectedClients.Add(peer);
+            connectedPeers.Add(peer);
 
             ClientConnectedEvent?.Invoke(this, new PeerConnectedEventArgs(peer));
         }
 
         protected override void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            connectedClients.Remove(peer);
+            connectedPeers.Remove(peer);
 
             ClientDisconnectedEvent?.Invoke(this, new PeerDisconnectedEventArgs(peer, disconnectInfo));
         }
