@@ -14,6 +14,13 @@ namespace Prototype.Networking.Zones
         private UnityClient client;
         private ClientGameManager gameManager;
 
+        [Inject]
+        public void Inject(UnityClient client, ClientGameManager gameManager)
+        {
+            this.client = client;
+            this.gameManager = gameManager; // ! replace with reference to local player later on
+        }
+
         private Player LocalPlayer
         {
             get
@@ -33,13 +40,6 @@ namespace Prototype.Networking.Zones
             {
                 gameManager.localPlayer.currentZone = value;
             }
-        }
-
-        [Inject]
-        public void Inject(UnityClient client, ClientGameManager gameManager)
-        {
-            this.client = client;
-            this.gameManager = gameManager; // ! replace with reference to local player later on
         }
 
         public void RegisterPackets(UnityNetwork network)
