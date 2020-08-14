@@ -16,8 +16,7 @@ namespace Prototype.Networking.Client
         public UnityClient client;
 
         public int id = -1;
-
-        private Player localPlayer;
+        public Player localPlayer;
 
         private ILog log;
         private Scene scene;
