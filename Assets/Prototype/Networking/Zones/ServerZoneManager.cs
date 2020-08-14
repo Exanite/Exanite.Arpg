@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
@@ -8,6 +9,7 @@ using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Zones
 {
@@ -15,7 +17,8 @@ namespace Prototype.Networking.Zones
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
-        public Zone mainZone;
+        [SerializeField] private int publicZoneCount = 3; // for testing
+        public List<Zone> publicZones;
 
         private ILog log;
         private UnityServer server;
@@ -29,15 +32,22 @@ namespace Prototype.Networking.Zones
             this.playerManager = playerManager;
         }
 
-        public Zone GetMainZone()
+        public Zone GetOpenZone()
         {
-            if (mainZone == null)
+            if (publicZones == null)
             {
-                mainZone = new Zone();
-                zones.Add(mainZone.guid, mainZone);
+                publicZones = new List<Zone>(publicZoneCount);
+
+                for (int i = 0; i < publicZoneCount; i++)
+                {
+                    var zone = new Zone();
+
+                    publicZones.Add(zone);
+                    zones.Add(zone.guid, zone);
+                }
             }
 
-            return mainZone;
+            return publicZones.OrderBy(x => Random.value).First();
         }
 
         public void RegisterPackets(UnityNetwork network)

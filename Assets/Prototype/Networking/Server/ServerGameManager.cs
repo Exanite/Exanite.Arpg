@@ -15,6 +15,8 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
 
+        private Zone selectedZone;
+
         private ILog log;
         private Scene scene;
         private ServerPlayerManager playerManager;
@@ -32,6 +34,17 @@ namespace Prototype.Networking.Server
         private void Start()
         {
             StartServer();
+        }
+
+        private void Update() // for debug
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i) && zoneManager.publicZones.Count > i)
+                {
+                    selectedZone = zoneManager.publicZones[i];
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -81,17 +94,21 @@ namespace Prototype.Networking.Server
 
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || selectedZone == null)
             {
                 return;
             }
 
             Gizmos.color = Color.red;
-
-            foreach (var player in zoneManager.GetMainZone().playersById.Values)
+            foreach (var player in selectedZone.playersById.Values)
             {
                 Gizmos.DrawSphere(player.character.transform.position, 0.5f);
             }
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.Label($"Selected zone: {selectedZone?.guid}");
         }
 
         public void StartServer()
@@ -137,22 +154,22 @@ namespace Prototype.Networking.Server
             log.Information("Player {Id} connected", e.Peer.Id);
 
             var player = playerManager.CreateFor(e.Peer);
+            var zone = zoneManager.GetOpenZone();
+
             player.isLoadingZone = true;
-            player.currentZone = zoneManager.GetMainZone();
+            player.currentZone = zone;
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zoneManager.GetMainZone().guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            var mainZone = zoneManager.GetMainZone();
-
-            if (mainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
+            if (playerManager.TryGetPlayer(e.Peer.Id, out ServerPlayer player))
             {
-                foreach (ServerPlayer playerInZone in mainZone.playersById.Values)
+                foreach (ServerPlayer playerInZone in player.currentZone.playersById.Values)
                 {
                     if (playerInZone != player)
                     {
@@ -165,11 +182,9 @@ namespace Prototype.Networking.Server
                     Destroy(player.character.gameObject);
                 }
 
-                mainZone.RemovePlayer(player);
+                player.currentZone.RemovePlayer(player);
                 playerManager.RemoveFor(e.Peer);
             }
-
-            playerManager.RemoveFor(e.Peer);
         }
 
         private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
