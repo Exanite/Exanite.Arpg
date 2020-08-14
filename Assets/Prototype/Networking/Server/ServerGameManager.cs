@@ -136,7 +136,9 @@ namespace Prototype.Networking.Server
         {
             log.Information("Player {Id} connected", e.Peer.Id);
 
-            playerManager.CreateFor(e.Peer);
+            var player = playerManager.CreateFor(e.Peer);
+            player.isLoadingZone = true;
+            player.currentZone = zoneManager.GetMainZone();
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
             server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zoneManager.GetMainZone().guid }, DeliveryMethod.ReliableOrdered);

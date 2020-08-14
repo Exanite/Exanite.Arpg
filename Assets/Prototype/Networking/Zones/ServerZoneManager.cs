@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
@@ -16,12 +17,14 @@ namespace Prototype.Networking.Zones
 
         public Zone mainZone;
 
+        private ILog log;
         private UnityServer server;
         private ServerPlayerManager playerManager;
 
         [Inject]
-        public void Inject(UnityServer server, ServerPlayerManager playerManager)
+        public void Inject(ILog log, UnityServer server, ServerPlayerManager playerManager)
         {
+            this.log = log;
             this.server = server;
             this.playerManager = playerManager;
         }
@@ -53,11 +56,16 @@ namespace Prototype.Networking.Zones
             {
                 var zone = zones[e.guid];
 
-                newPlayer.CreatePlayerCharacter(zone); // ! should check if player is loading zone on server or not first
+                if (!newPlayer.isLoadingZone || newPlayer.currentZone != zone)
+                {
+                    log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
+                    return;
+                }
+
+                newPlayer.CreatePlayerCharacter(zone);
                 zone.AddPlayer(newPlayer);
 
                 var packet = new ZonePlayerEnterPacket();
-
                 foreach (ServerPlayer playerInZone in zone.playersById.Values)
                 {
                     packet.playerId = newPlayer.Id;
@@ -68,6 +76,8 @@ namespace Prototype.Networking.Zones
                     packet.playerPosition = playerInZone.character.transform.position;
                     server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
                 }
+
+                newPlayer.isLoadingZone = false;
             }
         }
     }

@@ -15,7 +15,6 @@ namespace Prototype.Networking.Client
     {
         public UnityClient client;
 
-        public int id = -1;
         public Player localPlayer;
 
         private ILog log;
@@ -82,17 +81,17 @@ namespace Prototype.Networking.Client
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
             SceneManager.UnloadSceneAsync(scene);
-            SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
+            SceneManager.UnloadSceneAsync(localPlayer.currentZone.scene);
         }
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
-            id = e.id;
+            localPlayer = new Player(e.id);
         }
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
-            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (localPlayer.currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
                 if (player.character)
                 {
