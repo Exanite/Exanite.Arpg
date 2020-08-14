@@ -28,12 +28,14 @@ namespace Prototype.Networking.Players
             }
         }
 
-        public void CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
+        public ServerPlayer CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
         {
             var player = new ServerPlayer(new PlayerConnection(peer));
 
             playersById.Add(player.Id, player);
             PlayerAddedEvent?.Invoke(this, player);
+
+            return player;
         }
 
         public void RemoveFor(NetPeer peer)
