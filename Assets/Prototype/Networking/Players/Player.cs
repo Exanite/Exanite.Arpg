@@ -7,7 +7,9 @@ namespace Prototype.Networking.Players
     {
         private readonly int id;
 
-        // add IsCurrentlyLoadingZone property and Zone property
+        // ! functionality not implemented yet
+        public bool isLoadingZone;
+        public Zone currentZone;
 
         public PlayerCharacter character;
         
