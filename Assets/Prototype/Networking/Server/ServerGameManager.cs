@@ -38,6 +38,13 @@ namespace Prototype.Networking.Server
 
         private void Update() // for debug
         {
+            if (selectedZone == null 
+                && zoneManager.publicZones != null 
+                && zoneManager.publicZones.Count > 0)
+            {
+                selectedZone = zoneManager.publicZones[0];
+            }
+
             for (int i = 0; i < 9; i++)
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i) && zoneManager.publicZones.Count > i)
