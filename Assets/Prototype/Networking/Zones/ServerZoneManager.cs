@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Zones
 {
-    public class ServerZoneManager : MonoBehaviour, IPacketHandler
+    public class ServerZoneManager : ZoneManager, IPacketHandler
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
 
@@ -30,6 +30,21 @@ namespace Prototype.Networking.Zones
             this.log = log;
             this.server = server;
             this.playerManager = playerManager;
+        }
+
+        public override Zone GetZoneWithPlayer(Player player)
+        {
+            // ! replace with Dictionary<Player, Zone> lookup: O(n) -> O(1)
+
+            foreach (var zone in zones.Values)
+            {
+                if (zone.playersById.ContainsValue(player))
+                {
+                    return zone;
+                }
+            }
+
+            return null;
         }
 
         public Zone GetOpenZone()
@@ -64,7 +79,7 @@ namespace Prototype.Networking.Zones
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer newPlayer))
             {
-                var zone = zones[e.guid];
+                var zone = zones[e.guid]; // also check if zone exists first
 
                 if (!newPlayer.isLoadingZone || newPlayer.currentZone != zone)
                 {

@@ -4,13 +4,14 @@ using LiteNetLib;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
-using UnityEngine;
 using Zenject;
 
 namespace Prototype.Networking.Zones
 {
-    public class ClientZoneManager : MonoBehaviour, IPacketHandler
+    public class ClientZoneManager : ZoneManager, IPacketHandler
     {
+        public Zone currentZone;
+
         private UnityClient client;
         private ClientGameManager gameManager;
 
@@ -29,17 +30,14 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private Zone CurrentZone
+        public override Zone GetZoneWithPlayer(Player player)
         {
-            get
+            if (currentZone.playersById.ContainsValue(player))
             {
-                return gameManager.localPlayer.currentZone;
+                return currentZone;
             }
 
-            set
-            {
-                gameManager.localPlayer.currentZone = value;
-            }
+            return null;
         }
 
         public void RegisterPackets(UnityNetwork network)
@@ -61,7 +59,7 @@ namespace Prototype.Networking.Zones
             LocalPlayer.isLoadingZone = true;
 
             var newZone = new Zone(e.guid);
-            CurrentZone = newZone;
+            currentZone = newZone;
 
             client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
             LocalPlayer.isLoadingZone = false;
@@ -69,7 +67,7 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
         {
-            if (!CurrentZone.playersById.ContainsKey(e.playerId))
+            if (!currentZone.playersById.ContainsKey(e.playerId))
             {
                 Player player;
                 if (LocalPlayer.Id == e.playerId)
@@ -80,13 +78,13 @@ namespace Prototype.Networking.Zones
                 {
                     player = new Player(e.playerId)
                     {
-                        currentZone = CurrentZone
+                        currentZone = currentZone
                     };
                 }
 
-                CurrentZone.AddPlayer(player);
+                currentZone.AddPlayer(player);
 
-                player.CreatePlayerCharacter(CurrentZone);
+                player.CreatePlayerCharacter(currentZone);
                 player.character.transform.position = e.playerPosition;
 
                 if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
@@ -102,10 +100,10 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
         {
-            if (CurrentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
                 Destroy(player.character.gameObject);
-                CurrentZone.RemovePlayer(player);
+                currentZone.RemovePlayer(player);
             }
         }
     }

@@ -81,7 +81,7 @@ namespace Prototype.Networking.Client
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
             SceneManager.UnloadSceneAsync(scene);
-            SceneManager.UnloadSceneAsync(localPlayer.currentZone.scene);
+            SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
         }
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
@@ -91,7 +91,7 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
-            if (localPlayer.currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
                 if (player.character)
                 {
