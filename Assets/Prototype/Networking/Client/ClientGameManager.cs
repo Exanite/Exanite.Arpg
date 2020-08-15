@@ -86,7 +86,7 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
-            localPlayer = new Player(e.id);
+            localPlayer = new Player(e.id, zoneManager);
         }
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)

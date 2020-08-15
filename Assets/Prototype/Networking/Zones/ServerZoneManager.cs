@@ -81,13 +81,13 @@ namespace Prototype.Networking.Zones
             {
                 var zone = zones[e.guid]; // also check if zone exists first
 
-                if (!newPlayer.isLoadingZone || newPlayer.currentZone != zone)
+                if (!newPlayer.isLoadingZone || newPlayer.CurrentZone != zone)
                 {
                     log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
                     return;
                 }
 
-                newPlayer.CreatePlayerCharacter(zone);
+                newPlayer.CreatePlayerCharacter();
                 zone.AddPlayer(newPlayer);
 
                 var packet = new ZonePlayerEnterPacket();

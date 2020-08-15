@@ -76,15 +76,12 @@ namespace Prototype.Networking.Zones
                 }
                 else
                 {
-                    player = new Player(e.playerId)
-                    {
-                        currentZone = currentZone
-                    };
+                    player = new Player(e.playerId, this);
                 }
 
                 currentZone.AddPlayer(player);
 
-                player.CreatePlayerCharacter(currentZone);
+                player.CreatePlayerCharacter();
                 player.character.transform.position = e.playerPosition;
 
                 if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice

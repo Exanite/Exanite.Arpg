@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
 using LiteNetLib;
+using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Players
 {
@@ -11,6 +13,14 @@ namespace Prototype.Networking.Players
 
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
+
+        private ServerZoneManager zoneManager;
+
+        [Inject]
+        public void Inject(ServerZoneManager zoneManager)
+        {
+            this.zoneManager = zoneManager;
+        }
 
         public ICollection<ServerPlayer> Players
         {
@@ -30,7 +40,7 @@ namespace Prototype.Networking.Players
 
         public ServerPlayer CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
         {
-            var player = new ServerPlayer(new PlayerConnection(peer));
+            var player = new ServerPlayer(new PlayerConnection(peer), zoneManager);
 
             playersById.Add(player.Id, player);
             PlayerAddedEvent?.Invoke(this, player);

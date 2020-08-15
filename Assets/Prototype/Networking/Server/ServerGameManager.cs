@@ -38,8 +38,8 @@ namespace Prototype.Networking.Server
 
         private void Update() // for debug
         {
-            if (selectedZone == null 
-                && zoneManager.publicZones != null 
+            if (selectedZone == null
+                && zoneManager.publicZones != null
                 && zoneManager.publicZones.Count > 0)
             {
                 selectedZone = zoneManager.publicZones[0];
@@ -164,7 +164,6 @@ namespace Prototype.Networking.Server
             var zone = zoneManager.GetOpenZone();
 
             player.isLoadingZone = true;
-            player.currentZone = zone;
 
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
             server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
@@ -176,20 +175,24 @@ namespace Prototype.Networking.Server
 
             if (playerManager.TryGetPlayer(e.Peer.Id, out ServerPlayer player))
             {
-                foreach (ServerPlayer playerInZone in player.currentZone.playersById.Values)
+                if (player.CurrentZone != null)
                 {
-                    if (playerInZone != player)
+                    foreach (ServerPlayer playerInZone in player.CurrentZone.playersById.Values)
                     {
-                        server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
+                        if (playerInZone != player)
+                        {
+                            server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
+                        }
                     }
+
+                    player.CurrentZone.RemovePlayer(player);
                 }
 
                 if (player.character)
                 {
                     Destroy(player.character.gameObject);
                 }
-
-                player.currentZone.RemovePlayer(player);
+                
                 playerManager.RemoveFor(e.Peer);
             }
         }
