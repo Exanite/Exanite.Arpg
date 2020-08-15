@@ -11,6 +11,7 @@ namespace Prototype.Networking.Zones
     public class ClientZoneManager : ZoneManager, IPacketHandler
     {
         public Zone currentZone;
+        public bool isLoadingZone;
 
         private UnityClient client;
         private ClientGameManager gameManager;
@@ -40,6 +41,11 @@ namespace Prototype.Networking.Zones
             return null;
         }
 
+        public override bool IsPlayerLoading(Player player)
+        {
+            return isLoadingZone;
+        }
+
         public void RegisterPackets(UnityNetwork network)
         {
             network.RegisterPacketReceiver<ZoneCreatePacket>(OnZoneCreate);
@@ -56,13 +62,13 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
         {
-            LocalPlayer.isLoadingZone = true;
+            isLoadingZone = true;
 
             var newZone = new Zone(e.guid);
             currentZone = newZone;
 
             client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
-            LocalPlayer.isLoadingZone = false;
+            isLoadingZone = false;
         }
 
         private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)

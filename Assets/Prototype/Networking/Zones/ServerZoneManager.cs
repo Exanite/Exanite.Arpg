@@ -66,6 +66,11 @@ namespace Prototype.Networking.Zones
             return publicZones.OrderBy(x => Random.value).First();
         }
 
+        public override bool IsPlayerLoading(Player player)
+        {
+            return loadingPlayers.ContainsKey(player);
+        }
+
         public void MovePlayerToZone(ServerPlayer player, Zone zone)
         {
             var previousZone = GetZoneWithPlayer(player);
@@ -75,9 +80,7 @@ namespace Prototype.Networking.Zones
                 Destroy(player.character);
             }
 
-            player.isLoadingZone = true;
             loadingPlayers.Add(player, zone);
-
             server.SendPacket(player.Connection.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
         }
 
@@ -119,7 +122,7 @@ namespace Prototype.Networking.Zones
                 server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
 
-            newPlayer.isLoadingZone = false;
+            loadingPlayers.Remove(newPlayer);
         }
     }
 }

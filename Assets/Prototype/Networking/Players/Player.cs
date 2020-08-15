@@ -6,8 +6,6 @@ namespace Prototype.Networking.Players
 {
     public class Player
     {
-        public bool isLoadingZone;
-
         public PlayerCharacter character;
 
         private readonly int id;
@@ -32,6 +30,14 @@ namespace Prototype.Networking.Players
             get
             {
                 return zoneManager.GetZoneWithPlayer(this);
+            }
+        }
+
+        public bool IsLoadingZone
+        {
+            get
+            {
+                return zoneManager.IsPlayerLoading(this);
             }
         }
 

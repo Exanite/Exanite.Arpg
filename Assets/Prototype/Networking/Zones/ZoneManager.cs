@@ -12,5 +12,10 @@ namespace Prototype.Networking.Zones
         /// Returns the zone the <see cref="Player"/> is currently in
         /// </summary>
         public abstract Zone GetZoneWithPlayer(Player player);
+
+        /// <summary>
+        /// Returns if the <see cref="Player"/> is currently loading a zone
+        /// </summary>
+        public abstract bool IsPlayerLoading(Player player);
     }
 }
