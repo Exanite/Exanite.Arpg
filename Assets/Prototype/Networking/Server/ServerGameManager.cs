@@ -161,12 +161,10 @@ namespace Prototype.Networking.Server
             log.Information("Player {Id} connected", e.Peer.Id);
 
             var player = playerManager.CreateFor(e.Peer);
-            var zone = zoneManager.GetOpenZone();
-
-            player.isLoadingZone = true;
-
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
+
+            var zone = zoneManager.GetOpenZone();
+            zoneManager.MovePlayerToZone(player, zone);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
@@ -192,7 +190,7 @@ namespace Prototype.Networking.Server
                 {
                     Destroy(player.character.gameObject);
                 }
-                
+
                 playerManager.RemoveFor(e.Peer);
             }
         }

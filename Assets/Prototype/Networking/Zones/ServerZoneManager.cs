@@ -16,6 +16,7 @@ namespace Prototype.Networking.Zones
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
+        public Dictionary<Player, Zone> loadingPlayers = new Dictionary<Player, Zone>();
 
         [SerializeField] private int publicZoneCount = 3; // for testing
         public List<Zone> publicZones;
@@ -65,6 +66,21 @@ namespace Prototype.Networking.Zones
             return publicZones.OrderBy(x => Random.value).First();
         }
 
+        public void MovePlayerToZone(ServerPlayer player, Zone zone)
+        {
+            var previousZone = GetZoneWithPlayer(player);
+            if (previousZone != null)
+            {
+                previousZone.RemovePlayer(player);
+                Destroy(player.character);
+            }
+
+            player.isLoadingZone = true;
+            loadingPlayers.Add(player, zone);
+
+            server.SendPacket(player.Connection.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
+        }
+
         public void RegisterPackets(UnityNetwork network)
         {
             network.RegisterPacketReceiver<ZoneCreateFinishedPacket>(OnZoneCreateFinished);
@@ -77,33 +93,33 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
         {
-            if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer newPlayer))
+            if (!playerManager.TryGetPlayer(sender.Id, out ServerPlayer newPlayer))
             {
-                var zone = zones[e.guid]; // also check if zone exists first
-
-                if (!newPlayer.isLoadingZone || newPlayer.CurrentZone != zone)
-                {
-                    log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
-                    return;
-                }
-
-                newPlayer.CreatePlayerCharacter();
-                zone.AddPlayer(newPlayer);
-
-                var packet = new ZonePlayerEnterPacket();
-                foreach (ServerPlayer playerInZone in zone.playersById.Values)
-                {
-                    packet.playerId = newPlayer.Id;
-                    packet.playerPosition = newPlayer.character.transform.position;
-                    server.SendPacket(playerInZone.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-
-                    packet.playerId = playerInZone.Id;
-                    packet.playerPosition = playerInZone.character.transform.position;
-                    server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
-                }
-
-                newPlayer.isLoadingZone = false;
+                return;
             }
+
+            if (!loadingPlayers.TryGetValue(newPlayer, out Zone zone) || zone.guid != e.guid)
+            {
+                log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
+                return;
+            }
+
+            zone.AddPlayer(newPlayer);
+            newPlayer.CreatePlayerCharacter();
+
+            var packet = new ZonePlayerEnterPacket();
+            foreach (ServerPlayer playerInZone in zone.playersById.Values)
+            {
+                packet.playerId = newPlayer.Id;
+                packet.playerPosition = newPlayer.character.transform.position;
+                server.SendPacket(playerInZone.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+
+                packet.playerId = playerInZone.Id;
+                packet.playerPosition = playerInZone.character.transform.position;
+                server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+            }
+
+            newPlayer.isLoadingZone = false;
         }
     }
 }
