@@ -31,7 +31,7 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        public override Zone GetZoneWithPlayer(Player player)
+        public override Zone GetPlayerCurrentZone(Player player)
         {
             if (currentZone.playersById.ContainsValue(player))
             {

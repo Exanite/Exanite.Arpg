@@ -33,7 +33,7 @@ namespace Prototype.Networking.Zones
             this.playerManager = playerManager;
         }
 
-        public override Zone GetZoneWithPlayer(Player player)
+        public override Zone GetPlayerCurrentZone(Player player)
         {
             // ! replace with Dictionary<Player, Zone> lookup: O(n) -> O(1)
 
@@ -73,7 +73,7 @@ namespace Prototype.Networking.Zones
 
         public void MovePlayerToZone(ServerPlayer player, Zone zone)
         {
-            var previousZone = GetZoneWithPlayer(player);
+            var previousZone = GetPlayerCurrentZone(player);
             if (previousZone != null)
             {
                 previousZone.RemovePlayer(player);
@@ -96,33 +96,33 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
         {
-            if (!playerManager.TryGetPlayer(sender.Id, out ServerPlayer newPlayer))
+            if (!playerManager.TryGetPlayer(sender.Id, out ServerPlayer loadingPlayer))
             {
                 return;
             }
 
-            if (!loadingPlayers.TryGetValue(newPlayer, out Zone zone) || zone.guid != e.guid)
+            if (!loadingPlayers.TryGetValue(loadingPlayer, out Zone zone) || zone.guid != e.guid)
             {
                 log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
                 return;
             }
 
-            zone.AddPlayer(newPlayer);
-            newPlayer.CreatePlayerCharacter();
+            zone.AddPlayer(loadingPlayer);
+            loadingPlayer.CreatePlayerCharacter();
 
             var packet = new ZonePlayerEnterPacket();
             foreach (ServerPlayer playerInZone in zone.playersById.Values)
             {
-                packet.playerId = newPlayer.Id;
-                packet.playerPosition = newPlayer.Character.transform.position;
+                packet.playerId = loadingPlayer.Id;
+                packet.playerPosition = loadingPlayer.Character.transform.position;
                 server.SendPacket(playerInZone.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
 
                 packet.playerId = playerInZone.Id;
                 packet.playerPosition = playerInZone.Character.transform.position;
-                server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+                server.SendPacket(loadingPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
 
-            loadingPlayers.Remove(newPlayer);
+            loadingPlayers.Remove(loadingPlayer);
         }
     }
 }

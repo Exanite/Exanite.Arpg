@@ -29,7 +29,7 @@ namespace Prototype.Networking.Players
         {
             get
             {
-                return zoneManager.GetZoneWithPlayer(this);
+                return zoneManager.GetPlayerCurrentZone(this);
             }
         }
 
