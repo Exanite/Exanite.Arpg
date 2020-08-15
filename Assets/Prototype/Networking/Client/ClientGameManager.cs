@@ -93,9 +93,9 @@ namespace Prototype.Networking.Client
         {
             if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
-                if (player.character)
+                if (player.Character)
                 {
-                    player.character.transform.position = e.playerPosition;
+                    player.Character.transform.position = e.playerPosition;
                 }
             }
         }

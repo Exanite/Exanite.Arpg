@@ -6,7 +6,7 @@ namespace Prototype.Networking.Players
 {
     public class Player
     {
-        public PlayerCharacter character;
+        private PlayerCharacter character;
 
         private readonly int id;
         private readonly ZoneManager zoneManager;
@@ -41,6 +41,19 @@ namespace Prototype.Networking.Players
             }
         }
 
+        public PlayerCharacter Character
+        {
+            get
+            {
+                return character;
+            }
+
+            protected set
+            {
+                character = value;
+            }
+        }
+
         public void CreatePlayerCharacter()
         {
             if (CurrentZone == null)
@@ -48,8 +61,8 @@ namespace Prototype.Networking.Players
                 throw new InvalidOperationException("Player is currently not in a Zone");
             }
 
-            character = CurrentZone.scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
-            character.player = this;
+            Character = CurrentZone.scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
+            Character.player = this;
         }
     }
 }

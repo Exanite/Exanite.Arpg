@@ -77,7 +77,7 @@ namespace Prototype.Networking.Zones
             if (previousZone != null)
             {
                 previousZone.RemovePlayer(player);
-                Destroy(player.character);
+                Destroy(player.Character);
             }
 
             loadingPlayers.Add(player, zone);
@@ -114,11 +114,11 @@ namespace Prototype.Networking.Zones
             foreach (ServerPlayer playerInZone in zone.playersById.Values)
             {
                 packet.playerId = newPlayer.Id;
-                packet.playerPosition = newPlayer.character.transform.position;
+                packet.playerPosition = newPlayer.Character.transform.position;
                 server.SendPacket(playerInZone.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
 
                 packet.playerId = playerInZone.Id;
-                packet.playerPosition = playerInZone.character.transform.position;
+                packet.playerPosition = playerInZone.Character.transform.position;
                 server.SendPacket(newPlayer.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
 

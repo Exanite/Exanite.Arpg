@@ -88,15 +88,15 @@ namespace Prototype.Networking.Zones
                 currentZone.AddPlayer(player);
 
                 player.CreatePlayerCharacter();
-                player.character.transform.position = e.playerPosition;
+                player.Character.transform.position = e.playerPosition;
 
                 if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
                 {
-                    var controller = player.character.gameObject.AddComponent<PlayerController>();
+                    var controller = player.Character.gameObject.AddComponent<PlayerController>();
                     controller.player = player;
                     controller.client = client;
 
-                    player.character.name += " (Local)";
+                    player.Character.name += " (Local)";
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace Prototype.Networking.Zones
         {
             if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
-                Destroy(player.character.gameObject);
+                Destroy(player.Character.gameObject);
                 currentZone.RemovePlayer(player);
             }
         }

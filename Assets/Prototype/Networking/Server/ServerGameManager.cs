@@ -58,14 +58,14 @@ namespace Prototype.Networking.Server
         {
             foreach (var player in playerManager.Players)
             {
-                if (!player.character)
+                if (!player.Character)
                 {
                     continue;
                 }
 
-                var playerTransform = player.character.transform;
+                var playerTransform = player.Character.transform;
 
-                playerTransform.position += (Vector3)(player.character.movementInput * Time.deltaTime * 5);
+                playerTransform.position += (Vector3)(player.Character.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
@@ -109,7 +109,7 @@ namespace Prototype.Networking.Server
             Gizmos.color = Color.red;
             foreach (var player in selectedZone.playersById.Values)
             {
-                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
+                Gizmos.DrawSphere(player.Character.transform.position, 0.5f);
             }
         }
 
@@ -186,9 +186,9 @@ namespace Prototype.Networking.Server
                     player.CurrentZone.RemovePlayer(player);
                 }
 
-                if (player.character)
+                if (player.Character)
                 {
-                    Destroy(player.character.gameObject);
+                    Destroy(player.Character.gameObject);
                 }
 
                 playerManager.RemoveFor(e.Peer);
@@ -199,7 +199,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.character.movementInput = e.movementInput;
+                player.Character.movementInput = e.movementInput;
             }
         }
 
@@ -216,7 +216,7 @@ namespace Prototype.Networking.Server
                             new PlayerPositionUpdatePacket()
                             {
                                 playerId = current.Id,
-                                playerPosition = current.character.transform.position,
+                                playerPosition = current.Character.transform.position,
                             },
                             DeliveryMethod.Unreliable);
                     }
