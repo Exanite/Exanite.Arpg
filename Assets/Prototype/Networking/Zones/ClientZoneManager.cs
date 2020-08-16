@@ -50,26 +50,26 @@ namespace Prototype.Networking.Zones
 
         public void RegisterPackets(UnityNetwork network)
         {
-            network.RegisterPacketReceiver<ZoneCreatePacket>(OnZoneCreate);
+            network.RegisterPacketReceiver<ZoneLoadPacket>(OnZoneLoad);
             network.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
             network.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
         }
 
         public void UnregisterPackets(UnityNetwork network)
         {
-            network.ClearPacketReceiver<ZoneCreatePacket>();
+            network.ClearPacketReceiver<ZoneLoadPacket>();
             network.ClearPacketReceiver<ZonePlayerEnterPacket>();
             network.ClearPacketReceiver<ZonePlayerLeavePacket>();
         }
 
-        private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
+        private void OnZoneLoad(NetPeer sender, ZoneLoadPacket e)
         {
             isLoadingZone = true;
 
             var newZone = new Zone(e.guid, zoneSceneName);
             currentZone = newZone;
 
-            client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
+            client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
             isLoadingZone = false;
         }
 

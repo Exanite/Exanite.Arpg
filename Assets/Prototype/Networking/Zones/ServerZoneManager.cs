@@ -84,17 +84,17 @@ namespace Prototype.Networking.Zones
             }
 
             loadingPlayers.Add(player, zone);
-            server.SendPacket(player.Connection.Peer, new ZoneCreatePacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(player.Connection.Peer, new ZoneLoadPacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
         }
 
         public void RegisterPackets(UnityNetwork network)
         {
-            network.RegisterPacketReceiver<ZoneCreateFinishedPacket>(OnZoneCreateFinished);
+            network.RegisterPacketReceiver<ZoneLoadFinishedPacket>(OnZoneLoadFinished);
         }
 
         public void UnregisterPackets(UnityNetwork network)
         {
-            network.ClearPacketReceiver<ZoneCreateFinishedPacket>();
+            network.ClearPacketReceiver<ZoneLoadFinishedPacket>();
         }
 
         private void CreatePublicZones()
@@ -109,7 +109,7 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
+        private void OnZoneLoadFinished(NetPeer sender, ZoneLoadFinishedPacket e)
         {
             if (!playerManager.TryGetPlayer(sender.Id, out ServerPlayer loadingPlayer))
             {
