@@ -11,6 +11,9 @@ namespace Prototype.Editor
         {
             base.OnInspectorGUI();
 
+            EditorGUILayout.IntField("Id", TypedTarget.localPlayer?.Id ?? -1);
+            EditorGUILayout.TextField("Current zone", TypedTarget.localPlayer?.CurrentZone?.guid.ToString());
+
             if (GUILayout.Button("Disconnect"))
             {
                 TypedTarget.Disconnect();

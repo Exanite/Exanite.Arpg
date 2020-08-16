@@ -20,7 +20,7 @@ namespace Prototype.Editor
         {
             base.OnInspectorGUI();
 
-            EditorGUILayout.IntField("Player Count", TypedTarget.PlayerCount);
+            EditorGUILayout.IntField("Player count", TypedTarget.PlayerCount);
 
             if (TypedTarget.PlayerCount > 0)
             {
@@ -49,8 +49,8 @@ namespace Prototype.Editor
             {
                 using (new EditorGUI.IndentLevelScope())
                 {
-                    EditorGUILayout.Toggle("Is loading zone:", player.IsLoadingZone);
-                    EditorGUILayout.TextField("Current zone:", player.CurrentZone.guid.ToString());
+                    EditorGUILayout.Toggle("Is loading zone", player.IsLoadingZone);
+                    EditorGUILayout.TextField("Current zone", player.CurrentZone?.guid.ToString());
 
                     if (DrawButton("Disconnect"))
                     {
