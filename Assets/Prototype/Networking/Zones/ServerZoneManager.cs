@@ -15,13 +15,13 @@ namespace Prototype.Networking.Zones
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
-        public string zoneSceneName = "Zone";
+        [SerializeField] private int publicZoneCount = 3; // for testing
+        [SerializeField] private string zoneSceneName = "Zone";
+
+        public List<Zone> publicZones;
 
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
         public Dictionary<Player, Zone> loadingPlayers = new Dictionary<Player, Zone>();
-
-        [SerializeField] private int publicZoneCount = 3; // for testing
-        public List<Zone> publicZones;
 
         private ILog log;
         private UnityServer server;
@@ -33,6 +33,15 @@ namespace Prototype.Networking.Zones
             this.log = log;
             this.server = server;
             this.playerManager = playerManager;
+        }
+
+        // ! add method to base class as well
+        public Zone CreateZone()
+        {
+            var zone = new Zone(zoneSceneName);
+            zones.Add(zone.guid, zone);
+
+            return zone;
         }
 
         public override Zone GetPlayerCurrentZone(Player player)
@@ -54,15 +63,7 @@ namespace Prototype.Networking.Zones
         {
             if (publicZones == null)
             {
-                publicZones = new List<Zone>(publicZoneCount);
-
-                for (int i = 0; i < publicZoneCount; i++)
-                {
-                    var zone = new Zone(zoneSceneName);
-
-                    publicZones.Add(zone);
-                    zones.Add(zone.guid, zone);
-                }
+                CreatePublicZones();
             }
 
             return publicZones.OrderBy(x => Random.value).First();
@@ -94,6 +95,18 @@ namespace Prototype.Networking.Zones
         public void UnregisterPackets(UnityNetwork network)
         {
             network.ClearPacketReceiver<ZoneCreateFinishedPacket>();
+        }
+
+        private void CreatePublicZones()
+        {
+            publicZones = new List<Zone>(publicZoneCount);
+
+            for (int i = 0; i < publicZoneCount; i++)
+            {
+                var zone = CreateZone();
+
+                publicZones.Add(zone);
+            }
         }
 
         private void OnZoneCreateFinished(NetPeer sender, ZoneCreateFinishedPacket e)
