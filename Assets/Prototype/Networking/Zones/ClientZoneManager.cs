@@ -10,6 +10,8 @@ namespace Prototype.Networking.Zones
 {
     public class ClientZoneManager : ZoneManager, IPacketHandler
     {
+        public string zoneSceneName = "Zone";
+
         public Zone currentZone;
         public bool isLoadingZone;
 
@@ -64,7 +66,7 @@ namespace Prototype.Networking.Zones
         {
             isLoadingZone = true;
 
-            var newZone = new Zone(e.guid);
+            var newZone = new Zone(e.guid, zoneSceneName);
             currentZone = newZone;
 
             client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);

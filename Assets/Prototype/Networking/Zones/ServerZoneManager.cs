@@ -15,6 +15,8 @@ namespace Prototype.Networking.Zones
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
+        public string zoneSceneName = "Zone";
+
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
         public Dictionary<Player, Zone> loadingPlayers = new Dictionary<Player, Zone>();
 
@@ -56,7 +58,7 @@ namespace Prototype.Networking.Zones
 
                 for (int i = 0; i < publicZoneCount; i++)
                 {
-                    var zone = new Zone();
+                    var zone = new Zone(zoneSceneName);
 
                     publicZones.Add(zone);
                     zones.Add(zone.guid, zone);

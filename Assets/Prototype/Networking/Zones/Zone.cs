@@ -8,20 +8,18 @@ namespace Prototype.Networking.Zones
 {
     public class Zone
     {
-        private static int counter = 0; // ! hack to prevent scenes from having the same name
-
         public Guid guid;
         public Scene scene;
 
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public Zone() : this(Guid.NewGuid()) { }
+        public Zone(string zoneSceneName) : this(Guid.NewGuid(), zoneSceneName) { }
 
-        public Zone(Guid guid)
+        public Zone(Guid guid, string zoneSceneName)
         {
             this.guid = guid;
 
-            CreateZone();
+            CreateZone(zoneSceneName);
         }
 
         public event EventHandler<Zone, Player> PlayerEnteredEvent;
@@ -45,12 +43,11 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void CreateZone()
+        private void CreateZone(string zoneSceneName)
         {
-            var createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics3D);
-            scene = SceneManager.CreateScene($"{guid.ToString()} ({counter})", createSceneParameters);
+            var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
 
-            counter++;
+            scene = SceneManager.LoadScene("Zone", loadSceneParameters);
         }
     }
 }
