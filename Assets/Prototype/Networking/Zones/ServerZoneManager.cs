@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
@@ -35,11 +36,38 @@ namespace Prototype.Networking.Zones
             this.playerManager = playerManager;
         }
 
+        public event EventHandler<ServerZoneManager, Zone> ZoneAddedEvent;
+        public event EventHandler<ServerZoneManager, Zone> ZoneRemovedEvent;
+
+        public void AddZone(Zone zone)
+        {
+            if (!zones.ContainsKey(zone.guid))
+            {
+                zones.Add(zone.guid, zone);
+
+                zone.PlayerEnteredEvent += OnZonePlayerEntered;
+                zone.PlayerLeftEvent += OnZonePlayerLeft;
+
+                ZoneAddedEvent?.Invoke(this, zone);
+            }
+        }
+
+        public void RemoveZone(Zone zone)
+        {
+            if (zones.Remove(zone.guid))
+            {
+                zone.PlayerEnteredEvent -= OnZonePlayerEntered;
+                zone.PlayerLeftEvent -= OnZonePlayerLeft;
+
+                ZoneRemovedEvent?.Invoke(this, zone);
+            }
+        }
+
         // ! add method to base class as well
         public Zone CreateZone()
         {
             var zone = new Zone(zoneSceneName);
-            zones.Add(zone.guid, zone);
+            AddZone(zone);
 
             return zone;
         }
@@ -107,6 +135,16 @@ namespace Prototype.Networking.Zones
 
                 publicZones.Add(zone);
             }
+        }
+
+        private void OnZonePlayerEntered(Zone sender, Player e)
+        {
+            // send ZonePlayerEntered packets
+        }
+
+        private void OnZonePlayerLeft(Zone sender, Player e)
+        {
+            // send ZonePlayerLeft packets
         }
 
         private void OnZoneLoadFinished(NetPeer sender, ZoneLoadFinishedPacket e)
