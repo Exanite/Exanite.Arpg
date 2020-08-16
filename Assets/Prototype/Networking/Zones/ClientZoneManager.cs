@@ -51,15 +51,15 @@ namespace Prototype.Networking.Zones
         public void RegisterPackets(UnityNetwork network)
         {
             network.RegisterPacketReceiver<ZoneLoadPacket>(OnZoneLoad);
-            network.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
-            network.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
+            network.RegisterPacketReceiver<ZonePlayerEnteredPacket>(OnZonePlayerEntered);
+            network.RegisterPacketReceiver<ZonePlayerLeftPacket>(OnZonePlayerLeft);
         }
 
         public void UnregisterPackets(UnityNetwork network)
         {
             network.ClearPacketReceiver<ZoneLoadPacket>();
-            network.ClearPacketReceiver<ZonePlayerEnterPacket>();
-            network.ClearPacketReceiver<ZonePlayerLeavePacket>();
+            network.ClearPacketReceiver<ZonePlayerEnteredPacket>();
+            network.ClearPacketReceiver<ZonePlayerLeftPacket>();
         }
 
         private void OnZoneLoad(NetPeer sender, ZoneLoadPacket e)
@@ -73,7 +73,7 @@ namespace Prototype.Networking.Zones
             isLoadingZone = false;
         }
 
-        private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
+        private void OnZonePlayerEntered(NetPeer sender, ZonePlayerEnteredPacket e)
         {
             if (!currentZone.playersById.ContainsKey(e.playerId))
             {
@@ -103,7 +103,7 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
+        private void OnZonePlayerLeft(NetPeer sender, ZonePlayerLeftPacket e)
         {
             if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {

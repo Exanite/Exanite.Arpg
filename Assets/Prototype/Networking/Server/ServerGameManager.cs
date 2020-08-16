@@ -179,7 +179,7 @@ namespace Prototype.Networking.Server
                     {
                         if (playerInZone != player)
                         {
-                            server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
+                            server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeftPacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
                         }
                     }
 

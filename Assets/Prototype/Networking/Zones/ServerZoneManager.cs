@@ -163,7 +163,7 @@ namespace Prototype.Networking.Zones
             zone.AddPlayer(loadingPlayer);
             loadingPlayer.CreatePlayerCharacter();
 
-            var packet = new ZonePlayerEnterPacket();
+            var packet = new ZonePlayerEnteredPacket();
             foreach (ServerPlayer playerInZone in zone.playersById.Values)
             {
                 packet.playerId = loadingPlayer.Id;
