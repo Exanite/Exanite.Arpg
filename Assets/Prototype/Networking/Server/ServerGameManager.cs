@@ -173,18 +173,7 @@ namespace Prototype.Networking.Server
 
             if (playerManager.TryGetPlayer(e.Peer.Id, out ServerPlayer player))
             {
-                if (player.CurrentZone != null)
-                {
-                    foreach (ServerPlayer playerInZone in player.CurrentZone.playersById.Values)
-                    {
-                        if (playerInZone != player)
-                        {
-                            server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeftPacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
-                        }
-                    }
-
-                    player.CurrentZone.RemovePlayer(player);
-                }
+                player.CurrentZone?.RemovePlayer(player);
 
                 if (player.Character)
                 {
