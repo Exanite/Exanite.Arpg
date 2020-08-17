@@ -4,6 +4,7 @@ using LiteNetLib;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Prototype.Networking.Zones
@@ -65,6 +66,11 @@ namespace Prototype.Networking.Zones
         private void OnZoneLoad(NetPeer sender, ZoneLoadPacket e)
         {
             isLoadingZone = true;
+
+            if (currentZone != null)
+            {
+                SceneManager.UnloadSceneAsync(currentZone.scene);
+            }
 
             var newZone = new Zone(e.guid, zoneSceneName);
             currentZone = newZone;
