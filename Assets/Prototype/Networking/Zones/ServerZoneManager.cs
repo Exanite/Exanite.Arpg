@@ -105,10 +105,17 @@ namespace Prototype.Networking.Zones
         public void MovePlayerToZone(ServerPlayer player, Zone zone)
         {
             var previousZone = GetPlayerCurrentZone(player);
+
+            if (previousZone == zone)
+            {
+                // already in zone
+                return;
+            }
+
             if (previousZone != null)
             {
                 previousZone.RemovePlayer(player);
-                Destroy(player.Character);
+                Destroy(player.Character.gameObject);
             }
 
             loadingPlayers.Add(player, zone);
