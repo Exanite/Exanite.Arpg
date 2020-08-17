@@ -1,13 +1,16 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using System.Linq;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones;
-using Prototype.Networking.Zones.Packets;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Server
 {
@@ -31,9 +34,27 @@ namespace Prototype.Networking.Server
             this.zoneManager = zoneManager;
         }
 
-        private void Start()
+        private async UniTaskVoid Start()
         {
             StartServer();
+
+            while (true) // for testing moving players between zones
+            {
+                MoveRandomPlayerToRandomZone();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
+            }
+        }
+
+        private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
+        {
+            if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
+            {
+                var player = playerManager.Players.OrderBy(x => Random.value).First();
+                var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
+
+                zoneManager.MovePlayerToZone(player, zone);
+            }
         }
 
         private void Update() // for debug
