@@ -106,9 +106,9 @@ namespace Prototype.Networking.Zones
         {
             var previousZone = GetPlayerCurrentZone(player);
 
-            if (previousZone == zone)
+            if (previousZone == zone || player.IsLoadingZone)
             {
-                // already in zone
+                // already in zone or loading
                 return;
             }
 
