@@ -113,7 +113,11 @@ namespace Prototype.Networking.Zones
         {
             if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
-                Destroy(player.Character.gameObject);
+                if (player.Character)
+                {
+                    Destroy(player.Character.gameObject);
+                }
+
                 currentZone.RemovePlayer(player);
             }
         }
