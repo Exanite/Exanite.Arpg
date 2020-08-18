@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Exanite.Arpg.Editor.Builds
 {
+    /// <summary>
+    /// <see cref="MenuItem"/> defines for methods in the Exanite.Arpg.Editor.Builds namespace
+    /// </summary>
     public static class MenuItemDefines
     {
         [MenuItem("Build/Build Client", priority = 0)]
