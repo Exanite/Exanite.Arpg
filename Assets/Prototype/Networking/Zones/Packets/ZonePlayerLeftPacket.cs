@@ -3,7 +3,7 @@ using LiteNetLib.Utils;
 
 namespace Prototype.Networking.Zones.Packets
 {
-    public class ZonePlayerLeavePacket : IPacket
+    public class ZonePlayerLeftPacket : IPacket
     {
         public int playerId;
 

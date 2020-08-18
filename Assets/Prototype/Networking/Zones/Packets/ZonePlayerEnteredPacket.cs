@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Prototype.Networking.Zones.Packets
 {
-    public class ZonePlayerEnterPacket : IPacket
+    public class ZonePlayerEnteredPacket : IPacket
     {
         public int playerId;
         public Vector3 playerPosition;

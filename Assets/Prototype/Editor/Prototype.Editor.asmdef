@@ -1,7 +1,8 @@
 {
     "name": "Prototype.Editor",
     "references": [
-        "Prototype"
+        "Prototype",
+        "LiteNetLib"
     ],
     "includePlatforms": [
         "Editor"

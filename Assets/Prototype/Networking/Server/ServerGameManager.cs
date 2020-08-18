@@ -1,19 +1,24 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using System.Linq;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones;
-using Prototype.Networking.Zones.Packets;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Server
 {
     public class ServerGameManager : MonoBehaviour
     {
         public UnityServer server;
+
+        private Zone selectedZone;
 
         private ILog log;
         private Scene scene;
@@ -29,23 +34,59 @@ namespace Prototype.Networking.Server
             this.zoneManager = zoneManager;
         }
 
-        private void Start()
+        private async UniTaskVoid Start()
         {
             StartServer();
+
+            while (true) // for testing moving players between zones
+            {
+                MoveRandomPlayerToRandomZone();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
+            }
+        }
+
+        private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
+        {
+            if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
+            {
+                var player = playerManager.Players.OrderBy(x => Random.value).First();
+                var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
+
+                zoneManager.MovePlayerToZone(player, zone);
+            }
+        }
+
+        private void Update() // for debug
+        {
+            if (selectedZone == null
+                && zoneManager.publicZones != null
+                && zoneManager.publicZones.Count > 0)
+            {
+                selectedZone = zoneManager.publicZones[0];
+            }
+
+            for (int i = 0; i < 9; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i) && zoneManager.publicZones.Count > i)
+                {
+                    selectedZone = zoneManager.publicZones[i];
+                }
+            }
         }
 
         private void FixedUpdate()
         {
             foreach (var player in playerManager.Players)
             {
-                if (!player.character)
+                if (!player.Character)
                 {
                     continue;
                 }
 
-                var playerTransform = player.character.transform;
+                var playerTransform = player.Character.transform;
 
-                playerTransform.position += (Vector3)(player.character.movementInput * Time.deltaTime * 5);
+                playerTransform.position += (Vector3)(player.Character.movementInput * Time.deltaTime * 5);
 
                 float verticalExtents = Camera.main.orthographicSize;
                 float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
@@ -81,17 +122,21 @@ namespace Prototype.Networking.Server
 
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || selectedZone == null)
             {
                 return;
             }
 
             Gizmos.color = Color.red;
-
-            foreach (var player in zoneManager.GetMainZone().playersById.Values)
+            foreach (var player in selectedZone.playersById.Values)
             {
-                Gizmos.DrawSphere(player.character.transform.position, 0.5f);
+                Gizmos.DrawSphere(player.Character.transform.position, 0.5f);
             }
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.Label($"Selected zone: {selectedZone?.guid}");
         }
 
         public void StartServer()
@@ -136,45 +181,35 @@ namespace Prototype.Networking.Server
         {
             log.Information("Player {Id} connected", e.Peer.Id);
 
-            playerManager.CreateFor(e.Peer);
-
+            var player = playerManager.CreateFor(e.Peer);
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
-            server.SendPacket(e.Peer, new ZoneCreatePacket() { guid = zoneManager.GetMainZone().guid }, DeliveryMethod.ReliableOrdered);
+
+            var zone = zoneManager.GetOpenZone();
+            zoneManager.MovePlayerToZone(player, zone);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
         {
             log.Information("Player {Id} disconnected", e.Peer.Id);
 
-            var mainZone = zoneManager.GetMainZone();
-
-            if (mainZone.playersById.TryGetValue(e.Peer.Id, out Player player))
+            if (playerManager.TryGetPlayer(e.Peer.Id, out ServerPlayer player))
             {
-                foreach (ServerPlayer playerInZone in mainZone.playersById.Values)
+                player.CurrentZone?.RemovePlayer(player);
+
+                if (player.Character)
                 {
-                    if (playerInZone != player)
-                    {
-                        server.SendPacket(playerInZone.Connection.Peer, new ZonePlayerLeavePacket() { playerId = player.Id }, DeliveryMethod.ReliableOrdered);
-                    }
+                    Destroy(player.Character.gameObject);
                 }
 
-                if (player.character)
-                {
-                    Destroy(player.character.gameObject);
-                }
-
-                mainZone.RemovePlayer(player);
                 playerManager.RemoveFor(e.Peer);
             }
-
-            playerManager.RemoveFor(e.Peer);
         }
 
         private void OnPlayerInput(NetPeer sender, PlayerInputPacket e)
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.character.movementInput = e.movementInput;
+                player.Character.movementInput = e.movementInput;
             }
         }
 
@@ -191,7 +226,7 @@ namespace Prototype.Networking.Server
                             new PlayerPositionUpdatePacket()
                             {
                                 playerId = current.Id,
-                                playerPosition = current.character.transform.position,
+                                playerPosition = current.Character.transform.position,
                             },
                             DeliveryMethod.Unreliable);
                     }

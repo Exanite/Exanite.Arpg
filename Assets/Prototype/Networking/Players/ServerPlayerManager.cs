@@ -1,13 +1,23 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
 using LiteNetLib;
+using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Players
 {
     public class ServerPlayerManager : MonoBehaviour
     {
         private Dictionary<int, ServerPlayer> playersById = new Dictionary<int, ServerPlayer>();
+
+        private ServerZoneManager zoneManager;
+
+        [Inject]
+        public void Inject(ServerZoneManager zoneManager)
+        {
+            this.zoneManager = zoneManager;
+        }
 
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
@@ -28,12 +38,14 @@ namespace Prototype.Networking.Players
             }
         }
 
-        public void CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
+        public ServerPlayer CreateFor(NetPeer peer) // add PlayerCreateSettings parameter
         {
-            var player = new ServerPlayer(new PlayerConnection(peer));
+            var player = new ServerPlayer(new PlayerConnection(peer), zoneManager);
 
             playersById.Add(player.Id, player);
             PlayerAddedEvent?.Invoke(this, player);
+
+            return player;
         }
 
         public void RemoveFor(NetPeer peer)

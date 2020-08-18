@@ -15,9 +15,7 @@ namespace Prototype.Networking.Client
     {
         public UnityClient client;
 
-        public int id = -1;
-
-        private Player localPlayer;
+        public Player localPlayer;
 
         private ILog log;
         private Scene scene;
@@ -88,16 +86,16 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
-            id = e.id;
+            localPlayer = new Player(e.id, zoneManager);
         }
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
             if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
-                if (player.character)
+                if (player.Character)
                 {
-                    player.character.transform.position = e.playerPosition;
+                    player.Character.transform.position = e.playerPosition;
                 }
             }
         }

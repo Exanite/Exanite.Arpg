@@ -4,7 +4,7 @@ using LiteNetLib.Utils;
 
 namespace Prototype.Networking.Zones.Packets
 {
-    public class ZoneCreatePacket : IPacket
+    public class ZoneLoadPacket : IPacket
     {
         public Guid guid;
 

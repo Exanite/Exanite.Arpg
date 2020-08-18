@@ -4,14 +4,17 @@ using LiteNetLib;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
-using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Prototype.Networking.Zones
 {
-    public class ClientZoneManager : MonoBehaviour, IPacketHandler
+    public class ClientZoneManager : ZoneManager, IPacketHandler
     {
+        public string zoneSceneName = "Zone";
+
         public Zone currentZone;
+        public bool isLoadingZone;
 
         private UnityClient client;
         private ClientGameManager gameManager;
@@ -23,55 +26,98 @@ namespace Prototype.Networking.Zones
             this.gameManager = gameManager; // ! replace with reference to local player later on
         }
 
+        private Player LocalPlayer
+        {
+            get
+            {
+                return gameManager.localPlayer;
+            }
+        }
+
+        public override Zone GetPlayerCurrentZone(Player player)
+        {
+            if (currentZone.playersById.ContainsValue(player))
+            {
+                return currentZone;
+            }
+
+            return null;
+        }
+
+        public override bool IsPlayerLoading(Player player)
+        {
+            return isLoadingZone;
+        }
+
         public void RegisterPackets(UnityNetwork network)
         {
-            network.RegisterPacketReceiver<ZoneCreatePacket>(OnZoneCreate);
-            network.RegisterPacketReceiver<ZonePlayerEnterPacket>(OnZonePlayerEnter);
-            network.RegisterPacketReceiver<ZonePlayerLeavePacket>(OnZonePlayerLeave);
+            network.RegisterPacketReceiver<ZoneLoadPacket>(OnZoneLoad);
+            network.RegisterPacketReceiver<ZonePlayerEnteredPacket>(OnZonePlayerEntered);
+            network.RegisterPacketReceiver<ZonePlayerLeftPacket>(OnZonePlayerLeft);
         }
 
         public void UnregisterPackets(UnityNetwork network)
         {
-            network.ClearPacketReceiver<ZoneCreatePacket>();
-            network.ClearPacketReceiver<ZonePlayerEnterPacket>();
-            network.ClearPacketReceiver<ZonePlayerLeavePacket>();
+            network.ClearPacketReceiver<ZoneLoadPacket>();
+            network.ClearPacketReceiver<ZonePlayerEnteredPacket>();
+            network.ClearPacketReceiver<ZonePlayerLeftPacket>();
         }
 
-        private void OnZoneCreate(NetPeer sender, ZoneCreatePacket e)
+        private void OnZoneLoad(NetPeer sender, ZoneLoadPacket e)
         {
-            var newZone = new Zone(e.guid);
+            isLoadingZone = true;
 
+            if (currentZone != null)
+            {
+                SceneManager.UnloadSceneAsync(currentZone.scene);
+            }
+
+            var newZone = new Zone(e.guid, zoneSceneName);
             currentZone = newZone;
 
-            client.SendPacketToServer(new ZoneCreateFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
+            client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
+            isLoadingZone = false;
         }
 
-        private void OnZonePlayerEnter(NetPeer sender, ZonePlayerEnterPacket e)
+        private void OnZonePlayerEntered(NetPeer sender, ZonePlayerEnteredPacket e)
         {
             if (!currentZone.playersById.ContainsKey(e.playerId))
             {
-                var player = new Player(e.playerId);
+                Player player;
+                if (LocalPlayer.Id == e.playerId)
+                {
+                    player = LocalPlayer;
+                }
+                else
+                {
+                    player = new Player(e.playerId, this);
+                }
+
                 currentZone.AddPlayer(player);
 
-                player.CreatePlayerCharacter(currentZone);
-                player.character.transform.position = e.playerPosition;
+                player.CreatePlayerCharacter();
+                player.Character.transform.position = e.playerPosition;
 
-                if (e.playerId == gameManager.id)
+                if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
                 {
-                    var controller = player.character.gameObject.AddComponent<PlayerController>();
+                    var controller = player.Character.gameObject.AddComponent<PlayerController>();
                     controller.player = player;
                     controller.client = client;
 
-                    player.character.name += " (Local)";
+                    player.Character.name += " (Local)";
                 }
             }
         }
 
-        private void OnZonePlayerLeave(NetPeer sender, ZonePlayerLeavePacket e)
+        private void OnZonePlayerLeft(NetPeer sender, ZonePlayerLeftPacket e)
         {
             if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
             {
-                Destroy(player.character.gameObject);
+                if (player.Character)
+                {
+                    Destroy(player.Character.gameObject);
+                }
+
                 currentZone.RemovePlayer(player);
             }
         }
