@@ -222,7 +222,10 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         private void WriteToUnityConsole(LoggerConfiguration config)
         {
-            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(string.Join((IncludeTimestampInUnityConsole ? TimestampFormat : null), Format));
+            bool includeTimestamp = IncludeTimestampInUnityConsole || !Application.isEditor;
+            string template = string.Join(" ", includeTimestamp ? TimestampFormat : null, Format);
+
+            ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(template);
 
             config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
         }
