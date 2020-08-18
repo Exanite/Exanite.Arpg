@@ -11,9 +11,6 @@ namespace Prototype.Networking.Players
     {
         private Dictionary<int, ServerPlayer> playersById = new Dictionary<int, ServerPlayer>();
 
-        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
-        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
-
         private ServerZoneManager zoneManager;
 
         [Inject]
@@ -21,6 +18,9 @@ namespace Prototype.Networking.Players
         {
             this.zoneManager = zoneManager;
         }
+
+        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
+        public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
 
         public ICollection<ServerPlayer> Players
         {
