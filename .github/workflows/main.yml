@@ -12,6 +12,7 @@ env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
 jobs:
+  # Build
   build:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
@@ -46,3 +47,18 @@ jobs:
       with:
         name: Build_${{ matrix.targetPlatform }}
         path: Builds
+  # Activation - Use when changing Unity versions
+  activation:
+    name: Request manual activation file
+    runs-on: ubuntu-latest
+    steps:
+    # Request
+    - uses: webbertakken/unity-request-manual-activation-file@v1.1
+      with:
+        unityVersion: 2019.2.11f1
+    # Upload
+    - uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.getManualLicenseFile.outputs.filePath }}
+        path: ${{ steps.getManualLicenseFile.outputs.filePath 
+    # Activate by going to https://license.unity3d.com/manual and adding a secret 'UNITY_LICENSE' to the repo
