@@ -41,7 +41,6 @@ jobs:
         unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
         buildMethod: Exanite.Arpg.Editor.Builds.GameBuilder.BuildClientAndServer
-        versioning: Semantic
     # Upload
     - uses: actions/upload-artifact@v1
       with:
