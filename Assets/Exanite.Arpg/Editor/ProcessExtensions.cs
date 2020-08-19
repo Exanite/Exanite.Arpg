@@ -2,7 +2,7 @@
 // This code has been modified for use in Exanite.Arpg
 //
 // The original code can be found at the link below under the MIT License:
-// Code: https://github.com/webbertakken/unity-builder/tree/master/action/default-build-script/Assets/Editor/Versioning
+// Code: https://github.com/webbertakken/unity-builder/tree/master/action/default-build-script/Assets/Editor/System
 // License: https://github.com/webbertakken/unity-builder/blob/master/LICENSE
 
 using System.Diagnostics;
