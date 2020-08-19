@@ -30,7 +30,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
 
             if (HasAnyVersionTags())
             {
-                version = GetCommitVersion();
+                version = GetCommitInfo();
             }
             else
             {
@@ -51,23 +51,10 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
-        /// Whether or not the repository has any version tags yet
-        /// </summary>
-        public static bool HasAnyVersionTags()
-        {
-            string output = Run(@"tag --list --merged HEAD");
-            Regex regex = new Regex("v[0-9]*");
-
-            var matches = regex.Matches(output);
-
-            return matches.Count > 0;
-        }
-
-        /// <summary>
         /// Retrieves the build version from git based on the most recent matching tag and commit history<para/>
         /// Format: 0.1.2.3 (where 3 is the amount of commits)
         /// </summary>
-        public static string GetCommitVersion()
+        public static string GetCommitInfo()
         {
             // v0.1-2-g12345678 (where 2 is the amount of commits, g stands for git)
             string version = GetVersionString();
@@ -88,6 +75,19 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
             // Reference: https://softwareengineering.stackexchange.com/questions/141973/how-do-you-achieve-a-numeric-versioning-scheme-with-git
 
             return Run(@"describe --tags --long --match ""v[0-9]*""");
+        }
+
+        /// <summary>
+        /// Whether or not the repository has any version tags yet
+        /// </summary>
+        public static bool HasAnyVersionTags()
+        {
+            string output = Run(@"tag --list --merged HEAD");
+            Regex regex = new Regex("v[0-9]*");
+
+            var matches = regex.Matches(output);
+
+            return matches.Count > 0;
         }
 
         /// <summary>
