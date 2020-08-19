@@ -37,6 +37,8 @@ namespace Exanite.Arpg.Editor.Builds
         /// </summary>
         public static void BuildClientAndServer()
         {
+            throw new Exception();
+
             BuildClient();
             BuildServer();
         }
