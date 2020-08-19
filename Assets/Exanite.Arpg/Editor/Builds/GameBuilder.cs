@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Exanite.Arpg.Editor.Builds.Versioning;
 using UnityEditor;
 
 namespace Exanite.Arpg.Editor.Builds
@@ -46,6 +47,9 @@ namespace Exanite.Arpg.Editor.Builds
         /// </summary>
         public static void BuildClient()
         {
+            string originalVersion = PlayerSettings.bundleVersion;
+            PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             var options = new BuildPlayerOptions()
@@ -57,6 +61,8 @@ namespace Exanite.Arpg.Editor.Builds
             };
 
             BuildPipeline.BuildPlayer(options);
+
+            PlayerSettings.bundleVersion = originalVersion;
         }
 
         /// <summary>
@@ -64,6 +70,9 @@ namespace Exanite.Arpg.Editor.Builds
         /// </summary>
         public static void BuildServer()
         {
+            string originalVersion = PlayerSettings.bundleVersion;
+            PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             var options = new BuildPlayerOptions()
@@ -76,6 +85,8 @@ namespace Exanite.Arpg.Editor.Builds
             };
 
             BuildPipeline.BuildPlayer(options);
+
+            PlayerSettings.bundleVersion = originalVersion;
         }
 
         private static string GetBuildPath(bool isServer, BuildTarget target)
