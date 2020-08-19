@@ -30,7 +30,7 @@ namespace Exanite.Arpg.Editor.AssetManagement
             }
         }
 
-        [MenuItem("PackageBuilder/Build AssetBundlePackage (Test)")]
+        //[MenuItem("PackageBuilder/Build AssetBundlePackage (Test)")]
         public static void TestBuild()
         {
             new AssetBundlePackageBuilder
