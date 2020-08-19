@@ -33,7 +33,16 @@ namespace Exanite.Arpg.Editor.Builds
         public const string ServerExecutableName = "Exanite.Arpg-Server";
 
         /// <summary>
-        /// Builds a Client build using the active build target and the scenes defined in the Build Settings Unity menu
+        /// Builds a Client and Server using the active build target and the scenes defined in the Build Settings Unity menu
+        /// </summary>
+        public static void BuildClientAndServer()
+        {
+            BuildClient();
+            BuildServer();
+        }
+
+        /// <summary>
+        /// Builds a Client using the active build target and the scenes defined in the Build Settings Unity menu
         /// </summary>
         public static void BuildClient()
         {
@@ -51,7 +60,7 @@ namespace Exanite.Arpg.Editor.Builds
         }
 
         /// <summary>
-        /// Builds a Server build using the active build target and the scenes defined in the Build Settings Unity menu
+        /// Builds a Server using the active build target and the scenes defined in the Build Settings Unity menu
         /// </summary>
         public static void BuildServer()
         {

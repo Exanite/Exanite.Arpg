@@ -23,8 +23,7 @@ namespace Exanite.Arpg.Editor.Builds
         [MenuItem("Build/Build Client and Server", priority = 2)]
         public static void BuildClientAndServer()
         {
-            GameBuilder.BuildClient();
-            GameBuilder.BuildServer();
+            GameBuilder.BuildClientAndServer();
         }
 
         [MenuItem("Build/Open Builds folder", priority = 100)]
