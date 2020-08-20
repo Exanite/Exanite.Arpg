@@ -2,6 +2,7 @@
 using System.IO;
 using Exanite.Arpg.Editor.Builds.Versioning;
 using UnityEditor;
+using UnityEngine;
 
 namespace Exanite.Arpg.Editor.Builds
 {
@@ -10,6 +11,12 @@ namespace Exanite.Arpg.Editor.Builds
     /// </summary>
     public static class GameBuilder
     {
+        /// <summary>
+        /// The default version<para/>
+        /// Note: This is also used when the Git commit version generation fails (Git was not found in Path)
+        /// </summary>
+        public const string DefaultVersion = "dev";
+
         /// <summary>
         /// Folder that builds are built to
         /// </summary>
@@ -47,9 +54,10 @@ namespace Exanite.Arpg.Editor.Builds
         /// </summary>
         public static void BuildClient()
         {
-            string originalVersion = PlayerSettings.bundleVersion;
-            PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+            Debug.Log("Building Client");
+            SetBuildVersion();
 
+            string version = PlayerSettings.bundleVersion;
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             var options = new BuildPlayerOptions()
@@ -62,7 +70,8 @@ namespace Exanite.Arpg.Editor.Builds
 
             BuildPipeline.BuildPlayer(options);
 
-            PlayerSettings.bundleVersion = originalVersion;
+            ResetBuildVersion();
+            Debug.Log($"Finished building Client with version '{version}'");
         }
 
         /// <summary>
@@ -70,9 +79,10 @@ namespace Exanite.Arpg.Editor.Builds
         /// </summary>
         public static void BuildServer()
         {
-            string originalVersion = PlayerSettings.bundleVersion;
-            PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+            Debug.Log("Building Server");
+            SetBuildVersion();
 
+            string version = PlayerSettings.bundleVersion;
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             var options = new BuildPlayerOptions()
@@ -86,7 +96,27 @@ namespace Exanite.Arpg.Editor.Builds
 
             BuildPipeline.BuildPlayer(options);
 
-            PlayerSettings.bundleVersion = originalVersion;
+            ResetBuildVersion();
+            Debug.Log($"Finished building Server with version '{version}'");
+        }
+
+        private static void SetBuildVersion()
+        {
+            try
+            {
+                PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+            }
+            catch (GitException)
+            {
+                PlayerSettings.bundleVersion = DefaultVersion;
+            }
+        }
+
+        private static void ResetBuildVersion()
+        {
+            PlayerSettings.bundleVersion = DefaultVersion;
+
+            AssetDatabase.SaveAssets();
         }
 
         private static string GetBuildPath(bool isServer, BuildTarget target)
