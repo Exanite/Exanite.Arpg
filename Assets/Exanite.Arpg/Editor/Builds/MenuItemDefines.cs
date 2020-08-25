@@ -1,5 +1,4 @@
-﻿using Exanite.Arpg.Editor.Builds.Versioning;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Exanite.Arpg.Editor.Builds
@@ -42,7 +41,7 @@ namespace Exanite.Arpg.Editor.Builds
         [MenuItem("Build/Log current build version", priority = 200)]
         private static void LogBuildVersion()
         {
-            string version = Git.GenerateCommitVersion();
+            string version = GameBuilder.GenerateBuildVersion();
 
             Debug.Log($"The current version of the game is '{version}'");
         }

@@ -100,16 +100,25 @@ namespace Exanite.Arpg.Editor.Builds
             Debug.Log($"Finished building Server with version '{version}'");
         }
 
-        private static void SetBuildVersion()
+        /// <summary>
+        /// Generates and returns the current build version<para/>
+        /// Format: branch/0.0.0.0
+        /// </summary>
+        public static string GenerateBuildVersion()
         {
             try
             {
-                PlayerSettings.bundleVersion = Git.GenerateCommitVersion();
+                return $"{Git.GetBranchName()}/{Git.GenerateCommitVersion()}";
             }
             catch (GitException)
             {
-                PlayerSettings.bundleVersion = DefaultVersion;
+                return DefaultVersion;
             }
+        }
+
+        private static void SetBuildVersion()
+        {
+                PlayerSettings.bundleVersion = GenerateBuildVersion();
         }
 
         private static void ResetBuildVersion()

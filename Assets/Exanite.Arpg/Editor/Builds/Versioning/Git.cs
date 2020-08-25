@@ -18,7 +18,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         public const string Application = @"git";
 
         /// <summary>
-        /// Generate a version based on the latest tag and the amount of commits<para/>
+        /// Generates a version based on the latest tag and the amount of commits<para/>
         /// Format: 0.1.2.3 (where 3 is the amount of commits)
         /// </summary>
         public static string GenerateCommitVersion()
@@ -41,7 +41,15 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
-        /// Get the total number of commits
+        /// Gets the current checked out branch's name
+        /// </summary>
+        public static string GetBranchName()
+        {
+            return Run(@"branch --show-current");
+        }
+
+        /// <summary>
+        /// Gets the total number of commits
         /// </summary>
         public static int GetTotalNumberOfCommits()
         {
@@ -67,7 +75,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
-        /// Get version string<para/>
+        /// Gets version string<para/>
         /// Format: v0.1-2-g12345678 (where 2 is the amount of commits since the last tag)
         /// </summary>
         public static string GetVersionString()
