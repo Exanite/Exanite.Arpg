@@ -19,7 +19,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         /// <summary>
         /// Creates a new <see cref="GitException"/>
         /// </summary>
-        public GitException(int exitCode, string errors) : base(errors)
+        public GitException(int exitCode, string errors) : base($"\n{errors}")
         {
             this.exitCode = exitCode;
         }

@@ -211,7 +211,9 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         private void WriteToFile(LoggerConfiguration config, string path)
         {
-            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(string.Join(" ", TimestampFormat, Format));
+            string template = GetTemplate(true);
+
+            ITextFormatter fileFormatter = new MessageTemplateTextFormatter(template);
 
             config.WriteTo.File(fileFormatter, path)
                 .WriteTo.File(new JsonFormatter(), $"{path}.json");
@@ -223,11 +225,23 @@ namespace Exanite.Arpg.Installers
         private void WriteToUnityConsole(LoggerConfiguration config)
         {
             bool includeTimestamp = IncludeTimestampInUnityConsole || !Application.isEditor;
-            string template = string.Join(" ", includeTimestamp ? TimestampFormat : null, Format);
+            string template = GetTemplate(includeTimestamp);
 
             ITextFormatter unityConsoleFormatter = new MessageTemplateTextFormatter(template);
 
             config.WriteTo.Sink(new UnityConsoleSink(Debug.unityLogger.logHandler, unityConsoleFormatter));
+        }
+
+        private string GetTemplate(bool includeTimeStamp)
+        {
+            if (includeTimeStamp)
+            {
+                return string.Join(" ", TimestampFormat, Format);
+            }
+            else
+            {
+                return Format;
+            }
         }
     }
 }

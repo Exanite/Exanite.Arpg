@@ -5,6 +5,7 @@
 // Code: https://github.com/webbertakken/unity-builder/tree/master/action/default-build-script/Assets/Editor/Versioning
 // License: https://github.com/webbertakken/unity-builder/blob/master/LICENSE
 
+using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -18,7 +19,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         public const string Application = @"git";
 
         /// <summary>
-        /// Generate a version based on the latest tag and the amount of commits<para/>
+        /// Generates a version based on the latest tag and the amount of commits<para/>
         /// Format: 0.1.2.3 (where 3 is the amount of commits)
         /// </summary>
         public static string GenerateCommitVersion()
@@ -41,7 +42,31 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
-        /// Get the total number of commits
+        /// Gets the current checked out branch's name<para/>
+        /// This is for retrieving the correct branch name during Github Actions CI, but can be used normally
+        /// </summary>
+        public static string GetBranchNameGithubActionsFix()
+        {
+            string headRef = Environment.GetEnvironmentVariable("GITHUB_HEAD_REF");
+
+            if (!string.IsNullOrWhiteSpace(headRef))
+            {
+                return headRef;
+            }
+
+            return GetBranchName();
+        }
+
+        /// <summary>
+        /// Gets the current checked out branch's name
+        /// </summary>
+        public static string GetBranchName()
+        {
+            return Run(@"name-rev --name-only HEAD");
+        }
+
+        /// <summary>
+        /// Gets the total number of commits
         /// </summary>
         public static int GetTotalNumberOfCommits()
         {
@@ -67,7 +92,7 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
-        /// Get version string<para/>
+        /// Gets version string<para/>
         /// Format: v0.1-2-g12345678 (where 2 is the amount of commits since the last tag)
         /// </summary>
         public static string GetVersionString()

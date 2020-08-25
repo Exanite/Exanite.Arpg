@@ -1,5 +1,4 @@
-﻿using Exanite.Arpg.Editor.Builds.Versioning;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Exanite.Arpg.Editor.Builds
@@ -13,18 +12,24 @@ namespace Exanite.Arpg.Editor.Builds
         public static void BuildClient()
         {
             GameBuilder.BuildClient();
+
+            OpenBuildsFolder();
         }
 
         [MenuItem("Build/Build Server", priority = 1)]
         public static void BuildServer()
         {
             GameBuilder.BuildServer();
+
+            OpenBuildsFolder();
         }
 
         [MenuItem("Build/Build Client and Server", priority = 2)]
         public static void BuildClientAndServer()
         {
             GameBuilder.BuildClientAndServer();
+
+            OpenBuildsFolder();
         }
 
         [MenuItem("Build/Open Builds folder", priority = 100)]
@@ -36,7 +41,7 @@ namespace Exanite.Arpg.Editor.Builds
         [MenuItem("Build/Log current build version", priority = 200)]
         private static void LogBuildVersion()
         {
-            string version = Git.GenerateCommitVersion();
+            string version = GameBuilder.GenerateBuildVersion();
 
             Debug.Log($"The current version of the game is '{version}'");
         }
