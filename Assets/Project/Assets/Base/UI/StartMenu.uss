@@ -1,0 +1,75 @@
+* {
+    font-size: 16px;
+    -unity-font: url('/Assets/Project/Assets/Base/Fonts/Lato/Lato-Regular.ttf');
+}
+
+.background {
+    background-color: rgb(26, 26, 26);
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.direction--row {
+    flex-direction: row;
+}
+
+.flex {
+    flex-grow: 1;
+}
+
+.unity-label {
+    color: rgb(242, 242, 242);
+}
+
+.unity-text-field__label {
+    min-width: 80px;
+}
+
+.unity-text-field__input {
+}
+
+.unity-button {
+}
+
+.divider {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-left-width: 1px;
+    border-right-width: 0;
+    border-top-width: 1px;
+    border-bottom-width: 0;
+    flex-basis: 1px;
+    border-left-color: rgba(255, 255, 255, 0.5);
+    border-right-color: rgba(255, 255, 255, 0.5);
+    border-top-color: rgba(255, 255, 255, 0.5);
+    border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+.title {
+    font-size: 30px;
+    -unity-text-align: upper-center;
+    padding-bottom: 20px;
+    -unity-font-style: bold;
+}
+
+.subtitle {
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    font-size: 20px;
+    padding-bottom: 5px;
+}
+
+.game-info-panel {
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+}
+
+.start-panel {
+    justify-content: center;
+}

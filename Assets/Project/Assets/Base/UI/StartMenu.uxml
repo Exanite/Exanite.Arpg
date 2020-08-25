@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="background" class="background">
+        <Style src="StartMenu.uss" />
+    </ui:VisualElement>
+    <ui:VisualElement name="body" class="direction--row flex">
+        <Style src="StartMenu.uss" />
+        <ui:VisualElement name="left" class="flex" />
+        <ui:VisualElement name="start-panel" class="start-panel flex" style="margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
+            <ui:Label text="Exanite.Arpg" name="title" class="title" />
+            <ui:VisualElement name="start-panel__content" class="direction--row">
+                <ui:VisualElement name="client" class="flex">
+                    <ui:Label text="Client" name="client-subtitle" class="subtitle" />
+                    <ui:TextField picking-mode="Ignore" label="Username" value="Player" text="Player" name="username-field" />
+                    <ui:VisualElement name="flex" class="flex" />
+                    <ui:Button text="Start Client" name="start-client-button" focusable="true" />
+                </ui:VisualElement>
+                <ui:VisualElement name="divider" class="divider" />
+                <ui:VisualElement name="server" class="flex">
+                    <ui:Label text="Server" name="server-subtitle" class="subtitle" />
+                    <ui:TextField picking-mode="Ignore" label="Address" value="127.0.0.1" text="127.0.0.1" name="address-field" />
+                    <ui:TextField picking-mode="Ignore" label="Port" value="17175" text="17175" name="port-field" />
+                    <ui:VisualElement name="flex" class="flex" />
+                    <ui:Button text="Start Server" name="start-server-button" focusable="true" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="divider" class="divider" />
+            <ui:Button text="Start Client and Server" name="start-client-server-button" focusable="true" />
+        </ui:VisualElement>
+        <ui:VisualElement name="right" class="flex" />
+    </ui:VisualElement>
+    <ui:VisualElement name="info-panel" class="game-info-panel" style="right: 0; left: 0;">
+        <Style src="StartMenu.uss" />
+        <ui:Label text="Exanite.Arpg branch/0.0.0.0" name="version" />
+    </ui:VisualElement>
+</ui:UXML>
