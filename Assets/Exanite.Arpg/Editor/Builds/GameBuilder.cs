@@ -108,7 +108,7 @@ namespace Exanite.Arpg.Editor.Builds
         {
             try
             {
-                return $"{Git.GetBranchName()}/{Git.GenerateCommitVersion()}";
+                return $"{Git.GetBranchNameGithubActionsFix()}/{Git.GenerateCommitVersion()}";
             }
             catch (GitException e)
             {

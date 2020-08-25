@@ -5,6 +5,7 @@
 // Code: https://github.com/webbertakken/unity-builder/tree/master/action/default-build-script/Assets/Editor/Versioning
 // License: https://github.com/webbertakken/unity-builder/blob/master/LICENSE
 
+using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -41,11 +42,27 @@ namespace Exanite.Arpg.Editor.Builds.Versioning
         }
 
         /// <summary>
+        /// Gets the current checked out branch's name<para/>
+        /// This is for retrieving the correct branch name during Github Actions CI, but can be used normally
+        /// </summary>
+        public static string GetBranchNameGithubActionsFix()
+        {
+            string headRef = Environment.GetEnvironmentVariable("GITHUB_HEAD_REF");
+
+            if (!string.IsNullOrWhiteSpace(headRef))
+            {
+                return headRef;
+            }
+
+            return GetBranchName();
+        }
+
+        /// <summary>
         /// Gets the current checked out branch's name
         /// </summary>
         public static string GetBranchName()
         {
-            return Run(@"branch --show-current");
+            return Run(@"name-rev --name-only HEAD");
         }
 
         /// <summary>

@@ -25,11 +25,11 @@ jobs:
         - StandaloneWindows64
     steps:
     # Checkout
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.3.2
       with:
         lfs: false
     # Cache
-    - uses: actions/cache@v1.1.0
+    - uses: actions/cache@v2.1.1
       with:
         path: Library
         key: Library-${{ matrix.targetPlatform }}
@@ -43,7 +43,7 @@ jobs:
         buildMethod: Exanite.Arpg.Editor.Builds.GameBuilder.BuildClientAndServer
         customParameters: '-nographics' # ! hack used to prevent segfault, see: https://github.com/webbertakken/unity-actions/issues/84
     # Upload
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2.1.4
       with:
         name: Build_${{ matrix.targetPlatform }}
         path: Builds
