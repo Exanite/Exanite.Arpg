@@ -2,7 +2,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Exanite.Arpg.Gameplay
+namespace Exanite.Arpg.Versioning
 {
     /// <summary>
     /// Used to log the current game version
