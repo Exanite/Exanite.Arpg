@@ -41,6 +41,7 @@ jobs:
         unityVersion: ${{ matrix.unityVersion }}
         targetPlatform: ${{ matrix.targetPlatform }}
         buildMethod: Exanite.Arpg.Editor.Builds.GameBuilder.BuildClientAndServer
+        customParameters: '-nographics' # ! hack used to prevent segfault, see: https://github.com/webbertakken/unity-actions/issues/84
     # Upload
     - uses: actions/upload-artifact@v1
       with:
