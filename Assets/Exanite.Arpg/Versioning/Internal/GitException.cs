@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Exanite.Arpg.Editor.Builds.Versioning
+namespace Exanite.Arpg.Versioning.Internal
 {
     /// <summary>
     /// The exception that is thrown when Git fails to exit successfully
