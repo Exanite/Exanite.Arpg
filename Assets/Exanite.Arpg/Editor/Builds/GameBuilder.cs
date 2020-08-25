@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Exanite.Arpg.Editor.Builds.Versioning;
+using Exanite.Arpg.Versioning.Internal;
 using UnityEditor;
 using UnityEngine;
 
