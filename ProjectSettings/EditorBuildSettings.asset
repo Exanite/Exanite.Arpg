@@ -9,10 +9,10 @@ EditorBuildSettings:
     path: Assets/Prototype/Pathfinding/NavGridScene.unity
     guid: 6e8d1e8d373d2984bac6d78e4b5f26ab
   - enabled: 0
-    path: Assets/[Project]/Scenes/Entry.unity
+    path: Assets/Project/Scenes/Entry.unity
     guid: 775d53de77ffd2a43ba19b376c8dc634
   - enabled: 0
-    path: Assets/[Project]/Scenes/Main.unity
+    path: Assets/Project/Scenes/Main.unity
     guid: 54ab6fca601401041b07e01a0ff665c5
   - enabled: 1
     path: Assets/Prototype/Networking/Main.unity
@@ -27,5 +27,4 @@ EditorBuildSettings:
     path: Assets/Prototype/Networking/Zone.unity
     guid: 9c6418b96c03406498c958a5f97b4582
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: cc546a916d4a22c458294ff4f95328e3,
-      type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: cc546a916d4a22c458294ff4f95328e3, type: 2}
