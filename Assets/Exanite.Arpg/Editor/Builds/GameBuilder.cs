@@ -15,7 +15,7 @@ namespace Exanite.Arpg.Editor.Builds
         /// The default version<para/>
         /// Note: This is also used when the Git commit version generation fails (Git was not found in Path)
         /// </summary>
-        public const string DefaultVersion = "dev";
+        public const string DefaultVersion = "branch/0.0.0.0";
 
         /// <summary>
         /// Folder that builds are built to
@@ -110,15 +110,17 @@ namespace Exanite.Arpg.Editor.Builds
             {
                 return $"{Git.GetBranchName()}/{Git.GenerateCommitVersion()}";
             }
-            catch (GitException)
+            catch (GitException e)
             {
+                Debug.LogWarning($"Failed to generate build version\n{e}");
+
                 return DefaultVersion;
             }
         }
 
         private static void SetBuildVersion()
         {
-                PlayerSettings.bundleVersion = GenerateBuildVersion();
+            PlayerSettings.bundleVersion = GenerateBuildVersion();
         }
 
         private static void ResetBuildVersion()
