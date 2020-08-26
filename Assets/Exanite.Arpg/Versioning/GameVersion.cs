@@ -10,6 +10,9 @@ namespace Exanite.Arpg.Versioning
     /// </summary>
     public class GameVersion : MonoBehaviour
     {
+        private string company;
+        private string product;
+
         private string version;
         private string branch;
         private string number;
@@ -21,9 +24,41 @@ namespace Exanite.Arpg.Versioning
         {
             this.log = log.ForContext<GameVersion>();
 
-            GetVersion();
+            GetGameInfo();
 
             LogCurrentVersion();
+        }
+
+        /// <summary>
+        /// Game company name
+        /// </summary>
+        public string Company
+        {
+            get
+            {
+                return company;
+            }
+
+            set
+            {
+                company = value;
+            }
+        }
+
+        /// <summary>
+        /// Game product name
+        /// </summary>
+        public string Product
+        {
+            get
+            {
+                return product;
+            }
+
+            set
+            {
+                product = value;
+            }
         }
 
         /// <summary>
@@ -70,7 +105,19 @@ namespace Exanite.Arpg.Versioning
             log.Information("The current version of the game is '{Version}'", Version);
         }
 
-        private void GetVersion()
+        private void GetGameInfo()
+        {
+            GetProductInfo();
+            GetVersionInfo();
+        }
+
+        private void GetProductInfo()
+        {
+            company = Application.companyName;
+            product = Application.productName;
+        }
+
+        private void GetVersionInfo()
         {
             if (Application.isEditor)
             {
