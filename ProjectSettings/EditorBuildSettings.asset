@@ -14,9 +14,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Project/Scenes/Main.unity
     guid: 54ab6fca601401041b07e01a0ff665c5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Prototype/Networking/Main.unity
     guid: f7c23ddcd1a0b6741b6387b397ba5cb7
+  - enabled: 1
+    path: Assets/Prototype/UI/UIPrototype.unity
+    guid: 74700d16268938e4c800c42f4171da7a
   - enabled: 1
     path: Assets/Prototype/Networking/Client.unity
     guid: 010cc5033f3752346a89aa8e6159bb5d
