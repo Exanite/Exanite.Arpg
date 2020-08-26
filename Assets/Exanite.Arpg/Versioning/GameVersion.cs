@@ -121,7 +121,14 @@ namespace Exanite.Arpg.Versioning
         {
             if (Application.isEditor)
             {
-                version = $"{Git.GetBranchName()}/{Git.GenerateCommitVersion()}";
+                try
+                {
+                    version = $"{Git.GetBranchName()}/{Git.GenerateCommitVersion()}";
+                }
+                catch (GitException e)
+                {
+                    log.Error(e, "Failed to generate build version");
+                }
             }
             else
             {
