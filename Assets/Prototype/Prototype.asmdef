@@ -3,6 +3,8 @@
     "references": [
         "Exanite.Arpg",
         "LiteNetLib",
+        "UnityEngine.UIElementsModule",
+        "UnityEngine.UIElementsGameObjectsModule",
         "UniRx.Async",
         "Zenject"
     ],
