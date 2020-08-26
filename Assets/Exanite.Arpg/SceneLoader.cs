@@ -1,0 +1,60 @@
+﻿using System;
+using UniRx.Async;
+using UnityEngine.SceneManagement;
+using Zenject;
+
+namespace Exanite.Arpg
+{
+    public class SceneLoader
+    {
+        private bool isLoading;
+
+        private SceneContextRegistry sceneContextRegistery;
+
+        [Inject]
+        public void Inject(SceneContextRegistry sceneContextRegistery)
+        {
+            this.sceneContextRegistery = sceneContextRegistery;
+        }
+
+        public UniTask LoadAdditiveSceneAsync(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        {
+            var context = sceneContextRegistery.TryGetSceneContextForScene(parent);
+
+            return LoadAdditiveSceneAsync(sceneName, context, bindings, bindingsLate);
+        }
+
+        public async UniTask LoadAdditiveSceneAsync(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        {
+            if (parent == null)
+            {
+                throw new ArgumentNullException(nameof(parent));
+            }
+
+            await UniTask.WaitWhile(() => isLoading);
+            isLoading = true;
+
+            PrepareForSceneLoad(parent, bindings, bindingsLate);
+
+            try
+            {
+                var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+                await SceneManager.LoadSceneAsync(sceneName, loadSceneParameters).ToUniTask();
+            }
+            finally
+            {
+                isLoading = false; // prevent dead lock
+            }
+        }
+
+        private void PrepareForSceneLoad(SceneContext parent, Action<DiContainer> bindings, Action<DiContainer> bindingsLate)
+        {
+            var sceneContainer = parent.Container;
+
+            SceneContext.ParentContainers = new[] { sceneContainer };
+
+            SceneContext.ExtraBindingsInstallMethod = bindings;
+            SceneContext.ExtraBindingsLateInstallMethod = bindingsLate;
+        }
+    } 
+}
