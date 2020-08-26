@@ -1,4 +1,5 @@
-﻿using Exanite.Arpg.Versioning;
+﻿using Exanite.Arpg;
+using Exanite.Arpg.Versioning;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -14,11 +15,13 @@ public class MainMenuBehaviour : MonoBehaviour
     private EventSystem eventSystem;
 
     private GameVersion gameVersion;
+    private SceneLoader sceneLoader;
 
     [Inject]
-    public void Inject(GameVersion gameVersion)
+    public void Inject(GameVersion gameVersion, SceneLoader sceneLoader)
     {
         this.gameVersion = gameVersion;
+        this.sceneLoader = sceneLoader;
     }
 
     private void Start()
@@ -126,5 +129,14 @@ public class MainMenuBehaviour : MonoBehaviour
     private void OnStartClientServerButtonActivated(ClickEvent e)
     {
         Debug.Log("Start Client and Server button activated");
+
+        sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene);
+
+        for (int i = 0; i < 10; i++)
+        {
+            sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene);
+        }
+
+        document.enabled = false;
     }
 }
