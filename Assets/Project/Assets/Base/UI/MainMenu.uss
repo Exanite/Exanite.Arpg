@@ -31,7 +31,7 @@
 .unity-text-field__input {
     white-space: nowrap;
     width: 0;
-    cursor: initial; /* hack to prevent runtime cursor warning */
+    cursor: initial;
 }
 
 .unity-button {

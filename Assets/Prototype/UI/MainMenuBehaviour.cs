@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
 
-public class StartMenuBehaviour : MonoBehaviour
+public class MainMenuBehaviour : MonoBehaviour
 {
     public string username = "Player";
     public string address = "127.0.0.1";

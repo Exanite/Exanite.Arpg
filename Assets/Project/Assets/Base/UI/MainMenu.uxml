@@ -1,9 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:VisualElement name="background" class="background">
-        <Style src="StartMenu.uss" />
+        <Style src="MainMenu.uss" />
     </ui:VisualElement>
     <ui:VisualElement name="body" class="direction--row flex">
-        <Style src="StartMenu.uss" />
+        <Style src="MainMenu.uss" />
         <ui:VisualElement name="left" class="flex" />
         <ui:VisualElement name="start-panel" class="start-panel flex" style="margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;">
             <ui:Label text="Exanite.Arpg" name="title" class="title" />
@@ -29,7 +29,7 @@
         <ui:VisualElement name="right" class="flex" />
     </ui:VisualElement>
     <ui:VisualElement name="info-panel" class="game-info-panel" style="right: 0; left: 0;">
-        <Style src="StartMenu.uss" />
+        <Style src="MainMenu.uss" />
         <ui:Label text="Exanite.Arpg branch/0.0.0.0" name="version" />
     </ui:VisualElement>
 </ui:UXML>
