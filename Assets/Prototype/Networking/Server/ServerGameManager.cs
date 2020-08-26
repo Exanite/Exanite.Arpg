@@ -60,9 +60,12 @@ namespace Prototype.Networking.Server
 
         private void Update() // for debug
         {
-            if (selectedZone == null
-                && zoneManager.publicZones != null
-                && zoneManager.publicZones.Count > 0)
+            if (zoneManager.publicZones != null)
+            {
+                return;
+            }
+
+            if (selectedZone == null && zoneManager.publicZones.Count > 0)
             {
                 selectedZone = zoneManager.publicZones[0];
             }
