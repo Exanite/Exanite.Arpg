@@ -17,6 +17,7 @@ namespace Prototype.Networking.Server
     public class ServerGameManager : MonoBehaviour
     {
         public UnityServer server;
+        public Material glMaterial;
 
         private Zone selectedZone;
 
@@ -120,18 +121,33 @@ namespace Prototype.Networking.Server
             }
         }
 
-        private void OnDrawGizmos()
+        private void OnRenderObject()
         {
             if (!Application.isPlaying || selectedZone == null)
             {
                 return;
             }
 
-            Gizmos.color = Color.red;
-            foreach (var player in selectedZone.playersById.Values)
+            glMaterial.SetPass(0);
+            GL.Begin(GL.TRIANGLES);
             {
-                Gizmos.DrawSphere(player.Character.transform.position, 0.5f);
+                GL.Color(Color.red);
+
+                foreach (var player in selectedZone.playersById.Values)
+                {
+                    const float size = 0.25f;
+                    Vector3 position = player.Character.transform.position;
+
+                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                    GL.Vertex3(position.x - size, position.y + size, transform.position.z);
+                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
+
+                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
+                    GL.Vertex3(position.x + size, position.y - size, transform.position.z);
+                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                }
             }
+            GL.End();
         }
 
         private void OnGUI()
