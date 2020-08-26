@@ -6,7 +6,7 @@ using Zenject;
 namespace Exanite.Arpg.Versioning
 {
     /// <summary>
-    /// The current version of the game
+    /// Contains information about the game and its current version
     /// </summary>
     public class GameVersion : MonoBehaviour
     {
