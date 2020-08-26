@@ -1,4 +1,5 @@
 ﻿using Exanite.Arpg;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,12 +15,14 @@ public class MainMenuBehaviour : MonoBehaviour
     private VisualElement root;
     private EventSystem eventSystem;
 
+    private ILog log;
     private GameVersion gameVersion;
     private SceneLoader sceneLoader;
 
     [Inject]
-    public void Inject(GameVersion gameVersion, SceneLoader sceneLoader)
+    public void Inject(ILog log, GameVersion gameVersion, SceneLoader sceneLoader)
     {
+        this.log = log;
         this.gameVersion = gameVersion;
         this.sceneLoader = sceneLoader;
     }
@@ -118,17 +121,17 @@ public class MainMenuBehaviour : MonoBehaviour
 
     private void OnStartClientButtonActivated(ClickEvent e)
     {
-        Debug.Log("Start Client button activated");
+        log.Debug("Start Client button activated");
     }
 
     private void OnStartServerButtonActivated(ClickEvent e)
     {
-        Debug.Log("Start Server button activated");
+        log.Debug("Start Server button activated");
     }
 
     private void OnStartClientServerButtonActivated(ClickEvent e)
     {
-        Debug.Log("Start Client and Server button activated");
+        log.Debug("Start Client and Server button activated");
 
         sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene);
 
