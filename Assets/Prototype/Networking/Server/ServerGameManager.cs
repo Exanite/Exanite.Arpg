@@ -60,7 +60,7 @@ namespace Prototype.Networking.Server
 
         private void Update() // for debug
         {
-            if (zoneManager.publicZones != null)
+            if (zoneManager.publicZones == null)
             {
                 return;
             }
