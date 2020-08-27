@@ -1,5 +1,6 @@
 ﻿using System;
 using UniRx.Async;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -31,6 +32,11 @@ namespace Exanite.Arpg
                 throw new ArgumentNullException(nameof(parent));
             }
 
+            if (!Application.CanStreamedLevelBeLoaded(sceneName))
+            {
+                throw new ArgumentException($"Specified scene '{sceneName}' does not exist", nameof(sceneName));
+            }
+
             await UniTask.WaitWhile(() => isLoading);
             isLoading = true;
 
@@ -56,5 +62,5 @@ namespace Exanite.Arpg
             SceneContext.ExtraBindingsInstallMethod = bindings;
             SceneContext.ExtraBindingsLateInstallMethod = bindingsLate;
         }
-    } 
+    }
 }
