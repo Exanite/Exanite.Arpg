@@ -17,6 +17,7 @@ namespace Prototype.Networking.Server
     public class ServerGameManager : MonoBehaviour
     {
         public UnityServer server;
+        public Material glMaterial;
 
         private Zone selectedZone;
 
@@ -59,9 +60,12 @@ namespace Prototype.Networking.Server
 
         private void Update() // for debug
         {
-            if (selectedZone == null
-                && zoneManager.publicZones != null
-                && zoneManager.publicZones.Count > 0)
+            if (zoneManager.publicZones != null)
+            {
+                return;
+            }
+
+            if (selectedZone == null && zoneManager.publicZones.Count > 0)
             {
                 selectedZone = zoneManager.publicZones[0];
             }
@@ -120,23 +124,40 @@ namespace Prototype.Networking.Server
             }
         }
 
-        private void OnDrawGizmos()
+        private void OnRenderObject()
         {
             if (!Application.isPlaying || selectedZone == null)
             {
                 return;
             }
 
-            Gizmos.color = Color.red;
-            foreach (var player in selectedZone.playersById.Values)
+            glMaterial.SetPass(0);
+            GL.Begin(GL.TRIANGLES);
             {
-                Gizmos.DrawSphere(player.Character.transform.position, 0.5f);
+                GL.Color(Color.red);
+
+                foreach (var player in selectedZone.playersById.Values)
+                {
+                    const float size = 0.25f;
+                    Vector3 position = player.Character.transform.position;
+
+                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                    GL.Vertex3(position.x - size, position.y + size, transform.position.z);
+                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
+
+                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
+                    GL.Vertex3(position.x + size, position.y - size, transform.position.z);
+                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                }
             }
+            GL.End();
         }
 
         private void OnGUI()
         {
             GUILayout.Label($"Selected zone: {selectedZone?.guid}");
+            GUILayout.Label($"Active zone count: {zoneManager.zones.Count}");
+            GUILayout.Label($"(Use the 1-9 keys to change selected zones)");
         }
 
         public void StartServer()

@@ -63,6 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   server: {fileID: 2840840526475309358}
+  glMaterial: {fileID: 2100000, guid: 9096646fd4e45eb4fb844b230315187d, type: 2}
 --- !u!114 &2840840526475309356
 MonoBehaviour:
   m_ObjectHideFlags: 0
