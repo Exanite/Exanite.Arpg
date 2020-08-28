@@ -93,7 +93,11 @@ namespace Prototype.Networking.Client
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
             SceneManager.UnloadSceneAsync(scene);
-            SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
+
+            if (zoneManager.currentZone != null)
+            {
+                SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
+            }
         }
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
