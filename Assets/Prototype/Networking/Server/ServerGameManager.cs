@@ -215,8 +215,8 @@ namespace Prototype.Networking.Server
             var player = playerManager.CreateFor(e.Peer);
             server.SendPacket(e.Peer, new PlayerIdAssignmentPacket() { id = e.Peer.Id }, DeliveryMethod.ReliableOrdered);
 
-            var zone = zoneManager.GetOpenZone();
-            zoneManager.MovePlayerToZone(player, zone);
+            //var zone = zoneManager.GetOpenZone();
+            //zoneManager.MovePlayerToZone(player, zone);
         }
 
         private void OnPlayerDisconnected(UnityServer sender, PeerDisconnectedEventArgs e)
