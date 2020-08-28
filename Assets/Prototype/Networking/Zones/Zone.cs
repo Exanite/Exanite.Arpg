@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
+using UniRx.Async;
 using UnityEngine.SceneManagement;
 
 namespace Prototype.Networking.Zones
@@ -11,6 +12,8 @@ namespace Prototype.Networking.Zones
         public Guid guid;
         public Scene scene;
 
+        public bool isCreated = false;
+
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
         public Zone(string zoneSceneName) : this(Guid.NewGuid(), zoneSceneName) { }
@@ -18,8 +21,6 @@ namespace Prototype.Networking.Zones
         public Zone(Guid guid, string zoneSceneName)
         {
             this.guid = guid;
-
-            CreateZone(zoneSceneName);
         }
 
         public event EventHandler<Zone, Player> PlayerEnteredEvent;
@@ -43,11 +44,11 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void CreateZone(string zoneSceneName)
+        public async UniTask CreateZone(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
-            var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+            scene = await sceneLoader.LoadAdditiveSceneAsync(zoneSceneName, parent);
 
-            scene = SceneManager.LoadScene("Zone", loadSceneParameters);
+            isCreated = true;
         }
     }
 }
