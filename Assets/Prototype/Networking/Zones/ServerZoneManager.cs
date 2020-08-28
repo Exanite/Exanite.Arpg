@@ -8,7 +8,9 @@ using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
+using UniRx.Async;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -27,13 +29,17 @@ namespace Prototype.Networking.Zones
         private ILog log;
         private UnityServer server;
         private ServerPlayerManager playerManager;
+        private Scene scene;
+        private SceneLoader sceneLoader;
 
         [Inject]
-        public void Inject(ILog log, UnityServer server, ServerPlayerManager playerManager)
+        public void Inject(ILog log, UnityServer server, ServerPlayerManager playerManager, Scene scene, SceneLoader sceneLoader)
         {
             this.log = log;
             this.server = server;
             this.playerManager = playerManager;
+            this.scene = scene;
+            this.sceneLoader = sceneLoader;
         }
 
         public event EventHandler<ServerZoneManager, Zone> ZoneAddedEvent;
@@ -64,11 +70,12 @@ namespace Prototype.Networking.Zones
         }
 
         // ! add method to base class as well
-        public Zone CreateZone()
+        public async UniTask<Zone> CreateZone()
         {
             var zone = new Zone(zoneSceneName);
-            AddZone(zone);
+            await zone.CreateZone(zoneSceneName, scene, sceneLoader);
 
+            AddZone(zone);
             return zone;
         }
 
@@ -87,11 +94,11 @@ namespace Prototype.Networking.Zones
             return null;
         }
 
-        public Zone GetOpenZone()
+        public async UniTask<Zone> GetOpenZone()
         {
             if (publicZones == null)
             {
-                CreatePublicZones();
+                await CreatePublicZones();
             }
 
             return publicZones.OrderBy(x => Random.value).First();
@@ -132,13 +139,13 @@ namespace Prototype.Networking.Zones
             network.ClearPacketReceiver<ZoneLoadFinishedPacket>();
         }
 
-        private void CreatePublicZones()
+        private async UniTask CreatePublicZones()
         {
             publicZones = new List<Zone>(publicZoneCount);
 
             for (int i = 0; i < publicZoneCount; i++)
             {
-                var zone = CreateZone();
+                var zone = await CreateZone();
 
                 publicZones.Add(zone);
             }

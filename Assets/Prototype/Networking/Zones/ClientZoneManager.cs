@@ -1,9 +1,12 @@
-﻿using Exanite.Arpg.Networking;
+﻿using System;
+using Exanite.Arpg;
+using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
+using UniRx.Async;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -18,12 +21,16 @@ namespace Prototype.Networking.Zones
 
         private UnityClient client;
         private ClientGameManager gameManager;
+        private Scene scene;
+        private SceneLoader sceneLoader;
 
         [Inject]
-        public void Inject(UnityClient client, ClientGameManager gameManager)
+        public void Inject(UnityClient client, ClientGameManager gameManager, Scene scene, SceneLoader sceneLoader)
         {
             this.client = client;
-            this.gameManager = gameManager; // ! replace with reference to local player later on
+            this.gameManager = gameManager;
+            this.scene = scene;
+            this.sceneLoader = sceneLoader;
         }
 
         private Player LocalPlayer
@@ -65,18 +72,7 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneLoad(NetPeer sender, ZoneLoadPacket e)
         {
-            isLoadingZone = true;
-
-            if (currentZone != null)
-            {
-                SceneManager.UnloadSceneAsync(currentZone.scene);
-            }
-
-            var newZone = new Zone(e.guid, zoneSceneName);
-            currentZone = newZone;
-
-            client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = e.guid }, DeliveryMethod.ReliableOrdered);
-            isLoadingZone = false;
+            LoadZoneAsync(e.guid).Forget();
         }
 
         private void OnZonePlayerEntered(NetPeer sender, ZonePlayerEnteredPacket e)
@@ -120,6 +116,23 @@ namespace Prototype.Networking.Zones
 
                 currentZone.RemovePlayer(player);
             }
+        }
+
+        private async UniTask LoadZoneAsync(Guid zoneGuid)
+        {
+            isLoadingZone = true;
+
+            if (currentZone != null)
+            {
+                await SceneManager.UnloadSceneAsync(currentZone.scene);
+            }
+
+            var newZone = new Zone(zoneGuid, zoneSceneName);
+            await newZone.CreateZone(zoneSceneName, scene, sceneLoader);
+
+            client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = zoneGuid }, DeliveryMethod.ReliableOrdered);
+            currentZone = newZone;
+            isLoadingZone = false;
         }
     }
 }
