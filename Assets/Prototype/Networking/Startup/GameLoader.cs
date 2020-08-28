@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Prototype.Networking
+namespace Prototype.Networking.Startup
 {
     public class GameLoader : MonoBehaviour
     {

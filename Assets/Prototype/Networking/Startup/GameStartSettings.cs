@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Prototype.Networking
+namespace Prototype.Networking.Startup
 {
     public class GameStartSettings // likely will split into Server and Client implementations later on
     {
