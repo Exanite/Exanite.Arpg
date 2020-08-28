@@ -18,14 +18,14 @@ namespace Exanite.Arpg
             this.sceneContextRegistry = sceneContextRegistry;
         }
 
-        public UniTask LoadAdditiveSceneAsync(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        public UniTask<Scene> LoadAdditiveSceneAsync(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
             var context = sceneContextRegistry.TryGetSceneContextForScene(parent);
 
             return LoadAdditiveSceneAsync(sceneName, context, bindings, bindingsLate);
         }
 
-        public async UniTask LoadAdditiveSceneAsync(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        public async UniTask<Scene> LoadAdditiveSceneAsync(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
             if (parent == null)
             {
@@ -45,7 +45,13 @@ namespace Exanite.Arpg
             try
             {
                 var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-                await SceneManager.LoadSceneAsync(sceneName, loadSceneParameters).ToUniTask();
+                await SceneManager.LoadSceneAsync(sceneName, loadSceneParameters);
+
+                Scene scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+
+                await UniTask.Yield();
+
+                return scene;
             }
             finally
             {
