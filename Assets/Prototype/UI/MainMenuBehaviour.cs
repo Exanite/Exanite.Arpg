@@ -1,6 +1,9 @@
-﻿using Exanite.Arpg;
+﻿using System;
+using System.Net;
+using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
+using Prototype.Networking.Startup;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -124,25 +127,73 @@ namespace Prototype.UI
         private void OnStartClientButtonActivated(ClickEvent e)
         {
             log.Debug("Start Client button activated");
+
+            StartClient();
+
+            gameObject.SetActive(false);
         }
 
         private void OnStartServerButtonActivated(ClickEvent e)
         {
             log.Debug("Start Server button activated");
+
+            StartServer();
+
+            gameObject.SetActive(false);
         }
 
         private void OnStartClientServerButtonActivated(ClickEvent e)
         {
             log.Debug("Start Client and Server button activated");
 
-            sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene);
+            StartServer();
 
             for (int i = 0; i < 10; i++)
             {
-                sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene);
+                StartClient();
             }
 
-            document.enabled = false;
+            gameObject.SetActive(false);
         }
-    } 
+
+        private void StartClient()
+        {
+            var settings = new GameStartSettings(GameStartSettings.GameType.Client, GetUsername(), GetAddress(), GetPort());
+
+            Action<DiContainer> bindings = (container) =>
+            {
+                container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
+            };
+
+            sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene, bindings);
+        }
+
+        private void StartServer()
+        {
+            var settings = new GameStartSettings(GameStartSettings.GameType.Client, GetUsername(), GetAddress(), GetPort());
+
+            Action<DiContainer> bindings = (container) =>
+            {
+                container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
+            };
+
+            sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene, bindings);
+        }
+
+        private string GetUsername()
+        {
+            return username;
+        }
+
+        private ushort GetPort()
+        {
+            return ushort.Parse(port);
+        }
+
+        private IPAddress GetAddress()
+        {
+            return IPAddress.Parse(address);
+        }
+
+    }
 }
