@@ -50,9 +50,12 @@ namespace Exanite.Arpg.Installers
         /// </summary>
         private PhysicsScene GetPhysicsScene()
         {
-            var physicsScene = gameObject.scene.GetPhysicsScene();
+            var scene = GetScene();
+            var physicsScene = scene.GetPhysicsScene();
 
-            if (RequireLocalPhysicsScene && physicsScene == Physics.defaultPhysicsScene)
+            if (RequireLocalPhysicsScene 
+                && physicsScene == Physics.defaultPhysicsScene
+                && scene != SceneManager.GetActiveScene()) // handles case where the current scene is the default scene
             {
                 throw new InvalidOperationException($"Scene PhysicsScene is same as global. Make sure this scene is not loaded with the option 'LocalPhysicsMode.None'.");
             }
