@@ -26,6 +26,8 @@ namespace Prototype.Networking.Zones
         public Dictionary<Guid, Zone> zones = new Dictionary<Guid, Zone>();
         public Dictionary<Player, Zone> loadingPlayers = new Dictionary<Player, Zone>();
 
+        private bool isCreatingPublicZones;
+
         private ILog log;
         private UnityServer server;
         private ServerPlayerManager playerManager;
@@ -101,6 +103,8 @@ namespace Prototype.Networking.Zones
                 await CreatePublicZones();
             }
 
+            await UniTask.WaitWhile(() => isCreatingPublicZones);
+
             return publicZones.OrderBy(x => Random.value).First();
         }
 
@@ -141,6 +145,8 @@ namespace Prototype.Networking.Zones
 
         private async UniTask CreatePublicZones()
         {
+            isCreatingPublicZones = true;
+
             publicZones = new List<Zone>(publicZoneCount);
 
             for (int i = 0; i < publicZoneCount; i++)
@@ -149,6 +155,8 @@ namespace Prototype.Networking.Zones
 
                 publicZones.Add(zone);
             }
+
+            isCreatingPublicZones = false;
         }
 
         private void OnZonePlayerEntered(Zone sender, Player e)
