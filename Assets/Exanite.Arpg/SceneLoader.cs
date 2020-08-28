@@ -10,17 +10,17 @@ namespace Exanite.Arpg
     {
         private bool isLoading;
 
-        private SceneContextRegistry sceneContextRegistery;
+        private SceneContextRegistry sceneContextRegistry;
 
         [Inject]
-        public void Inject(SceneContextRegistry sceneContextRegistery)
+        public void Inject(SceneContextRegistry sceneContextRegistry)
         {
-            this.sceneContextRegistery = sceneContextRegistery;
+            this.sceneContextRegistry = sceneContextRegistry;
         }
 
         public UniTask LoadAdditiveSceneAsync(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
-            var context = sceneContextRegistery.TryGetSceneContextForScene(parent);
+            var context = sceneContextRegistry.TryGetSceneContextForScene(parent);
 
             return LoadAdditiveSceneAsync(sceneName, context, bindings, bindingsLate);
         }
