@@ -6,11 +6,12 @@ namespace Prototype.Networking.Startup
     {
         public GameType gameType;
 
-        public ushort port;
         public string username;
-        public IPAddress address;
 
-        public GameStartSettings(GameType gameType, ushort port, string username, IPAddress address)
+        public IPAddress address;
+        public ushort port;
+
+        public GameStartSettings(GameType gameType, string username, IPAddress address, ushort port)
         {
             this.gameType = gameType;
             this.port = port;
