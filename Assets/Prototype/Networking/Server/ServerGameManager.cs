@@ -5,6 +5,7 @@ using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
 using UniRx.Async;
 using UnityEngine;
@@ -22,14 +23,16 @@ namespace Prototype.Networking.Server
         private Zone selectedZone;
 
         private ILog log;
+        private GameStartSettings startSettings;
         private Scene scene;
         private ServerPlayerManager playerManager;
         private ServerZoneManager zoneManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, ServerPlayerManager playerManager, ServerZoneManager zoneManager)
+        public void Inject(ILog log, GameStartSettings startSettings, Scene scene, ServerPlayerManager playerManager, ServerZoneManager zoneManager)
         {
             this.log = log;
+            this.startSettings = startSettings;
             this.scene = scene;
             this.playerManager = playerManager;
             this.zoneManager = zoneManager;
@@ -37,6 +40,13 @@ namespace Prototype.Networking.Server
 
         private async UniTaskVoid Start()
         {
+            if (startSettings.gameType != GameStartSettings.GameType.Server)
+            {
+                throw new ArgumentException(nameof(startSettings.gameType));
+            }
+
+            server.Port = startSettings.port;
+
             StartServer();
 
             while (true) // for testing moving players between zones

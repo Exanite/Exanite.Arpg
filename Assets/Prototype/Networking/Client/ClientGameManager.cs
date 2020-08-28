@@ -1,8 +1,10 @@
-﻿using Exanite.Arpg.Logging;
+﻿using System;
+using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
 using UniRx.Async;
 using UnityEngine;
@@ -18,19 +20,29 @@ namespace Prototype.Networking.Client
         public Player localPlayer;
 
         private ILog log;
+        private GameStartSettings startSettings;
         private Scene scene;
         private ClientZoneManager zoneManager;
 
         [Inject]
-        public void Inject(ILog log, Scene scene, ClientZoneManager zoneManager)
+        public void Inject(ILog log, GameStartSettings startSettings, Scene scene, ClientZoneManager zoneManager)
         {
             this.log = log;
+            this.startSettings = startSettings;
             this.scene = scene;
             this.zoneManager = zoneManager;
         }
 
         private void Start()
         {
+            if (startSettings.gameType != GameStartSettings.GameType.Client)
+            {
+                throw new ArgumentException(nameof(startSettings.gameType));
+            }
+
+            client.IPAddress = startSettings.address;
+            client.Port = startSettings.port;
+
             Connect();
         }
 
