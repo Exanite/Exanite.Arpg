@@ -34,7 +34,7 @@ namespace Exanite.Arpg
 
             if (!Application.CanStreamedLevelBeLoaded(sceneName))
             {
-                throw new ArgumentException($"Specified scene '{sceneName}' does not exist", nameof(sceneName));
+                throw new ArgumentException($"Failed to load scene. Specified scene '{sceneName}' does not exist", nameof(sceneName));
             }
 
             await UniTask.WaitWhile(() => isLoading);
