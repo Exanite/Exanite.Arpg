@@ -150,19 +150,20 @@ namespace Prototype.UI
 
             for (int i = 0; i < 10; i++)
             {
-                StartClient();
+                StartClient(true);
             }
 
             gameObject.SetActive(false);
         }
 
-        private void StartClient()
+        private void StartClient(bool useAI = false)
         {
             var settings = new GameStartSettings()
             {
                 gameType = GameType.Client,
 
                 username = GetUsername(),
+                useAI = useAI,
 
                 address = GetAddress(),
                 port = GetPort(),
@@ -182,9 +183,6 @@ namespace Prototype.UI
             {
                 gameType = GameType.Server,
 
-                username = GetUsername(),
-
-                address = GetAddress(),
                 port = GetPort(),
             };
 

@@ -7,6 +7,7 @@ namespace Prototype.Networking.Startup
         public GameType gameType = GameType.Client;
 
         public string username = "Player";
+        public bool useAI = false;
 
         public IPAddress address = IPAddress.Loopback;
         public ushort port = 17175;

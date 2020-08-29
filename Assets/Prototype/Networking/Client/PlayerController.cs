@@ -8,12 +8,10 @@ namespace Prototype.Networking.Client
 {
     public class PlayerController : MonoBehaviour
     {
-        public static PlayerController Current; // ! hack for making sure only 1 player is locally controlled at a time
-
         public UnityClient client; // inject this later
         public Player player;
 
-        public bool forceEnableControls = false; // used for debug
+        public bool useAI;
 
         private float seed;
 
@@ -24,22 +22,15 @@ namespace Prototype.Networking.Client
 
         private void FixedUpdate()
         {
-            if (forceEnableControls)
-            {
-                Current = this;
-
-                forceEnableControls = false;
-            }
-
             Vector2 input;
 
-            if (Current == this)
+            if (useAI)
             {
-                input = GetMovementInput();
+                input = GetPerlinMovementInput();
             }
             else
             {
-                input = GetPerlinMovementInput();
+                input = GetMovementInput();
             }
 
             SendMovementInput(input);
