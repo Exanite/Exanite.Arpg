@@ -10,11 +10,5 @@ namespace Prototype.Networking.Startup
 
         public IPAddress address = IPAddress.Loopback;
         public ushort port = 17175;
-
-        public enum GameType
-        {
-            Server,
-            Client,
-        }
     }
 }

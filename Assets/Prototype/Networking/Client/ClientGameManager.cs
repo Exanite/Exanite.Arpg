@@ -35,7 +35,7 @@ namespace Prototype.Networking.Client
 
         private void Start()
         {
-            if (startSettings.gameType != GameStartSettings.GameType.Client)
+            if (startSettings.gameType != GameType.Client)
             {
                 throw new ArgumentException(nameof(startSettings.gameType));
             }

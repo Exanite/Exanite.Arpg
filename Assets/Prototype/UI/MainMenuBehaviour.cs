@@ -160,7 +160,7 @@ namespace Prototype.UI
         {
             var settings = new GameStartSettings()
             {
-                gameType = GameStartSettings.GameType.Client,
+                gameType = GameType.Client,
 
                 username = GetUsername(),
 
@@ -180,7 +180,7 @@ namespace Prototype.UI
         {
             var settings = new GameStartSettings()
             {
-                gameType = GameStartSettings.GameType.Server,
+                gameType = GameType.Server,
 
                 username = GetUsername(),
 

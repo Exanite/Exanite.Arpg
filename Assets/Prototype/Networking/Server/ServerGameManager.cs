@@ -40,7 +40,7 @@ namespace Prototype.Networking.Server
 
         private async UniTaskVoid Start()
         {
-            if (startSettings.gameType != GameStartSettings.GameType.Server)
+            if (startSettings.gameType != GameType.Server)
             {
                 throw new ArgumentException(nameof(startSettings.gameType));
             }
