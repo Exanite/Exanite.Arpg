@@ -158,7 +158,15 @@ namespace Prototype.UI
 
         private void StartClient()
         {
-            var settings = new GameStartSettings(GameStartSettings.GameType.Client, GetUsername(), GetAddress(), GetPort());
+            var settings = new GameStartSettings()
+            {
+                gameType = GameStartSettings.GameType.Client,
+
+                username = GetUsername(),
+
+                address = GetAddress(),
+                port = GetPort(),
+            };
 
             Action<DiContainer> bindings = (container) =>
             {
@@ -170,7 +178,15 @@ namespace Prototype.UI
 
         private void StartServer()
         {
-            var settings = new GameStartSettings(GameStartSettings.GameType.Server, GetUsername(), GetAddress(), GetPort());
+            var settings = new GameStartSettings()
+            {
+                gameType = GameStartSettings.GameType.Server,
+
+                username = GetUsername(),
+
+                address = GetAddress(),
+                port = GetPort(),
+            };
 
             Action<DiContainer> bindings = (container) =>
             {
