@@ -142,26 +142,13 @@ namespace Prototype.Networking.Server
                 return;
             }
 
-            glMaterial.SetPass(0);
-            GL.Begin(GL.TRIANGLES);
+            foreach (var player in selectedZone.playersById.Values)
             {
-                GL.Color(Color.red);
-
-                foreach (var player in selectedZone.playersById.Values)
+                if (player.Character)
                 {
-                    const float size = 0.25f;
-                    Vector3 position = player.Character.transform.position;
-
-                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
-                    GL.Vertex3(position.x - size, position.y + size, transform.position.z);
-                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
-
-                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
-                    GL.Vertex3(position.x + size, position.y - size, transform.position.z);
-                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                    player.Character.DrawWithGL(glMaterial, Color.red);
                 }
             }
-            GL.End();
         }
 
         private void OnGUI()
