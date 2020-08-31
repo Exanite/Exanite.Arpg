@@ -16,6 +16,7 @@ namespace Prototype.Networking.Client
     public class ClientGameManager : MonoBehaviour
     {
         public UnityClient client;
+        public Material glMaterial;
 
         public Player localPlayer;
 
@@ -44,6 +45,14 @@ namespace Prototype.Networking.Client
             client.Port = startSettings.port;
 
             Connect();
+        }
+
+        private void OnRenderObject()
+        {
+            if (!startSettings.useAI && localPlayer?.Character)
+            {
+                localPlayer.Character.DrawWithGL(glMaterial, Color.blue);
+            }
         }
 
         public void Connect()
