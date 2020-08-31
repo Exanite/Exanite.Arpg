@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
@@ -38,7 +39,7 @@ namespace Prototype.Networking.Server
             this.zoneManager = zoneManager;
         }
 
-        private async UniTaskVoid Start()
+        private void Start()
         {
             if (startSettings.gameType != GameType.Server)
             {
@@ -49,24 +50,24 @@ namespace Prototype.Networking.Server
 
             StartServer();
 
-            while (true) // for testing moving players between zones
-            {
-                MoveRandomPlayerToRandomZone();
+            //while (true) // for testing moving players between zones
+            //{
+            //    MoveRandomPlayerToRandomZone();
 
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
-            }
+            //    await UniTask.Delay(TimeSpan.FromSeconds(1));
+            //}
         }
 
-        private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
-        {
-            if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
-            {
-                var player = playerManager.Players.OrderBy(x => Random.value).First();
-                var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
+        //private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
+        //{
+        //    if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
+        //    {
+        //        var player = playerManager.Players.OrderBy(x => Random.value).First();
+        //        var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
 
-                zoneManager.MovePlayerToZone(player, zone);
-            }
-        }
+        //        zoneManager.MovePlayerToZone(player, zone);
+        //    }
+        //}
 
         private void Update() // for debug
         {
