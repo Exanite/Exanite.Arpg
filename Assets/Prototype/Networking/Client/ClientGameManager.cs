@@ -49,9 +49,17 @@ namespace Prototype.Networking.Client
 
         private void OnRenderObject()
         {
-            if (!startSettings.useAI && localPlayer?.Character)
+            if (!startSettings.useAI && zoneManager.currentZone != null)
             {
-                localPlayer.Character.DrawWithGL(glMaterial, Color.blue);
+                foreach (var player in zoneManager.currentZone.playersById.Values)
+                {
+                    if (player.Character)
+                    {
+                        Color color = player == localPlayer ? Color.blue : Color.red;
+
+                        player.Character.DrawWithGL(glMaterial, color);
+                    }
+                }
             }
         }
 
