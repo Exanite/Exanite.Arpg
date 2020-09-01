@@ -208,6 +208,5 @@ namespace Prototype.UI
         {
             return IPAddress.Parse(address);
         }
-
     }
 }
