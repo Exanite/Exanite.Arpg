@@ -5,6 +5,7 @@ using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players;
+using Prototype.Networking.Startup;
 using Prototype.Networking.Zones.Packets;
 using UniRx.Async;
 using UnityEngine.SceneManagement;
@@ -20,14 +21,16 @@ namespace Prototype.Networking.Zones
         public bool isLoadingZone;
 
         private UnityClient client;
+        private GameStartSettings startSettings;
         private ClientGameManager gameManager;
         private Scene scene;
         private SceneLoader sceneLoader;
 
         [Inject]
-        public void Inject(UnityClient client, ClientGameManager gameManager, Scene scene, SceneLoader sceneLoader)
+        public void Inject(UnityClient client, GameStartSettings startSettings, ClientGameManager gameManager, Scene scene, SceneLoader sceneLoader)
         {
             this.client = client;
+            this.startSettings = startSettings;
             this.gameManager = gameManager;
             this.scene = scene;
             this.sceneLoader = sceneLoader;
@@ -97,6 +100,7 @@ namespace Prototype.Networking.Zones
                 if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
                 {
                     var controller = player.Character.gameObject.AddComponent<PlayerController>();
+                    controller.useAI = startSettings.useAI;
                     controller.player = player;
                     controller.client = client;
 

@@ -16,6 +16,7 @@ namespace Prototype.Networking.Client
     public class ClientGameManager : MonoBehaviour
     {
         public UnityClient client;
+        public Material glMaterial;
 
         public Player localPlayer;
 
@@ -35,7 +36,7 @@ namespace Prototype.Networking.Client
 
         private void Start()
         {
-            if (startSettings.gameType != GameStartSettings.GameType.Client)
+            if (startSettings.gameType != GameType.Client)
             {
                 throw new ArgumentException(nameof(startSettings.gameType));
             }
@@ -44,6 +45,22 @@ namespace Prototype.Networking.Client
             client.Port = startSettings.port;
 
             Connect();
+        }
+
+        private void OnRenderObject()
+        {
+            if (!startSettings.useAI && zoneManager.currentZone != null)
+            {
+                foreach (var player in zoneManager.currentZone.playersById.Values)
+                {
+                    if (player.Character)
+                    {
+                        Color color = player == localPlayer ? Color.blue : Color.red;
+
+                        player.Character.DrawWithGL(glMaterial, color);
+                    }
+                }
+            }
         }
 
         public void Connect()

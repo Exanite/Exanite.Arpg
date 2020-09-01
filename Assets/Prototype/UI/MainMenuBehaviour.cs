@@ -150,15 +150,24 @@ namespace Prototype.UI
 
             for (int i = 0; i < 10; i++)
             {
-                StartClient();
+                StartClient(true);
             }
 
             gameObject.SetActive(false);
         }
 
-        private void StartClient()
+        private void StartClient(bool useAI = false)
         {
-            var settings = new GameStartSettings(GameStartSettings.GameType.Client, GetUsername(), GetAddress(), GetPort());
+            var settings = new GameStartSettings()
+            {
+                gameType = GameType.Client,
+
+                username = GetUsername(),
+                useAI = useAI,
+
+                address = GetAddress(),
+                port = GetPort(),
+            };
 
             Action<DiContainer> bindings = (container) =>
             {
@@ -170,7 +179,12 @@ namespace Prototype.UI
 
         private void StartServer()
         {
-            var settings = new GameStartSettings(GameStartSettings.GameType.Server, GetUsername(), GetAddress(), GetPort());
+            var settings = new GameStartSettings()
+            {
+                gameType = GameType.Server,
+
+                port = GetPort(),
+            };
 
             Action<DiContainer> bindings = (container) =>
             {
@@ -194,6 +208,5 @@ namespace Prototype.UI
         {
             return IPAddress.Parse(address);
         }
-
     }
 }

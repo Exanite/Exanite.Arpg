@@ -18,7 +18,8 @@ namespace Prototype.Networking.Zones
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
-        [SerializeField] private int publicZoneCount = 3; // for testing
+        private const int publicZoneCount = 1; // ! for testing
+
         [SerializeField] private string zoneSceneName = "Zone";
 
         public List<Zone> publicZones;
@@ -71,7 +72,6 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        // ! add method to base class as well
         public async UniTask<Zone> CreateZone()
         {
             var zone = new Zone(zoneSceneName);

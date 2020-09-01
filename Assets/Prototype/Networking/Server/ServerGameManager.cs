@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
@@ -11,7 +10,6 @@ using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Prototype.Networking.Server
 {
@@ -38,9 +36,9 @@ namespace Prototype.Networking.Server
             this.zoneManager = zoneManager;
         }
 
-        private async UniTaskVoid Start()
+        private void Start()
         {
-            if (startSettings.gameType != GameStartSettings.GameType.Server)
+            if (startSettings.gameType != GameType.Server)
             {
                 throw new ArgumentException(nameof(startSettings.gameType));
             }
@@ -49,24 +47,24 @@ namespace Prototype.Networking.Server
 
             StartServer();
 
-            while (true) // for testing moving players between zones
-            {
-                MoveRandomPlayerToRandomZone();
+            //while (true) // for testing moving players between zones
+            //{
+            //    MoveRandomPlayerToRandomZone();
 
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
-            }
+            //    await UniTask.Delay(TimeSpan.FromSeconds(1));
+            //}
         }
 
-        private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
-        {
-            if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
-            {
-                var player = playerManager.Players.OrderBy(x => Random.value).First();
-                var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
+        //private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
+        //{
+        //    if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
+        //    {
+        //        var player = playerManager.Players.OrderBy(x => Random.value).First();
+        //        var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
 
-                zoneManager.MovePlayerToZone(player, zone);
-            }
-        }
+        //        zoneManager.MovePlayerToZone(player, zone);
+        //    }
+        //}
 
         private void Update() // for debug
         {
@@ -141,26 +139,13 @@ namespace Prototype.Networking.Server
                 return;
             }
 
-            glMaterial.SetPass(0);
-            GL.Begin(GL.TRIANGLES);
+            foreach (var player in selectedZone.playersById.Values)
             {
-                GL.Color(Color.red);
-
-                foreach (var player in selectedZone.playersById.Values)
+                if (player.Character)
                 {
-                    const float size = 0.25f;
-                    Vector3 position = player.Character.transform.position;
-
-                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
-                    GL.Vertex3(position.x - size, position.y + size, transform.position.z);
-                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
-
-                    GL.Vertex3(position.x + size, position.y + size, transform.position.z);
-                    GL.Vertex3(position.x + size, position.y - size, transform.position.z);
-                    GL.Vertex3(position.x - size, position.y - size, transform.position.z);
+                    player.Character.DrawWithGL(glMaterial, Color.red);
                 }
             }
-            GL.End();
         }
 
         private void OnGUI()
