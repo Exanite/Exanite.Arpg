@@ -4,6 +4,7 @@ using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
 using Prototype.Networking.Startup;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -174,7 +175,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene, bindings);
+            sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene, bindings).Forget();
         }
 
         private void StartServer()
@@ -191,7 +192,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene, bindings);
+            sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene, bindings).Forget();
         }
 
         private string GetUsername()
