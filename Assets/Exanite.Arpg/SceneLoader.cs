@@ -47,18 +47,13 @@ namespace Exanite.Arpg
         /// <returns>The newly loaded <see cref="Scene"/></returns>
         public async UniTask<Scene> LoadAdditiveSceneAsync(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
-            if (parent == null)
-            {
-                throw new ArgumentNullException(nameof(parent));
-            }
-
             if (!Application.CanStreamedLevelBeLoaded(sceneName))
             {
                 throw new ArgumentException($"Failed to load scene. Specified scene '{sceneName}' does not exist", nameof(sceneName));
             }
 
             // Allow only one scene to load at a time
-            await UniTask.WaitWhile(() => isLoading); 
+            await UniTask.WaitWhile(() => isLoading);
             isLoading = true;
 
             PrepareForSceneLoad(parent, bindings, bindingsLate);
@@ -72,7 +67,7 @@ namespace Exanite.Arpg
                 Scene scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
 
                 // Wait for scene to initialize
-                await UniTask.Yield(); 
+                await UniTask.Yield();
 
                 return scene;
             }
@@ -88,9 +83,7 @@ namespace Exanite.Arpg
         /// </summary>
         private void PrepareForSceneLoad(SceneContext parent, Action<DiContainer> bindings, Action<DiContainer> bindingsLate)
         {
-            var sceneContainer = parent.Container;
-
-            SceneContext.ParentContainers = new[] { sceneContainer };
+            SceneContext.ParentContainers = (parent == null) ? null : new[] { parent.Container };
 
             SceneContext.ExtraBindingsInstallMethod = bindings;
             SceneContext.ExtraBindingsLateInstallMethod = bindingsLate;
