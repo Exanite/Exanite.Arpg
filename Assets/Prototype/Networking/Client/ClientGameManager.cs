@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
@@ -7,7 +8,6 @@ using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
-using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;

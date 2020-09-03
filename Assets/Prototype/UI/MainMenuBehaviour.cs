@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
 using Prototype.Networking.Startup;
-using UniRx.Async;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;

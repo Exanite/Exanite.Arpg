@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
-using UniRx.Async;
 using UnityEngine.SceneManagement;
 
 namespace Prototype.Networking.Zones
