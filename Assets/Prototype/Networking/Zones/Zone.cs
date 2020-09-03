@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
 using UniRx.Async;
@@ -9,10 +10,10 @@ namespace Prototype.Networking.Zones
 {
     public class Zone
     {
+        public bool isCreated;
+
         public Guid guid;
         public Scene scene;
-
-        public bool isCreated = false;
 
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
@@ -46,9 +47,29 @@ namespace Prototype.Networking.Zones
 
         public async UniTask Create(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
+            if (isCreated)
+            {
+                throw new InvalidOperationException("Zone has already been created.");
+            }
+
             scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
 
             isCreated = true;
+        }
+
+        public async UniTask Destroy(SceneLoader sceneLoader)
+        {
+            if (!isCreated)
+            {
+                return;
+            }
+
+            foreach (var player in playersById.Values.ToArray())
+            {
+                RemovePlayer(player);
+            }
+
+            await sceneLoader.UnloadScene(scene);
         }
     }
 }

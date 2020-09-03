@@ -126,10 +126,7 @@ namespace Prototype.Networking.Zones
         {
             isLoadingZone = true;
 
-            if (currentZone != null)
-            {
-                await SceneManager.UnloadSceneAsync(currentZone.scene);
-            }
+            currentZone?.Destroy(sceneLoader);
 
             var newZone = new Zone(zoneGuid, zoneSceneName);
             await newZone.Create(zoneSceneName, scene, sceneLoader);
