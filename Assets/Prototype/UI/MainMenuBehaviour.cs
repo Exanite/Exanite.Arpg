@@ -175,7 +175,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Client", null, bindings).Forget();
+            sceneLoader.LoadAdditiveScene("Client", null, bindings).Forget();
         }
 
         private void StartServer()
@@ -192,7 +192,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Server", null, bindings).Forget();
+            sceneLoader.LoadAdditiveScene("Server", null, bindings).Forget();
         }
 
         private string GetUsername()

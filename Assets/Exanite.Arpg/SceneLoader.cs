@@ -30,11 +30,11 @@ namespace Exanite.Arpg
         /// <param name="bindings">Bindings to install to the <see cref="DiContainer"/></param>
         /// <param name="bindingsLate">Late bindings to install to the <see cref="DiContainer"/>, these are installed after all other bindings are installed</param>
         /// <returns>The newly loaded <see cref="Scene"/></returns>
-        public UniTask<Scene> LoadAdditiveSceneAsync(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        public UniTask<Scene> LoadAdditiveScene(string sceneName, Scene parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
             var context = sceneContextRegistry.TryGetSceneContextForScene(parent);
 
-            return LoadAdditiveSceneAsync(sceneName, context, bindings, bindingsLate);
+            return LoadAdditiveScene(sceneName, context, bindings, bindingsLate);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Exanite.Arpg
         /// <param name="bindings">Bindings to install to the <see cref="DiContainer"/></param>
         /// <param name="bindingsLate">Late bindings to install to the <see cref="DiContainer"/>, these are installed after all other bindings are installed</param>
         /// <returns>The newly loaded <see cref="Scene"/></returns>
-        public async UniTask<Scene> LoadAdditiveSceneAsync(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        public async UniTask<Scene> LoadAdditiveScene(string sceneName, SceneContext parent, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
         {
             if (!Application.CanStreamedLevelBeLoaded(sceneName))
             {

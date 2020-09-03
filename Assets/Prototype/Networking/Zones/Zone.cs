@@ -46,7 +46,7 @@ namespace Prototype.Networking.Zones
 
         public async UniTask Create(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
-            scene = await sceneLoader.LoadAdditiveSceneAsync(zoneSceneName, parent);
+            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
 
             isCreated = true;
         }
