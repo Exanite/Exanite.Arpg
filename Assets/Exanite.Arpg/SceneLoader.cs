@@ -49,7 +49,7 @@ namespace Exanite.Arpg
         {
             if (!Application.CanStreamedLevelBeLoaded(sceneName))
             {
-                throw new ArgumentException($"Failed to load scene. Specified scene '{sceneName}' does not exist", nameof(sceneName));
+                throw new ArgumentException($"Failed to load scene. Specified scene '{sceneName}' does not exist.", nameof(sceneName));
             }
 
             // Allow only one scene to load at a time
@@ -76,6 +76,20 @@ namespace Exanite.Arpg
                 // Prevent dead lock
                 isLoading = false;
             }
+        }
+
+        /// <summary>
+        /// Unloads the provided <see cref="Scene"/>
+        /// </summary>
+        /// <param name="scene">The <see cref="Scene"/> to unload</param>
+        public async UniTask UnloadScene(Scene scene)
+        {
+            if (SceneManager.sceneCount == 1)
+            {
+                throw new InvalidOperationException($"Cannot unload the last active scene '{scene.name}'.");
+            }
+
+            await SceneManager.UnloadSceneAsync(scene);
         }
 
         /// <summary>
