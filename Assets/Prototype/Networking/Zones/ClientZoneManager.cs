@@ -132,7 +132,7 @@ namespace Prototype.Networking.Zones
             }
 
             var newZone = new Zone(zoneGuid, zoneSceneName);
-            await newZone.CreateZone(zoneSceneName, scene, sceneLoader);
+            await newZone.Create(zoneSceneName, scene, sceneLoader);
 
             client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = zoneGuid }, DeliveryMethod.ReliableOrdered);
             currentZone = newZone;
