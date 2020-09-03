@@ -79,6 +79,46 @@ namespace Exanite.Arpg
         }
 
         /// <summary>
+        /// Loads the <see cref="Scene"/> while unloading all other scenes
+        /// </summary>
+        /// <param name="sceneName">The name of the <see cref="Scene"/> to load</param>
+        /// <param name="bindings">Bindings to install to the <see cref="DiContainer"/></param>
+        /// <param name="bindingsLate">Late bindings to install to the <see cref="DiContainer"/>, these are installed after all other bindings are installed</param>
+        /// <returns>The newly loaded <see cref="Scene"/></returns>
+        public async UniTask<Scene> LoadSingleScene(string sceneName, Action<DiContainer> bindings = null, Action<DiContainer> bindingsLate = null)
+        {
+            if (!Application.CanStreamedLevelBeLoaded(sceneName))
+            {
+                throw new ArgumentException($"Failed to load scene. Specified scene '{sceneName}' does not exist.", nameof(sceneName));
+            }
+
+            // Allow only one scene to load at a time
+            await UniTask.WaitWhile(() => isLoading);
+            isLoading = true;
+
+            PrepareForSceneLoad(null, bindings, bindingsLate);
+
+            try
+            {
+                var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Single, LocalPhysicsMode.Physics3D);
+                await SceneManager.LoadSceneAsync(sceneName, loadSceneParameters);
+
+                // LoadSceneAsync does not return the newly loaded scene, this is the only way to get the new scene
+                Scene scene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+
+                // Wait for scene to initialize
+                await UniTask.Yield();
+
+                return scene;
+            }
+            finally
+            {
+                // Prevent dead lock
+                isLoading = false;
+            }
+        }
+
+        /// <summary>
         /// Unloads the provided <see cref="Scene"/>
         /// </summary>
         /// <param name="scene">The <see cref="Scene"/> to unload</param>
