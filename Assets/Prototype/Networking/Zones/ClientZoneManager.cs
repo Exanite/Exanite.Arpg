@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
@@ -7,7 +8,6 @@ using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones.Packets;
-using UniRx.Async;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -126,13 +126,10 @@ namespace Prototype.Networking.Zones
         {
             isLoadingZone = true;
 
-            if (currentZone != null)
-            {
-                await SceneManager.UnloadSceneAsync(currentZone.scene);
-            }
+            currentZone?.Destroy(sceneLoader);
 
             var newZone = new Zone(zoneGuid, zoneSceneName);
-            await newZone.CreateZone(zoneSceneName, scene, sceneLoader);
+            await newZone.Create(zoneSceneName, scene, sceneLoader);
 
             client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = zoneGuid }, DeliveryMethod.ReliableOrdered);
             currentZone = newZone;

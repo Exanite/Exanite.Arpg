@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
-using UniRx.Async;
 using UnityEngine.SceneManagement;
 
 namespace Prototype.Networking.Zones
 {
     public class Zone
     {
+        public bool isCreated;
+
         public Guid guid;
         public Scene scene;
-
-        public bool isCreated = false;
 
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
@@ -44,11 +45,31 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        public async UniTask CreateZone(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
+        public async UniTask Create(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
-            scene = await sceneLoader.LoadAdditiveSceneAsync(zoneSceneName, parent);
+            if (isCreated)
+            {
+                throw new InvalidOperationException("Zone has already been created.");
+            }
+
+            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
 
             isCreated = true;
+        }
+
+        public async UniTask Destroy(SceneLoader sceneLoader)
+        {
+            if (!isCreated)
+            {
+                return;
+            }
+
+            foreach (var player in playersById.Values.ToArray())
+            {
+                RemovePlayer(player);
+            }
+
+            await sceneLoader.UnloadScene(scene);
         }
     }
 }

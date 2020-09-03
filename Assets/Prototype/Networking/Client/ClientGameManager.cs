@@ -1,4 +1,6 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
+using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
@@ -6,7 +8,6 @@ using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
-using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -22,16 +23,18 @@ namespace Prototype.Networking.Client
 
         private ILog log;
         private GameStartSettings startSettings;
-        private Scene scene;
         private ClientZoneManager zoneManager;
+        private Scene scene;
+        private SceneLoader sceneLoader;
 
         [Inject]
-        public void Inject(ILog log, GameStartSettings startSettings, Scene scene, ClientZoneManager zoneManager)
+        public void Inject(ILog log, GameStartSettings startSettings, ClientZoneManager zoneManager, Scene scene, SceneLoader sceneLoader)
         {
             this.log = log;
             this.startSettings = startSettings;
-            this.scene = scene;
             this.zoneManager = zoneManager;
+            this.scene = scene;
+            this.sceneLoader = sceneLoader;
         }
 
         private void Start()
@@ -109,12 +112,8 @@ namespace Prototype.Networking.Client
 
         private void OnDisconnected(UnityClient sender, DisconnectedEventArgs e)
         {
-            SceneManager.UnloadSceneAsync(scene);
-
-            if (zoneManager.currentZone != null)
-            {
-                SceneManager.UnloadSceneAsync(zoneManager.currentZone.scene);
-            }
+            sceneLoader.UnloadScene(scene).Forget();
+            zoneManager.currentZone?.Destroy(sceneLoader).Forget();
         }
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)

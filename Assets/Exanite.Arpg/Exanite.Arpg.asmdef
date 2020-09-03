@@ -2,7 +2,7 @@
     "name": "Exanite.Arpg",
     "references": [
         "LiteNetLib",
-        "UniRx.Async",
+        "UniTask",
         "Zenject"
     ],
     "includePlatforms": [],

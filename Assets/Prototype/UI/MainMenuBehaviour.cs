@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
@@ -174,7 +175,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Client", gameObject.scene, bindings);
+            sceneLoader.LoadAdditiveScene("Client", null, bindings).Forget();
         }
 
         private void StartServer()
@@ -191,7 +192,7 @@ namespace Prototype.UI
                 container.Bind<GameStartSettings>().FromInstance(settings).AsSingle();
             };
 
-            sceneLoader.LoadAdditiveSceneAsync("Server", gameObject.scene, bindings);
+            sceneLoader.LoadAdditiveScene("Server", null, bindings).Forget();
         }
 
         private string GetUsername()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
@@ -8,7 +9,6 @@ using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Zones.Packets;
-using UniRx.Async;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -75,7 +75,7 @@ namespace Prototype.Networking.Zones
         public async UniTask<Zone> CreateZone()
         {
             var zone = new Zone(zoneSceneName);
-            await zone.CreateZone(zoneSceneName, scene, sceneLoader);
+            await zone.Create(zoneSceneName, scene, sceneLoader);
 
             AddZone(zone);
             return zone;

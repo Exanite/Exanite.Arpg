@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Exanite.Arpg.Pathfinding.Graphs;
-using UniRx.Async;
 using UnityEngine;
 
 namespace Exanite.Arpg.Pathfinding
