@@ -89,7 +89,7 @@ namespace Exanite.Arpg.Networking.Server
 
         private void OnDestroy()
         {
-            Close();
+            Close(false);
         }
 
         /// <summary>
@@ -112,13 +112,30 @@ namespace Exanite.Arpg.Networking.Server
         /// </summary>
         public void Close()
         {
+            Close(true);
+        }
+
+        /// <summary>
+        /// Closes the server
+        /// </summary>
+        /// <param name="pollEvents">
+        /// Should events be polled?<para/>
+        /// Note: Should be <see langword="false"/> if called when the <see cref="Application"/> is quitting
+        /// </param>
+        protected void Close(bool pollEvents)
+        {
             if (!IsCreated)
             {
                 return;
             }
 
             netManager.DisconnectAll();
-            netManager.PollEvents();
+
+            if (pollEvents)
+            {
+                netManager.PollEvents();
+            }
+
             netManager.Stop();
 
             IsCreated = false;

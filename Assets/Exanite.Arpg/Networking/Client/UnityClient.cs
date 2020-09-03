@@ -133,7 +133,7 @@ namespace Exanite.Arpg.Networking.Client
 
         private void OnDestroy()
         {
-            Disconnect();
+            Disconnect(false);
         }
 
         /// <summary>
@@ -165,17 +165,7 @@ namespace Exanite.Arpg.Networking.Client
         /// </summary>
         public void Disconnect()
         {
-            if (netManager == null)
-            {
-                return;
-            }
-
-            netManager.DisconnectAll();
-            netManager.PollEvents();
-            netManager.Stop();
-
-            isConnected = false;
-            isConnecting = false;
+            Disconnect(true);
         }
 
         /// <summary>
@@ -184,6 +174,28 @@ namespace Exanite.Arpg.Networking.Client
         public void SendPacketToServer<T>(T packet, DeliveryMethod deliveryMethod) where T : class, IPacket, new()
         {
             SendPacket(Server, packet, deliveryMethod);
+        }
+
+        /// <summary>
+        /// Disconnects from the server
+        /// </summary>
+        /// <param name="pollEvents">
+        /// Should events be polled?<para/>
+        /// Note: Should be <see langword="false"/> if called when the <see cref="Application"/> is quitting
+        /// </param>
+        protected void Disconnect(bool pollEvents)
+        {
+            netManager.DisconnectAll();
+
+            if (pollEvents)
+            {
+                netManager.PollEvents();
+            }
+
+            netManager.Stop();
+
+            isConnected = false;
+            isConnecting = false;
         }
 
         protected override void OnPeerConnected(NetPeer server)
