@@ -76,7 +76,7 @@ namespace Prototype.Networking.Players
         /// <summary>
         /// Creates a new <see cref="PlayerCharacter"/> in the <see cref="Player"/>'s current zone
         /// </summary>
-        public void CreatePlayerCharacter()
+        public virtual void CreatePlayerCharacter()
         {
             if (CurrentZone == null)
             {

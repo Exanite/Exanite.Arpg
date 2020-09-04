@@ -7,8 +7,9 @@ namespace Prototype.Networking.Players
     /// </summary>
     public class ServerPlayer : Player
     {
+        private PlayerMovementBehaviour movementBehaviour;
+
         private readonly PlayerConnection connection;
-        private readonly ServerZoneManager zoneManager;
 
         /// <summary>
         /// Creates a new <see cref="ServerPlayer"/>
@@ -27,6 +28,26 @@ namespace Prototype.Networking.Players
             {
                 return connection;
             }
+        }
+
+        public PlayerMovementBehaviour MovementBehaviour
+        {
+            get
+            {
+                return movementBehaviour;
+            }
+
+            private set
+            {
+                movementBehaviour = value;
+            }
+        }
+
+        public override void CreatePlayerCharacter()
+        {
+            base.CreatePlayerCharacter();
+
+            MovementBehaviour = Character.gameObject.AddComponent<PlayerMovementBehaviour>();
         }
     }
 }

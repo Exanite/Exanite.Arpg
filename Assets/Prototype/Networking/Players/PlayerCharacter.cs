@@ -6,8 +6,6 @@ namespace Prototype.Networking.Players
     {
         public Player player;
 
-        public Vector2 movementInput;
-
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp
         {
             material.SetPass(0);
