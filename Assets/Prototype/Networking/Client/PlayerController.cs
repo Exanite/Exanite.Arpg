@@ -1,7 +1,6 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
 using UnityEngine;
 
 namespace Prototype.Networking.Client
@@ -13,20 +12,20 @@ namespace Prototype.Networking.Client
 
         public bool useAI;
 
-        public PlayerInputPacket playerInput;
-
         private float seed;
+
+        private PlayerMovementBehaviour movementBehaviour;
 
         private void Start()
         {
             seed = Random.Range(-1000f, 1000f);
 
-            playerInput = new PlayerInputPacket();
+            movementBehaviour = GetComponent<PlayerMovementBehaviour>();
         }
 
         private void FixedUpdate()
         {
-            playerInput.movement = useAI ? GetPerlinMovementInput() : GetMovementInput();
+            movementBehaviour.input.movement = useAI ? GetPerlinMovementInput() : GetMovementInput();
 
             SendInput();
         }
@@ -55,7 +54,7 @@ namespace Prototype.Networking.Client
 
         public void SendInput()
         {
-            client.SendPacketToServer(playerInput, DeliveryMethod.Unreliable);
+            client.SendPacketToServer(movementBehaviour.input, DeliveryMethod.Unreliable);
         }
     }
 }

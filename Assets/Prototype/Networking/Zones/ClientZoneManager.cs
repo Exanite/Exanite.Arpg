@@ -105,6 +105,8 @@ namespace Prototype.Networking.Zones
                     controller.player = player;
                     controller.client = client;
 
+                    player.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
+
                     player.Character.name += " (Local)";
                 }
             }
