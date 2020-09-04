@@ -4,6 +4,8 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
+        public const float maxInterpolationDistance = 2; // ! temp
+
         public Player player;
 
         public Vector3 currentPosition;
@@ -20,7 +22,15 @@ namespace Prototype.Networking.Players
 
         public void UpdatePosition(Vector3 newPosition, float time)
         {
-            previousPosition = currentPosition;
+            if ((newPosition - currentPosition).sqrMagnitude < maxInterpolationDistance * maxInterpolationDistance)
+            {
+                previousPosition = currentPosition;
+            }
+            else
+            {
+                previousPosition = newPosition;
+            }
+
             currentPosition = newPosition;
 
             lastUpdateTime = time;
