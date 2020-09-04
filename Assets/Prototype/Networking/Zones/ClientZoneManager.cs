@@ -8,6 +8,7 @@ using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones.Packets;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -95,7 +96,7 @@ namespace Prototype.Networking.Zones
                 currentZone.AddPlayer(player);
 
                 player.CreatePlayerCharacter();
-                player.Character.transform.position = e.playerPosition;
+                player.Character.UpdatePosition(e.playerPosition, Time.fixedTime);
 
                 if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
                 {

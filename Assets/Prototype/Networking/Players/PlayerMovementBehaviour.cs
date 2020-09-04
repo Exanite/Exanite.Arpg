@@ -9,21 +9,28 @@ namespace Prototype.Networking.Players
 
         public PlayerInputPacket input = new PlayerInputPacket();
 
-        private void FixedUpdate()
-        {
-            transform.position += (Vector3)(input.movement * Time.deltaTime * 5);
+        private PlayerCharacter character;
 
-            WrapPosition();
+        private void Start()
+        {
+            character = GetComponent<PlayerCharacter>();
         }
 
-        private void WrapPosition()
+        private void FixedUpdate()
         {
-            Vector2 position = transform.position;
+            Vector2 position = character.currentPosition;
+            position += input.movement * Time.fixedDeltaTime * 5;
+            position = Wrap(position);
 
+            character.UpdatePosition(position, Time.fixedTime);
+        }
+
+        private Vector2 Wrap(Vector2 position)
+        {
             position.x = Wrap(position.x, -MapSize, MapSize);
             position.y = Wrap(position.y, -MapSize, MapSize);
 
-            transform.position = position;
+            return position;
         }
 
         /// <summary>

@@ -167,11 +167,11 @@ namespace Prototype.Networking.Zones
             foreach (ServerPlayer player in sender.playersById.Values)
             {
                 packet.playerId = e.Id;
-                packet.playerPosition = e.Character.transform.position;
+                packet.playerPosition = e.Character.currentPosition;
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
 
                 packet.playerId = player.Id;
-                packet.playerPosition = player.Character.transform.position;
+                packet.playerPosition = player.Character.currentPosition;
                 server.SendPacket(((ServerPlayer)e).Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }

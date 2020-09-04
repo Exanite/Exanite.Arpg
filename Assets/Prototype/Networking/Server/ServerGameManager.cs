@@ -201,7 +201,7 @@ namespace Prototype.Networking.Server
                             new PlayerPositionUpdatePacket()
                             {
                                 playerId = current.Id,
-                                playerPosition = current.Character.transform.position,
+                                playerPosition = current.Character.currentPosition,
                             },
                             DeliveryMethod.Unreliable);
                     }
