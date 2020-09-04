@@ -89,47 +89,7 @@ namespace Prototype.Networking.Server
 
         private void FixedUpdate()
         {
-            foreach (var player in playerManager.Players)
-            {
-                if (!player.Character)
-                {
-                    continue;
-                }
-
-                var playerTransform = player.Character.transform;
-
-                playerTransform.position += (Vector3)(player.MovementBehaviour.input.movement * Time.deltaTime * 5);
-
-                float verticalExtents = Camera.main.orthographicSize;
-                float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
-
-                if (playerTransform.position.x > horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x -= horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.x < -horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x += horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y > verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y -= verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y < -verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y += verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-
-                SendPositionUpdates();
-            }
+            SendPositionUpdates();
         }
 
         private void OnRenderObject()
