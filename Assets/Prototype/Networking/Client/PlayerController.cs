@@ -26,7 +26,7 @@ namespace Prototype.Networking.Client
 
         private void FixedUpdate()
         {
-            playerInput.movementInput = useAI ? GetPerlinMovementInput() : GetMovementInput();
+            playerInput.movement = useAI ? GetPerlinMovementInput() : GetMovementInput();
 
             SendInput();
         }

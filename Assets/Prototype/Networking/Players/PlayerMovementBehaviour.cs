@@ -5,6 +5,6 @@ namespace Prototype.Networking.Players
 {
     public class PlayerMovementBehaviour : MonoBehaviour
     {
-        public PlayerInputPacket playerInput = new PlayerInputPacket();
+        public PlayerInputPacket input = new PlayerInputPacket();
     }
 }
