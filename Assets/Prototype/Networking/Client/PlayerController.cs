@@ -13,27 +13,22 @@ namespace Prototype.Networking.Client
 
         public bool useAI;
 
+        public PlayerInputPacket playerInput;
+
         private float seed;
 
         private void Start()
         {
             seed = Random.Range(-1000f, 1000f);
+
+            playerInput = new PlayerInputPacket();
         }
 
         private void FixedUpdate()
         {
-            Vector2 input;
+            playerInput.movementInput = useAI ? GetPerlinMovementInput() : GetMovementInput();
 
-            if (useAI)
-            {
-                input = GetPerlinMovementInput();
-            }
-            else
-            {
-                input = GetMovementInput();
-            }
-
-            SendMovementInput(input);
+            SendInput();
         }
 
         public Vector2 GetMovementInput()
@@ -58,9 +53,9 @@ namespace Prototype.Networking.Client
             return input * Mathf.PerlinNoise(Time.time * 0.1f + seed, 0) * 2;
         }
 
-        public void SendMovementInput(Vector2 movementInput)
+        public void SendInput()
         {
-            client.SendPacketToServer(new PlayerInputPacket() { movementInput = movementInput }, DeliveryMethod.Unreliable);
+            client.SendPacketToServer(playerInput, DeliveryMethod.Unreliable);
         }
     }
 }
