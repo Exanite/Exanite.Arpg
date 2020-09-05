@@ -22,28 +22,12 @@ namespace Exanite.Arpg.Networking
         }
 
         /// <summary>
-        /// Reads a Vector3 (12 bytes)
-        /// </summary>
-        public static Vector3 GetVector3(this NetDataReader reader)
-        {
-            return new Vector3(reader.GetFloat(), reader.GetFloat(), reader.GetFloat());
-        }
-
-        /// <summary>
         /// Writes a Vector2 (8 bytes)
         /// </summary>
         public static void Put(this NetDataWriter writer, Vector2 value)
         {
             writer.Put(value.x);
             writer.Put(value.y);
-        }
-
-        /// <summary>
-        /// Reads a Vector2 (8 bytes)
-        /// </summary>
-        public static Vector2 GetVector2(this NetDataReader reader)
-        {
-            return new Vector2(reader.GetFloat(), reader.GetFloat());
         }
 
         /// <summary>
@@ -55,6 +39,22 @@ namespace Exanite.Arpg.Networking
             writer.Put(q.x);
             writer.Put(q.y);
             writer.Put(q.z);
+        }
+
+        /// <summary>
+        /// Reads a Vector3 (12 bytes)
+        /// </summary>
+        public static Vector3 GetVector3(this NetDataReader reader)
+        {
+            return new Vector3(reader.GetFloat(), reader.GetFloat(), reader.GetFloat());
+        }
+
+        /// <summary>
+        /// Reads a Vector2 (8 bytes)
+        /// </summary>
+        public static Vector2 GetVector2(this NetDataReader reader)
+        {
+            return new Vector2(reader.GetFloat(), reader.GetFloat());
         }
 
         /// <summary>
