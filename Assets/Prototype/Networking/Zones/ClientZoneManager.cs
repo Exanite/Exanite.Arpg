@@ -81,24 +81,29 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerEntered(NetPeer sender, ZonePlayerEnteredPacket e)
         {
-            if (!currentZone.playersById.ContainsKey(e.playerId))
+            CreatePlayer(e.data);
+        }
+
+        private void CreatePlayer(PlayerCreateData data)
+        {
+            if (!currentZone.playersById.ContainsKey(data.playerId))
             {
                 Player player;
-                if (LocalPlayer.Id == e.playerId)
+                if (LocalPlayer.Id == data.playerId)
                 {
                     player = LocalPlayer;
                 }
                 else
                 {
-                    player = new Player(e.playerId, this);
+                    player = new Player(data.playerId, this);
                 }
 
                 currentZone.AddPlayer(player);
 
                 player.CreatePlayerCharacter();
-                player.Character.UpdatePosition(e.playerPosition, Time.fixedTime);
+                player.Character.UpdatePosition(data.playerPosition, Time.fixedTime);
 
-                if (e.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
+                if (data.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
                 {
                     var controller = player.Character.gameObject.AddComponent<PlayerController>();
                     controller.useAI = startSettings.useAI;

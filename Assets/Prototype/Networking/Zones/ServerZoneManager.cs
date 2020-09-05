@@ -166,12 +166,12 @@ namespace Prototype.Networking.Zones
             var packet = new ZonePlayerEnteredPacket();
             foreach (ServerPlayer player in sender.playersById.Values)
             {
-                packet.playerId = e.Id;
-                packet.playerPosition = e.Character.currentPosition;
+                packet.data.playerId = e.Id;
+                packet.data.playerPosition = e.Character.currentPosition;
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
 
-                packet.playerId = player.Id;
-                packet.playerPosition = player.Character.currentPosition;
+                packet.data.playerId = player.Id;
+                packet.data.playerPosition = player.Character.currentPosition;
                 server.SendPacket(((ServerPlayer)e).Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
         }
