@@ -1,4 +1,5 @@
-﻿using LiteNetLib.Utils;
+﻿using System;
+using LiteNetLib.Utils;
 using UnityEngine;
 
 namespace Exanite.Arpg.Networking
@@ -12,7 +13,7 @@ namespace Exanite.Arpg.Networking
         // https://github.com/LukeStampfli/DarkriftSerializationExtensions/blob/master/DarkriftSerializationExtensions/DarkriftSerializationExtensions/SerializationExtensions.cs
 
         /// <summary>
-        /// Writes a Vector3 (12 bytes)
+        /// Writes a <see cref="Vector3"/> (12 bytes)
         /// </summary>
         public static void Put(this NetDataWriter writer, Vector3 value)
         {
@@ -22,7 +23,7 @@ namespace Exanite.Arpg.Networking
         }
 
         /// <summary>
-        /// Writes a Vector2 (8 bytes)
+        /// Writes a <see cref="Vector2"/> (8 bytes)
         /// </summary>
         public static void Put(this NetDataWriter writer, Vector2 value)
         {
@@ -31,18 +32,26 @@ namespace Exanite.Arpg.Networking
         }
 
         /// <summary>
-        /// Writes a Quaternion (12 bytes)
+        /// Writes a <see cref="Quaternion"/> (12 bytes)
         /// </summary>
-        public static void Put(this NetDataWriter writer, Quaternion q)
+        public static void Put(this NetDataWriter writer, Quaternion value)
         {
             // (x * x) + (y * y) + (z * z) + (w * w) = 1 => No need to send w
-            writer.Put(q.x);
-            writer.Put(q.y);
-            writer.Put(q.z);
+            writer.Put(value.x);
+            writer.Put(value.y);
+            writer.Put(value.z);
         }
 
         /// <summary>
-        /// Reads a Vector3 (12 bytes)
+        /// Writes a <see cref="Guid"/> (16 bytes)
+        /// </summary>
+        public static void Put(this NetDataWriter writer, Guid value)
+        {
+            writer.PutBytesWithLength(value.ToByteArray());
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Vector3"/> (12 bytes)
         /// </summary>
         public static Vector3 GetVector3(this NetDataReader reader)
         {
@@ -50,7 +59,7 @@ namespace Exanite.Arpg.Networking
         }
 
         /// <summary>
-        /// Reads a Vector2 (8 bytes)
+        /// Reads a <see cref="Vector2"/> (8 bytes)
         /// </summary>
         public static Vector2 GetVector2(this NetDataReader reader)
         {
@@ -58,7 +67,7 @@ namespace Exanite.Arpg.Networking
         }
 
         /// <summary>
-        /// Reads a Quaternion (12 bytes)
+        /// Reads a <see cref="Quaternion"/> (12 bytes)
         /// </summary>
         public static Quaternion GetQuaternion(this NetDataReader reader)
         {
@@ -68,6 +77,14 @@ namespace Exanite.Arpg.Networking
             float w = Mathf.Sqrt(1f - (x * x + y * y + z * z));
 
             return new Quaternion(x, y, z, w);
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Guid"/> (16 bytes)
+        /// </summary>
+        public static Guid GetGuid(this NetDataReader reader)
+        {
+            return new Guid(reader.GetBytesWithLength());
         }
     }
 }
