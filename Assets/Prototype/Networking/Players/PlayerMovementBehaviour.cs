@@ -18,14 +18,19 @@ namespace Prototype.Networking.Players
 
         private void FixedUpdate()
         {
-            Vector2 position = character.currentPosition;
-            position += input.movement * Time.fixedDeltaTime * 5;
-            position = Wrap(position);
-
-            character.UpdatePosition(position, Time.fixedTime);
+            Tick(Time.fixedDeltaTime, Time.fixedTime);
         }
 
-        private Vector2 Wrap(Vector2 position)
+        public void Tick(float deltaTime, float currentTime)
+        {
+            Vector2 position = character.currentPosition;
+            position += input.movement * deltaTime * 5;
+            position = Wrap(position);
+
+            character.UpdatePosition(position, currentTime);
+        }
+
+        private static Vector2 Wrap(Vector2 position)
         {
             position.x = Wrap(position.x, -MapSize, MapSize);
             position.y = Wrap(position.y, -MapSize, MapSize);
