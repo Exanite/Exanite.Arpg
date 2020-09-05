@@ -26,7 +26,7 @@ namespace LiteNetLib
     internal enum ConnectRequestResult
     {
         None,
-        P2PConnection, //when peer connecting
+        P2PLose, //when peer connecting
         Reconnection,  //when peer was connected
         NewConnection  //when peer was disconnected
     }
@@ -222,8 +222,7 @@ namespace LiteNetLib
 
         private void SetMtu(int mtuIdx)
         {
-            int extraLayerSpace = NetManager._extraPacketLayer != null ? NetManager._extraPacketLayer.ExtraPacketSizeForLayer : 0;
-            _mtu = NetConstants.PossibleMtu[mtuIdx] - extraLayerSpace;
+            _mtu = NetConstants.PossibleMtu[mtuIdx] - NetManager.ExtraPacketSizeForLayer;
         }
 
         /// <summary>
@@ -275,7 +274,7 @@ namespace LiteNetLib
             ConnectionNum = connectNum;
 
             //Make initial packet
-            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, _connectTime);
+            _connectRequestPacket = NetConnectRequestPacket.Make(connectData, remoteEndPoint.Serialize(), _connectTime);
             _connectRequestPacket.ConnectionNumber = connectNum;
 
             //Send request
@@ -829,16 +828,28 @@ namespace LiteNetLib
             //current or new request
             switch (_connectionState)
             {
-                //P2P case or just ID update
+                //P2P case
                 case ConnectionState.Outgoing:
-                    //change connect id if newer
-                    if (connRequest.ConnectionTime >= _connectTime)
+                    //fast check
+                    if (connRequest.ConnectionTime < _connectTime)
                     {
-                        //Change connect id
-                        _connectTime = connRequest.ConnectionTime;
-                        ConnectionNum = connRequest.ConnectionNumber;
+                        return ConnectRequestResult.P2PLose;
                     }
-                    return ConnectRequestResult.P2PConnection;
+                    //slow rare case check
+                    else if (connRequest.ConnectionTime == _connectTime)
+                    {
+                        var remoteBytes = EndPoint.Serialize();
+                        var localBytes = connRequest.TargetAddress;
+                        for (int i = remoteBytes.Size-1; i >= 0; i--)
+                        {
+                            byte rb = remoteBytes[i];
+                            if (rb == localBytes[i])
+                                continue;
+                            if (rb < localBytes[i])
+                                return ConnectRequestResult.P2PLose;
+                        }
+                    }
+                    break;
 
                 case ConnectionState.Connected:
                     //Old connect request
@@ -857,9 +868,7 @@ namespace LiteNetLib
                 case ConnectionState.Disconnected:
                 case ConnectionState.ShutdownRequested:
                     if (connRequest.ConnectionTime >= _connectTime)
-                    {
                         return ConnectRequestResult.NewConnection;
-                    }
                     break;
             }
             return ConnectRequestResult.None;
