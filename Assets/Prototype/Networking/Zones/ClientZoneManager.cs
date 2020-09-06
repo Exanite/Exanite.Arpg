@@ -94,7 +94,7 @@ namespace Prototype.Networking.Zones
 
             currentZone.tick = e.tick;
 
-            CreatePlayer(e.localPlayer);
+            CreateLocalPlayer(e.localPlayer);
 
             foreach (var playerCreateData in e.zonePlayers)
             {
@@ -120,37 +120,36 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        private void CreatePlayer(PlayerCreateData data)
+        private void CreatePlayer(PlayerCreateData data, Player player = null)
         {
-            if (!currentZone.playersById.ContainsKey(data.playerId))
+            if (currentZone.playersById.ContainsKey(data.playerId))
             {
-                Player player;
-                if (LocalPlayer.Id == data.playerId)
-                {
-                    player = LocalPlayer;
-                }
-                else
-                {
-                    player = new Player(data.playerId, this);
-                }
-
-                currentZone.AddPlayer(player);
-
-                player.CreatePlayerCharacter();
-                player.Character.UpdatePosition(data.playerPosition, Time.fixedTime);
-
-                if (data.playerId == LocalPlayer.Id) // works for now, but try avoiding checking the Id twice
-                {
-                    var controller = player.Character.gameObject.AddComponent<PlayerController>();
-                    controller.useAI = startSettings.useAI;
-                    controller.player = player;
-                    controller.client = client;
-
-                    player.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
-
-                    player.Character.name += " (Local)";
-                }
+                log.Warning("Cannot create player that already exists");
             }
+
+            if (player == null)
+            {
+                player = new Player(data.playerId, this);
+            }
+
+            currentZone.AddPlayer(player);
+
+            player.CreatePlayerCharacter();
+            player.Character.UpdatePosition(data.playerPosition, Time.fixedTime);
+        }
+
+        private void CreateLocalPlayer(PlayerCreateData data)
+        {
+            CreatePlayer(data, LocalPlayer);
+
+            var controller = LocalPlayer.Character.gameObject.AddComponent<PlayerController>();
+            controller.useAI = startSettings.useAI;
+            controller.player = LocalPlayer;
+            controller.client = client;
+
+            LocalPlayer.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
+
+            LocalPlayer.Character.name += " (Local)";
         }
 
         private async UniTask LoadZoneAsync(Guid zoneGuid)
