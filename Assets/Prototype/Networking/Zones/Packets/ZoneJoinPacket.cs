@@ -16,26 +16,17 @@ namespace Prototype.Networking.Zones.Packets
         public void Deserialize(NetDataReader reader)
         {
             guid = reader.GetGuid();
-            localPlayer.Deserialize(reader);
 
-            zonePlayers.Clear();
-            int count = reader.GetInt();
-            for (int i = 0; i < count; i++)
-            {
-                zonePlayers.Add(reader.Get<PlayerCreateData>());
-            }
+            localPlayer.Deserialize(reader);
+            reader.GetListWithCount(zonePlayers);
         }
 
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(guid);
-            localPlayer.Serialize(writer);
 
-            writer.Put(zonePlayers.Count);
-            for (int i = 0; i < zonePlayers.Count; i++)
-            {
-                writer.Put(zonePlayers[i]);
-            }
+            localPlayer.Serialize(writer);
+            writer.PutListWithCount(zonePlayers);
         }
     }
 }
