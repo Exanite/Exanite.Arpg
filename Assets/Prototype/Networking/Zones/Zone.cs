@@ -15,6 +15,8 @@ namespace Prototype.Networking.Zones
         public Guid guid;
         public Scene scene;
 
+        public int tick;
+
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
         public Zone(string zoneSceneName) : this(Guid.NewGuid(), zoneSceneName) { }
