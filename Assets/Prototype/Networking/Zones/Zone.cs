@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Prototype.Networking.Zones
 {
@@ -53,6 +54,11 @@ namespace Prototype.Networking.Zones
             {
                 throw new InvalidOperationException("Zone has already been created.");
             }
+
+            Action<DiContainer> bindings = (container) =>
+            {
+                container.Bind<Zone>().FromInstance(this).AsSingle();
+            };
 
             scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
 
