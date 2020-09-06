@@ -161,19 +161,38 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerEntered(Zone sender, Player e)
         {
-            e.CreatePlayerCharacter();
+            var newPlayer = (ServerPlayer)e;
 
-            var packet = new ZonePlayerEnteredPacket();
+            newPlayer.CreatePlayerCharacter();
+
+            var playerEnterPacket = new ZonePlayerEnteredPacket();
+            var joinPacket = new ZoneJoinPacket();
+
+            joinPacket.guid = sender.guid;
+            joinPacket.tick = sender.tick;
+            joinPacket.localPlayer.playerId = newPlayer.Id;
+            joinPacket.localPlayer.playerPosition = newPlayer.Character.currentPosition;
+
             foreach (ServerPlayer player in sender.playersById.Values)
             {
-                packet.data.playerId = e.Id;
-                packet.data.playerPosition = e.Character.currentPosition;
-                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+                if (player == newPlayer)
+                {
+                    continue;
+                }
 
-                packet.data.playerId = player.Id;
-                packet.data.playerPosition = player.Character.currentPosition;
-                server.SendPacket(((ServerPlayer)e).Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+                joinPacket.zonePlayers.Add(new PlayerCreateData()
+                {
+                    playerId = player.Id,
+                    playerPosition = player.Character.currentPosition,
+                });
+
+                playerEnterPacket.data.playerId = newPlayer.Id;
+                playerEnterPacket.data.playerPosition = newPlayer.Character.currentPosition;
+
+                server.SendPacket(player.Connection.Peer, playerEnterPacket, DeliveryMethod.ReliableOrdered);
             }
+
+            server.SendPacket(newPlayer.Connection.Peer, joinPacket, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnZonePlayerLeft(Zone sender, Player e)
