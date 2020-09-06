@@ -8,6 +8,7 @@ using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;

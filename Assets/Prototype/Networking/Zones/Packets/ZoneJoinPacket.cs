@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
-using Prototype.Networking.Players;
+using Prototype.Networking.Players.Packets;
 
 namespace Prototype.Networking.Zones.Packets
 {

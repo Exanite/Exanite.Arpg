@@ -2,7 +2,7 @@
 using LiteNetLib.Utils;
 using UnityEngine;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Players.Packets
 {
     public class PlayerCreateData : INetSerializable
     {
