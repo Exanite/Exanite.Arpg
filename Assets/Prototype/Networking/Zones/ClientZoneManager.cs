@@ -107,6 +107,19 @@ namespace Prototype.Networking.Zones
             CreatePlayer(e.data);
         }
 
+        private void OnZonePlayerLeft(NetPeer sender, ZonePlayerLeftPacket e)
+        {
+            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            {
+                if (player.Character)
+                {
+                    Destroy(player.Character.gameObject);
+                }
+
+                currentZone.RemovePlayer(player);
+            }
+        }
+
         private void CreatePlayer(PlayerCreateData data)
         {
             if (!currentZone.playersById.ContainsKey(data.playerId))
@@ -137,19 +150,6 @@ namespace Prototype.Networking.Zones
 
                     player.Character.name += " (Local)";
                 }
-            }
-        }
-
-        private void OnZonePlayerLeft(NetPeer sender, ZonePlayerLeftPacket e)
-        {
-            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
-            {
-                if (player.Character)
-                {
-                    Destroy(player.Character.gameObject);
-                }
-
-                currentZone.RemovePlayer(player);
             }
         }
 
