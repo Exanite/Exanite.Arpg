@@ -99,7 +99,7 @@ namespace Prototype.Networking.Server
                 return;
             }
 
-            foreach (var player in selectedZone.playersById.Values)
+            foreach (var player in selectedZone.Players)
             {
                 if (player.Character)
                 {
@@ -193,9 +193,9 @@ namespace Prototype.Networking.Server
         {
             foreach (Zone zone in zoneManager.zones.Values)
             {
-                foreach (ServerPlayer target in zone.playersById.Values)
+                foreach (ServerPlayer target in zone.Players)
                 {
-                    foreach (ServerPlayer current in zone.playersById.Values)
+                    foreach (ServerPlayer current in zone.Players)
                     {
                         server.SendPacket(
                             target.Connection.Peer,

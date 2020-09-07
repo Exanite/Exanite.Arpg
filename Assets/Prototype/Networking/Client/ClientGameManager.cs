@@ -54,7 +54,7 @@ namespace Prototype.Networking.Client
         {
             if (!startSettings.useAI && zoneManager.currentZone != null)
             {
-                foreach (var player in zoneManager.currentZone.playersById.Values)
+                foreach (var player in zoneManager.currentZone.Players)
                 {
                     if (player.Character)
                     {
@@ -123,7 +123,7 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
         {
-            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (zoneManager.currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
                 player.Character?.UpdatePosition(e.playerPosition, e.tick);
             }

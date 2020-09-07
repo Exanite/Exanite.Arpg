@@ -88,7 +88,7 @@ namespace Prototype.Networking.Zones
 
             foreach (var zone in zones.Values)
             {
-                if (zone.playersById.ContainsValue(player))
+                if (zone.PlayersById.ContainsKey(player.Id))
                 {
                     return zone;
                 }
@@ -174,7 +174,7 @@ namespace Prototype.Networking.Zones
             joinPacket.localPlayer.playerId = newPlayer.Id;
             joinPacket.localPlayer.playerPosition = newPlayer.Character.currentPosition;
 
-            foreach (ServerPlayer player in sender.playersById.Values)
+            foreach (ServerPlayer player in sender.Players)
             {
                 if (player == newPlayer)
                 {
@@ -203,7 +203,7 @@ namespace Prototype.Networking.Zones
                 playerId = e.Id,
             };
 
-            foreach (ServerPlayer player in sender.playersById.Values)
+            foreach (ServerPlayer player in sender.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }

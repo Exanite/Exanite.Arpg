@@ -51,7 +51,7 @@ namespace Prototype.Networking.Zones
 
         public override Zone GetPlayerCurrentZone(Player player)
         {
-            if (currentZone.playersById.ContainsValue(player))
+            if (currentZone.PlayersById.ContainsKey(player.Id))
             {
                 return currentZone;
             }
@@ -110,7 +110,7 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerLeft(NetPeer sender, ZonePlayerLeftPacket e)
         {
-            if (currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
                 if (player.Character)
                 {
@@ -123,7 +123,7 @@ namespace Prototype.Networking.Zones
 
         private void CreatePlayer(PlayerCreateData data, Player player = null)
         {
-            if (currentZone.playersById.ContainsKey(data.playerId))
+            if (currentZone.PlayersById.ContainsKey(data.playerId))
             {
                 log.Warning("Cannot create player that already exists");
             }

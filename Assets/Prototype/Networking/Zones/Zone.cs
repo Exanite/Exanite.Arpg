@@ -20,7 +20,7 @@ namespace Prototype.Networking.Zones
 
         private int tick;
 
-        public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
+        private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
         public Zone(string zoneSceneName, bool isServer) : this(Guid.NewGuid(), zoneSceneName, isServer) { }
 
@@ -113,6 +113,22 @@ namespace Prototype.Networking.Zones
             }
         }
 
+        public IReadOnlyDictionary<int, Player> PlayersById
+        {
+            get
+            {
+                return playersById;
+            }
+        }
+
+        public IReadOnlyCollection<Player> Players
+        {
+            get
+            {
+                return playersById.Values;
+            }
+        }
+
         public void AddPlayer(Player player)
         {
             if (!playersById.ContainsKey(player.Id))
@@ -154,7 +170,7 @@ namespace Prototype.Networking.Zones
                 return;
             }
 
-            foreach (var player in playersById.Values.ToArray())
+            foreach (var player in Players.ToArray())
             {
                 RemovePlayer(player);
             }
