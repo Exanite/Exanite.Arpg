@@ -6,6 +6,7 @@ using Exanite.Arpg;
 using Prototype.Networking.Players;
 using UnityEngine.SceneManagement;
 using Zenject;
+using UnityTime = UnityEngine.Time;
 
 namespace Prototype.Networking.Zones
 {
@@ -100,7 +101,15 @@ namespace Prototype.Networking.Zones
         {
             get
             {
-                return UnityEngine.Time.fixedDeltaTime;
+                return UnityTime.fixedDeltaTime;
+            }
+        }
+
+        public float TimeSinceLastTick
+        {
+            get
+            {
+                return UnityTime.time - UnityTime.fixedTime;
             }
         }
 
