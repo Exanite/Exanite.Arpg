@@ -88,6 +88,22 @@ namespace Prototype.Networking.Zones
             }
         }
 
+        public float Time
+        {
+            get
+            {
+                return Tick * TimePerTick;
+            }
+        }
+
+        public float TimePerTick
+        {
+            get
+            {
+                return UnityEngine.Time.fixedDeltaTime;
+            }
+        }
+
         public void AddPlayer(Player player)
         {
             if (!playersById.ContainsKey(player.Id))
