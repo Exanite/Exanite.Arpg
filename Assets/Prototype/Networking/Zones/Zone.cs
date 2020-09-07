@@ -22,9 +22,9 @@ namespace Prototype.Networking.Zones
 
         private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public Zone(string zoneSceneName, bool isServer) : this(Guid.NewGuid(), zoneSceneName, isServer) { }
+        public Zone(bool isServer) : this(Guid.NewGuid(), isServer) { }
 
-        public Zone(Guid guid, string zoneSceneName, bool isServer)
+        public Zone(Guid guid, bool isServer)
         {
             this.guid = guid;
             this.isServer = isServer;
