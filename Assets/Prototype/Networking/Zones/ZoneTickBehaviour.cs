@@ -16,7 +16,7 @@ namespace Prototype.Networking.Zones
 
         private void FixedUpdate()
         {
-            zone.tick++;
+            zone.Tick++;
         }
     }
 }

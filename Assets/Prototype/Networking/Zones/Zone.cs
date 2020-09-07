@@ -11,14 +11,13 @@ namespace Prototype.Networking.Zones
 {
     public class Zone
     {
-        public readonly bool isServer;
+        private readonly Guid guid;
+        private readonly bool isServer;
 
-        public bool isCreated;
+        private bool isCreated;
+        private Scene scene;
 
-        public Guid guid;
-        public Scene scene;
-
-        public int tick;
+        private int tick;
 
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
@@ -33,6 +32,61 @@ namespace Prototype.Networking.Zones
         public event EventHandler<Zone, Player> PlayerEnteredEvent;
 
         public event EventHandler<Zone, Player> PlayerLeftEvent;
+
+        public Guid Guid
+        {
+            get
+            {
+                return guid;
+            }
+        }
+
+        public bool IsServer
+        {
+            get
+            {
+                return isServer;
+            }
+        }
+
+        public bool IsCreated
+        {
+            get
+            {
+                return isCreated;
+            }
+
+            private set
+            {
+                isCreated = value;
+            }
+        }
+
+        public Scene Scene
+        {
+            get
+            {
+                return scene;
+            }
+
+            private set
+            {
+                scene = value;
+            }
+        }
+
+        public int Tick
+        {
+            get
+            {
+                return tick;
+            }
+
+            set
+            {
+                tick = value;
+            }
+        }
 
         public void AddPlayer(Player player)
         {
@@ -53,7 +107,7 @@ namespace Prototype.Networking.Zones
 
         public async UniTask Create(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
-            if (isCreated)
+            if (IsCreated)
             {
                 throw new InvalidOperationException("Zone has already been created.");
             }
@@ -63,14 +117,14 @@ namespace Prototype.Networking.Zones
                 container.Bind<Zone>().FromInstance(this).AsSingle();
             };
 
-            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent, bindings);
+            Scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent, bindings);
 
-            isCreated = true;
+            IsCreated = true;
         }
 
         public async UniTask Destroy(SceneLoader sceneLoader)
         {
-            if (!isCreated)
+            if (!IsCreated)
             {
                 return;
             }
@@ -80,7 +134,7 @@ namespace Prototype.Networking.Zones
                 RemovePlayer(player);
             }
 
-            await sceneLoader.UnloadScene(scene);
+            await sceneLoader.UnloadScene(Scene);
         }
     }
 }

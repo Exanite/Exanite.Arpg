@@ -83,7 +83,7 @@ namespace Prototype.Networking.Players
                 throw new InvalidOperationException("Player is currently not in a Zone");
             }
 
-            Character = CurrentZone.scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
+            Character = CurrentZone.Scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
             Character.player = this;
         }
     }

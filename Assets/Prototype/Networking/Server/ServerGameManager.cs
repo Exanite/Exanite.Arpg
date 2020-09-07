@@ -110,8 +110,8 @@ namespace Prototype.Networking.Server
 
         private void OnGUI()
         {
-            GUILayout.Label($"Selected zone: {selectedZone?.guid}");
-            GUILayout.Label($"Selected zone tick: {selectedZone?.tick}");
+            GUILayout.Label($"Selected zone: {selectedZone?.Guid}");
+            GUILayout.Label($"Selected zone tick: {selectedZone?.Tick}");
             GUILayout.Label($"Active zone count: {zoneManager.zones.Count}");
             GUILayout.Label($"(Use the 1-9 keys to change selected zones)");
         }

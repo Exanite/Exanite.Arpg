@@ -12,7 +12,7 @@ namespace Prototype.Editor
             base.OnInspectorGUI();
 
             EditorGUILayout.IntField("Id", TypedTarget.localPlayer?.Id ?? -1);
-            EditorGUILayout.TextField("Current zone", TypedTarget.localPlayer?.CurrentZone?.guid.ToString());
+            EditorGUILayout.TextField("Current zone", TypedTarget.localPlayer?.CurrentZone?.Guid.ToString());
 
             if (GUILayout.Button("Disconnect"))
             {

@@ -51,9 +51,9 @@ namespace Prototype.Networking.Zones
 
         public void AddZone(Zone zone)
         {
-            if (!zones.ContainsKey(zone.guid))
+            if (!zones.ContainsKey(zone.Guid))
             {
-                zones.Add(zone.guid, zone);
+                zones.Add(zone.Guid, zone);
 
                 zone.PlayerEnteredEvent += OnZonePlayerEntered;
                 zone.PlayerLeftEvent += OnZonePlayerLeft;
@@ -64,7 +64,7 @@ namespace Prototype.Networking.Zones
 
         public void RemoveZone(Zone zone)
         {
-            if (zones.Remove(zone.guid))
+            if (zones.Remove(zone.Guid))
             {
                 zone.PlayerEnteredEvent -= OnZonePlayerEntered;
                 zone.PlayerLeftEvent -= OnZonePlayerLeft;
@@ -131,7 +131,7 @@ namespace Prototype.Networking.Zones
             }
 
             loadingPlayers.Add(player, zone);
-            server.SendPacket(player.Connection.Peer, new ZoneLoadPacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(player.Connection.Peer, new ZoneLoadPacket() { guid = zone.Guid }, DeliveryMethod.ReliableOrdered);
         }
 
         public void RegisterPackets(UnityNetwork network)
@@ -169,8 +169,8 @@ namespace Prototype.Networking.Zones
             var playerEnterPacket = new ZonePlayerEnteredPacket();
             var joinPacket = new ZoneJoinPacket();
 
-            joinPacket.guid = sender.guid;
-            joinPacket.tick = sender.tick;
+            joinPacket.guid = sender.Guid;
+            joinPacket.tick = sender.Tick;
             joinPacket.localPlayer.playerId = newPlayer.Id;
             joinPacket.localPlayer.playerPosition = newPlayer.Character.currentPosition;
 
@@ -216,7 +216,7 @@ namespace Prototype.Networking.Zones
                 return;
             }
 
-            if (!loadingPlayers.TryGetValue(loadingPlayer, out Zone zone) || zone.guid != e.guid)
+            if (!loadingPlayers.TryGetValue(loadingPlayer, out Zone zone) || zone.Guid != e.guid)
             {
                 log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
                 return;

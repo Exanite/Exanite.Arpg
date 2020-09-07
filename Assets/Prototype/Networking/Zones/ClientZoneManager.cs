@@ -87,13 +87,13 @@ namespace Prototype.Networking.Zones
 
         private void OnZoneJoin(NetPeer sender, ZoneJoinPacket e)
         {
-            if (currentZone.guid != e.guid)
+            if (currentZone.Guid != e.guid)
             {
-                log.Warning("Expected to recieve ZoneJoinPacket with Guid '{Expected}', but recieved '{Actual}' instead", currentZone.guid, e.guid);
+                log.Warning("Expected to recieve ZoneJoinPacket with Guid '{Expected}', but recieved '{Actual}' instead", currentZone.Guid, e.guid);
                 return;
             }
 
-            currentZone.tick = e.tick;
+            currentZone.Tick = e.tick;
 
             CreateLocalPlayer(e.localPlayer);
 
