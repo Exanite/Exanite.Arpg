@@ -85,6 +85,7 @@ namespace Prototype.Networking.Players
 
             Character = CurrentZone.Scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
             Character.player = this;
+            Character.zone = CurrentZone;
         }
     }
 }

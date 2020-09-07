@@ -201,6 +201,8 @@ namespace Prototype.Networking.Server
                             target.Connection.Peer,
                             new PlayerPositionUpdatePacket()
                             {
+                                tick = zone.Tick,
+
                                 playerId = current.Id,
                                 playerPosition = current.Character.currentPosition,
                             },

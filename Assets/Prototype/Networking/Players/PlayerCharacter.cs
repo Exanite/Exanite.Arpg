@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Prototype.Networking.Zones;
+using UnityEngine;
 
 namespace Prototype.Networking.Players
 {
@@ -7,20 +8,23 @@ namespace Prototype.Networking.Players
         public const float maxInterpolationDistance = 2; // ! temp
 
         public Player player;
+        public Zone zone;
 
         public Vector3 currentPosition;
         public Vector3 previousPosition;
-        public float lastUpdateTime;
+        public int lastUpdateTick;
 
         private void Update()
         {
-            float timeSinceLastUpdate = Time.time - lastUpdateTime;
-            float t = timeSinceLastUpdate / Time.fixedDeltaTime;
+            int ticksSinceLastUpdate = zone.Tick - lastUpdateTick;
+
+            float timeSinceLastUpdate = ticksSinceLastUpdate * zone.TimePerTick;
+            float t = timeSinceLastUpdate / zone.TimePerTick;
 
             transform.position = Vector3.LerpUnclamped(previousPosition, currentPosition, t);
         }
 
-        public void UpdatePosition(Vector3 newPosition, float time)
+        public void UpdatePosition(Vector3 newPosition, int tick)
         {
             if ((newPosition - currentPosition).sqrMagnitude < maxInterpolationDistance * maxInterpolationDistance)
             {
@@ -33,7 +37,7 @@ namespace Prototype.Networking.Players
 
             currentPosition = newPosition;
 
-            lastUpdateTime = time;
+            lastUpdateTick = tick;
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp

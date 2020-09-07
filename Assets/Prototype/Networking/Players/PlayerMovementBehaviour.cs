@@ -1,4 +1,5 @@
 ﻿using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Zones;
 using UnityEngine;
 
 namespace Prototype.Networking.Players
@@ -9,6 +10,8 @@ namespace Prototype.Networking.Players
 
         public PlayerInputPacket input = new PlayerInputPacket();
 
+        public Zone zone;
+
         private PlayerCharacter character;
 
         private void Start()
@@ -18,16 +21,16 @@ namespace Prototype.Networking.Players
 
         private void FixedUpdate()
         {
-            Tick(Time.fixedDeltaTime, Time.fixedTime);
+            Simulate();
         }
 
-        public void Tick(float deltaTime, float currentTime)
+        public void Simulate()
         {
             Vector2 position = character.currentPosition;
-            position += input.movement * deltaTime * 5;
+            position += input.movement * zone.TimePerTick * 5;
             position = Wrap(position);
 
-            character.UpdatePosition(position, currentTime);
+            character.UpdatePosition(position, zone.Tick);
         }
 
         private static Vector2 Wrap(Vector2 position)

@@ -48,6 +48,7 @@ namespace Prototype.Networking.Players
             base.CreatePlayerCharacter();
 
             MovementBehaviour = Character.gameObject.AddComponent<PlayerMovementBehaviour>();
+            MovementBehaviour.zone = CurrentZone;
         }
     }
 }

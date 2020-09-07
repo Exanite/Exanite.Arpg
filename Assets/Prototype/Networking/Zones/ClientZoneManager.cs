@@ -136,7 +136,7 @@ namespace Prototype.Networking.Zones
             currentZone.AddPlayer(player);
 
             player.CreatePlayerCharacter();
-            player.Character.UpdatePosition(data.playerPosition, Time.fixedTime);
+            player.Character.UpdatePosition(data.playerPosition, currentZone.Tick);
         }
 
         private void CreateLocalPlayer(PlayerCreateData data)
@@ -148,7 +148,8 @@ namespace Prototype.Networking.Zones
             controller.player = LocalPlayer;
             controller.client = client;
 
-            LocalPlayer.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
+            var movement = LocalPlayer.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
+            movement.zone = currentZone;
 
             LocalPlayer.Character.name += " (Local)";
         }
