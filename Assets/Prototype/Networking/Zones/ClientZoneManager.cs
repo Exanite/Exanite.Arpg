@@ -159,7 +159,7 @@ namespace Prototype.Networking.Zones
 
             currentZone?.Destroy(sceneLoader);
 
-            var newZone = new Zone(zoneGuid, zoneSceneName);
+            var newZone = new Zone(zoneGuid, zoneSceneName, false);
             await newZone.Create(zoneSceneName, scene, sceneLoader);
 
             client.SendPacketToServer(new ZoneLoadFinishedPacket() { guid = zoneGuid }, DeliveryMethod.ReliableOrdered);

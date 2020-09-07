@@ -11,6 +11,8 @@ namespace Prototype.Networking.Zones
 {
     public class Zone
     {
+        public readonly bool isServer;
+
         public bool isCreated;
 
         public Guid guid;
@@ -20,11 +22,12 @@ namespace Prototype.Networking.Zones
 
         public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public Zone(string zoneSceneName) : this(Guid.NewGuid(), zoneSceneName) { }
+        public Zone(string zoneSceneName, bool isServer) : this(Guid.NewGuid(), zoneSceneName, isServer) { }
 
-        public Zone(Guid guid, string zoneSceneName)
+        public Zone(Guid guid, string zoneSceneName, bool isServer)
         {
             this.guid = guid;
+            this.isServer = isServer;
         }
 
         public event EventHandler<Zone, Player> PlayerEnteredEvent;

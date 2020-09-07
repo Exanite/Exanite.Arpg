@@ -75,7 +75,7 @@ namespace Prototype.Networking.Zones
 
         public async UniTask<Zone> CreateZone()
         {
-            var zone = new Zone(zoneSceneName);
+            var zone = new Zone(zoneSceneName, true);
             await zone.Create(zoneSceneName, scene, sceneLoader);
 
             AddZone(zone);
