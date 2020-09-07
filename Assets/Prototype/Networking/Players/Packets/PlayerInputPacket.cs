@@ -6,7 +6,7 @@ namespace Prototype.Networking.Players.Packets
 {
     public class PlayerInputPacket : IPacket
     {
-        public int tick;
+        public int tick; // ! not implemented yet
 
         public Vector2 movement;
 
