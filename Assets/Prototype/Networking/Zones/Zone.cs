@@ -63,7 +63,7 @@ namespace Prototype.Networking.Zones
                 container.Bind<Zone>().FromInstance(this).AsSingle();
             };
 
-            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
+            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent, bindings);
 
             isCreated = true;
         }
