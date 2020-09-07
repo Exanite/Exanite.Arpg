@@ -22,7 +22,7 @@ namespace Prototype.Networking.Players
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerAddedEvent;
         public event EventHandler<ServerPlayerManager, ServerPlayer> PlayerRemovedEvent;
 
-        public ICollection<ServerPlayer> Players
+        public IReadOnlyCollection<ServerPlayer> Players
         {
             get
             {
