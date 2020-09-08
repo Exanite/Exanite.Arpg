@@ -185,7 +185,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.MovementBehaviour.input.movement = e.movement;
+                player.MovementBehaviour.input = e.data;
             }
         }
 

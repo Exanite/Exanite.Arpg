@@ -146,6 +146,7 @@ namespace Prototype.Networking.Zones
             controller.useAI = startSettings.useAI;
             controller.player = LocalPlayer;
             controller.client = client;
+            controller.zone = currentZone;
 
             var movement = LocalPlayer.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
             movement.zone = currentZone;

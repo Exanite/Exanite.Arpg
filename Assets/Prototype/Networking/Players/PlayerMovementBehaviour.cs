@@ -8,7 +8,7 @@ namespace Prototype.Networking.Players
     {
         public const float MapSize = 10; // ! temp
 
-        public PlayerInputPacket input = new PlayerInputPacket();
+        public PlayerInputData input;
 
         public Zone zone;
 
