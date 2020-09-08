@@ -6,7 +6,7 @@ namespace Prototype.Networking.Zones.Packets
 {
     public class ZonePlayerEnteredPacket : IPacket
     {
-        public PlayerCreateData data = new PlayerCreateData();
+        public PlayerCreateData data;
 
         public void Deserialize(NetDataReader reader)
         {

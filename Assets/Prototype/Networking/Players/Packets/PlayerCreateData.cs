@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Prototype.Networking.Players.Packets
 {
-    public class PlayerCreateData : INetSerializable
+    public struct PlayerCreateData : INetSerializable
     {
         public int playerId;
         public Vector3 playerPosition;
