@@ -49,6 +49,15 @@ namespace Prototype.Networking.Zones
         public event EventHandler<ServerZoneManager, Zone> ZoneAddedEvent;
         public event EventHandler<ServerZoneManager, Zone> ZoneRemovedEvent;
 
+        public async UniTask<Zone> CreateZone()
+        {
+            var zone = new Zone(true);
+            await zone.Create(zoneSceneName, scene, sceneLoader);
+
+            AddZone(zone);
+            return zone;
+        }
+
         public void AddZone(Zone zone)
         {
             if (!zones.ContainsKey(zone.Guid))
@@ -71,15 +80,6 @@ namespace Prototype.Networking.Zones
 
                 ZoneRemovedEvent?.Invoke(this, zone);
             }
-        }
-
-        public async UniTask<Zone> CreateZone()
-        {
-            var zone = new Zone(true);
-            await zone.Create(zoneSceneName, scene, sceneLoader);
-
-            AddZone(zone);
-            return zone;
         }
 
         public override Zone GetPlayerCurrentZone(Player player)

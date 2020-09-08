@@ -10,7 +10,6 @@ using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones.Packets;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
