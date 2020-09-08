@@ -11,9 +11,10 @@ namespace Prototype.Networking.Client
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private bool useAI;
+
         private PlayerInputPacket inputPacket = new PlayerInputPacket();
         private float seed;
-        private bool useAI;
 
         private UnityClient client;
         private Player player;
