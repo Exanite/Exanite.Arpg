@@ -28,9 +28,10 @@ namespace Prototype.Networking.Zones
         private ClientGameManager gameManager;
         private Scene scene;
         private SceneLoader sceneLoader;
+        private SceneContextRegistry sceneContextRegistry; // ! temporary
 
         [Inject]
-        public void Inject(ILog log, UnityClient client, GameStartSettings startSettings, ClientGameManager gameManager, Scene scene, SceneLoader sceneLoader)
+        public void Inject(ILog log, UnityClient client, GameStartSettings startSettings, ClientGameManager gameManager, Scene scene, SceneLoader sceneLoader, SceneContextRegistry sceneContextRegistry)
         {
             this.log = log;
             this.client = client;
@@ -38,6 +39,7 @@ namespace Prototype.Networking.Zones
             this.gameManager = gameManager;
             this.scene = scene;
             this.sceneLoader = sceneLoader;
+            this.sceneContextRegistry = sceneContextRegistry;
         }
 
         private Player LocalPlayer
@@ -129,27 +131,18 @@ namespace Prototype.Networking.Zones
 
             if (player == null)
             {
-                player = new Player(data.playerId, this);
+                player = new Player(data.playerId, this, false, false);
             }
 
             currentZone.AddPlayer(player);
 
-            player.CreatePlayerCharacter();
+            player.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
             player.Character.UpdatePosition(data.playerPosition, currentZone.Tick);
         }
 
         private void CreateLocalPlayer(PlayerCreateData data)
         {
             CreatePlayer(data, LocalPlayer);
-
-            var controller = LocalPlayer.Character.gameObject.AddComponent<PlayerController>();
-            controller.useAI = startSettings.useAI;
-            controller.player = LocalPlayer;
-            controller.client = client;
-            controller.zone = currentZone;
-
-            var movement = LocalPlayer.Character.gameObject.AddComponent<PlayerMovementBehaviour>();
-            movement.zone = currentZone;
 
             LocalPlayer.Character.name += " (Local)";
         }

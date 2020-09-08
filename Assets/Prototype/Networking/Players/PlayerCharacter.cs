@@ -1,5 +1,6 @@
 ﻿using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Players
 {
@@ -7,12 +8,19 @@ namespace Prototype.Networking.Players
     {
         public const float maxInterpolationDistance = 2; // ! temp
 
-        public Player player;
-        public Zone zone;
-
         public Vector3 currentPosition;
         public Vector3 previousPosition;
         public int lastUpdateTick;
+
+        private Player player;
+        private Zone zone;
+
+        [Inject]
+        public void Inject(Player player, Zone zone)
+        {
+            this.player = player;
+            this.zone = zone;
+        }
 
         private void Update()
         {

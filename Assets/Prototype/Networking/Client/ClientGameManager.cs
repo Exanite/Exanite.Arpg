@@ -18,6 +18,7 @@ namespace Prototype.Networking.Client
     {
         public UnityClient client;
         public Material glMaterial;
+        public PlayerCharacter playerCharacterPrefab;
 
         public Player localPlayer;
 
@@ -118,7 +119,7 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
-            localPlayer = new Player(e.id, zoneManager);
+            localPlayer = new Player(e.id, zoneManager, false, true);
         }
 
         private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)

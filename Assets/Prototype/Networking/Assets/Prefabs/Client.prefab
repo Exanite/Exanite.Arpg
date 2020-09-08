@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   client: {fileID: 1276474697970050233}
   glMaterial: {fileID: 2100000, guid: 9096646fd4e45eb4fb844b230315187d, type: 2}
+  playerCharacterPrefab: {fileID: 1246712660514328117, guid: b2f7349e1e3ca484ab2da6ccc55247b2, type: 3}
 --- !u!114 &1276474697970050233
 MonoBehaviour:
   m_ObjectHideFlags: 0
