@@ -2,27 +2,40 @@
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Client
 {
     public class PlayerController : MonoBehaviour
     {
-        public bool useAI;
-        public float seed;
+        [SerializeField] private bool useAI;
 
         private PlayerInputPacket inputPacket = new PlayerInputPacket();
+        private float seed;
 
-        public UnityClient client; // inject this later
-        public Player player;
-        public Zone zone;
+        private UnityClient client;
+        private Player player;
+        private Zone zone;
         private PlayerMovementBehaviour movementBehaviour;
 
-        private void Start()
+        [Inject]
+        public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
         {
-            seed = Random.Range(-1000f, 1000f);
+            if (!player.IsLocal)
+            {
+                enabled = false;
+            }
 
+            this.client = client;
+            this.player = player;
+            this.zone = zone;
+
+            useAI = settings.useAI;
+
+            seed = Random.Range(-1000f, 1000f);
             movementBehaviour = GetComponent<PlayerMovementBehaviour>();
         }
 

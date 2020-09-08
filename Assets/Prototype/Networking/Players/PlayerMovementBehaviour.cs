@@ -1,6 +1,7 @@
 ﻿using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Players
 {
@@ -10,12 +11,19 @@ namespace Prototype.Networking.Players
 
         public PlayerInputData input;
 
-        public Zone zone;
-
+        private Zone zone;
         private PlayerCharacter character;
 
-        private void Start()
+        [Inject]
+        public void Inject(Player player, Zone zone)
         {
+            if (!player.IsLocal && !player.IsServer)
+            {
+                enabled = false;
+            }
+
+            this.zone = zone;
+
             character = GetComponent<PlayerCharacter>();
         }
 

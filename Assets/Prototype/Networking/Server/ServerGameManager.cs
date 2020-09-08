@@ -17,6 +17,7 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
         public Material glMaterial;
+        public PlayerCharacter playerCharacterPrefab;
 
         private Zone selectedZone;
 

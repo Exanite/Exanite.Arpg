@@ -9,6 +9,7 @@ using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Server;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,18 +33,22 @@ namespace Prototype.Networking.Zones
 
         private ILog log;
         private UnityServer server;
+        private ServerGameManager gameManager;
         private ServerPlayerManager playerManager;
         private Scene scene;
         private SceneLoader sceneLoader;
+        private SceneContextRegistry sceneContextRegistry;
 
         [Inject]
-        public void Inject(ILog log, UnityServer server, ServerPlayerManager playerManager, Scene scene, SceneLoader sceneLoader)
+        public void Inject(ILog log, UnityServer server, ServerGameManager gameManager, ServerPlayerManager playerManager, Scene scene, SceneLoader sceneLoader, SceneContextRegistry sceneContextRegistry)
         {
             this.log = log;
             this.server = server;
+            this.gameManager = gameManager;
             this.playerManager = playerManager;
             this.scene = scene;
             this.sceneLoader = sceneLoader;
+            this.sceneContextRegistry = sceneContextRegistry;
         }
 
         public event EventHandler<ServerZoneManager, Zone> ZoneAddedEvent;
@@ -164,7 +169,7 @@ namespace Prototype.Networking.Zones
         {
             var newPlayer = (ServerPlayer)e;
 
-            newPlayer.CreatePlayerCharacter();
+            newPlayer.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
 
             var playerEnterPacket = new ZonePlayerEnteredPacket();
             var joinPacket = new ZoneJoinPacket();
