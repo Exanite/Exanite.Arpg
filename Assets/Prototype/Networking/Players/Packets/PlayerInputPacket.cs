@@ -1,5 +1,6 @@
 ﻿using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
+using Prototype.Networking.Players.Data;
 
 namespace Prototype.Networking.Players.Packets
 {

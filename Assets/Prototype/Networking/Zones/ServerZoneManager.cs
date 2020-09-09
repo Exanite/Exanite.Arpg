@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
@@ -8,7 +7,7 @@ using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Server;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;

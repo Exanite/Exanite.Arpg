@@ -1,4 +1,4 @@
-﻿using Prototype.Networking.Players.Packets;
+﻿using Prototype.Networking.Players.Data;
 using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
