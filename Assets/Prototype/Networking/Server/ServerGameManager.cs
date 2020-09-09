@@ -200,7 +200,7 @@ namespace Prototype.Networking.Server
                     {
                         server.SendPacket(
                             target.Connection.Peer,
-                            new PlayerPositionUpdatePacket()
+                            new PlayerUpdatePacket()
                             {
                                 tick = zone.Tick,
 

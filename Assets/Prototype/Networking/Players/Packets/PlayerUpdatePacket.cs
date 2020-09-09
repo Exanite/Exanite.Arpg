@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Prototype.Networking.Players.Packets
 {
-    public class PlayerPositionUpdatePacket : IPacket
+    public class PlayerUpdatePacket : IPacket
     {
         public int tick;
 

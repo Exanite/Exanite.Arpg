@@ -96,7 +96,7 @@ namespace Prototype.Networking.Client
             client.DisconnectedEvent += OnDisconnected;
 
             client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+            client.RegisterPacketReceiver<PlayerUpdatePacket>(OnPlayerUpdate);
 
             zoneManager.RegisterPackets(client);
         }
@@ -105,7 +105,7 @@ namespace Prototype.Networking.Client
         {
             zoneManager.UnregisterPackets(client);
 
-            client.ClearPacketReceiver<PlayerPositionUpdatePacket>();
+            client.ClearPacketReceiver<PlayerUpdatePacket>();
             client.ClearPacketReceiver<PlayerIdAssignmentPacket>();
 
             client.DisconnectedEvent -= OnDisconnected;
@@ -122,7 +122,7 @@ namespace Prototype.Networking.Client
             localPlayer = new Player(e.id, zoneManager, false, true);
         }
 
-        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
+        private void OnPlayerUpdate(NetPeer sender, PlayerUpdatePacket e)
         {
             if (zoneManager.currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
