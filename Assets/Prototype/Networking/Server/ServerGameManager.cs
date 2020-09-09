@@ -203,11 +203,11 @@ namespace Prototype.Networking.Server
                             target.Connection.Peer,
                             new PlayerUpdatePacket()
                             {
-                                tick = zone.Tick,
-
                                 playerId = current.Id,
                                 data = new PlayerUpdateData()
                                 {
+                                    tick = zone.Tick,
+
                                     playerPosition = current.Character.currentPosition,
                                 },
                             },

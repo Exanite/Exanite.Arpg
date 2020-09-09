@@ -126,7 +126,7 @@ namespace Prototype.Networking.Client
         {
             if (zoneManager.currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
-                player.Character?.UpdatePosition(e.data.playerPosition, e.tick);
+                player.Character?.UpdatePosition(e.data.playerPosition, e.data.tick);
             }
         }
     }
