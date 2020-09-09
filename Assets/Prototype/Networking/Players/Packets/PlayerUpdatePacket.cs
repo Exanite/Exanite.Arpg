@@ -1,6 +1,6 @@
 ﻿using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
-using UnityEngine;
+using Prototype.Networking.Players.Data;
 
 namespace Prototype.Networking.Players.Packets
 {
@@ -9,14 +9,14 @@ namespace Prototype.Networking.Players.Packets
         public int tick;
 
         public int playerId;
-        public Vector3 playerPosition;
+        public PlayerUpdateData data;
 
         public void Deserialize(NetDataReader reader)
         {
             tick = reader.GetInt();
 
             playerId = reader.GetInt();
-            playerPosition = reader.GetVector3();
+            data.Deserialize(reader);
         }
 
         public void Serialize(NetDataWriter writer)
@@ -24,7 +24,7 @@ namespace Prototype.Networking.Players.Packets
             writer.Put(tick);
 
             writer.Put(playerId);
-            writer.Put(playerPosition);
+            data.Serialize(writer);
         }
     }
 }

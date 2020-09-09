@@ -4,6 +4,7 @@ using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
@@ -205,7 +206,10 @@ namespace Prototype.Networking.Server
                                 tick = zone.Tick,
 
                                 playerId = current.Id,
-                                playerPosition = current.Character.currentPosition,
+                                data = new PlayerUpdateData()
+                                {
+                                    playerPosition = current.Character.currentPosition,
+                                },
                             },
                             DeliveryMethod.Unreliable);
                     }
