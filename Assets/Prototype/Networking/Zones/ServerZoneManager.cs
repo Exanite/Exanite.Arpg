@@ -111,7 +111,9 @@ namespace Prototype.Networking.Zones
 
             await UniTask.WaitWhile(() => isCreatingPublicZones);
 
-            return publicZones.OrderBy(x => Random.value).First();
+            int index = Random.Range(0, publicZones.Count);
+
+            return publicZones[index];
         }
 
         public override bool IsPlayerLoading(Player player)
