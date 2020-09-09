@@ -4,7 +4,6 @@ using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Data;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
@@ -21,6 +20,8 @@ namespace Prototype.Networking.Server
         public PlayerCharacter playerCharacterPrefab;
 
         private Zone selectedZone;
+
+        private PlayerUpdatePacket updatePacket = new PlayerUpdatePacket();
 
         private ILog log;
         private GameStartSettings startSettings;
@@ -199,17 +200,12 @@ namespace Prototype.Networking.Server
                 {
                     foreach (ServerPlayer current in zone.Players)
                     {
-                        server.SendPacket(
-                            target.Connection.Peer,
-                            new PlayerUpdatePacket()
-                            {
-                                playerId = current.Id,
-                                data = new PlayerUpdateData()
-                                {
-                                    playerPosition = current.Character.interpolation.current.playerPosition,
-                                },
-                            },
-                            DeliveryMethod.Unreliable);
+                        updatePacket.tick = zone.Tick;
+
+                        updatePacket.playerId = current.Id;
+                        updatePacket.data = current.Character.interpolation.current;
+
+                        server.SendPacket(target.Connection.Peer, updatePacket, DeliveryMethod.Unreliable);
                     }
                 }
             }
