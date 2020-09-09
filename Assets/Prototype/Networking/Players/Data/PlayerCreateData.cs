@@ -1,24 +1,25 @@
-﻿using Exanite.Arpg.Networking;
-using LiteNetLib.Utils;
-using UnityEngine;
+﻿using LiteNetLib.Utils;
 
 namespace Prototype.Networking.Players.Data
 {
     public struct PlayerCreateData : INetSerializable
     {
         public int playerId;
-        public Vector3 playerPosition;
+
+        public PlayerUpdateData updateData;
 
         public void Deserialize(NetDataReader reader)
         {
             playerId = reader.GetInt();
-            playerPosition = reader.GetVector3();
+
+            updateData.Deserialize(reader);
         }
 
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(playerId);
-            writer.Put(playerPosition);
+
+            updateData.Serialize(writer);
         }
     }
 }

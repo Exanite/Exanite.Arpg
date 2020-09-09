@@ -137,11 +137,7 @@ namespace Prototype.Networking.Zones
             currentZone.AddPlayer(player);
 
             player.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
-            player.Character.interpolation.UpdateData(new PlayerUpdateData()
-            {
-                playerPosition = data.playerPosition,
-                tick = currentZone.Tick,
-            });
+            player.Character.interpolation.UpdateData(data.updateData, true);
         }
 
         private void CreateLocalPlayer(PlayerCreateData data)

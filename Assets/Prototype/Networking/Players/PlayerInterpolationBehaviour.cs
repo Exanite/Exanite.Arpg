@@ -31,12 +31,12 @@ namespace Prototype.Networking.Players
             transform.position = Vector3.LerpUnclamped(previous.playerPosition, previous.playerPosition, t);
         }
 
-        public void UpdateData(PlayerUpdateData newData)
+        public void UpdateData(PlayerUpdateData newData, bool snapInterpolation = false)
         {
-            previous = current;
+            previous = snapInterpolation ? newData : current;
             current = newData;
 
             lastUpdateTick = zone.Tick;
         }
-    } 
+    }
 }
