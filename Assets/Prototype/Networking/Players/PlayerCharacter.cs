@@ -6,11 +6,7 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
-        public const float maxInterpolationDistance = 2; // ! temp
-
-        public Vector3 currentPosition;
-        public Vector3 previousPosition;
-        public int lastUpdateTick;
+        public PlayerInterpolationBehaviour interpolation;
 
         private Player player;
         private Zone zone;
@@ -20,32 +16,8 @@ namespace Prototype.Networking.Players
         {
             this.player = player;
             this.zone = zone;
-        }
 
-        private void Update()
-        {
-            int ticksSinceLastUpdate = zone.Tick - lastUpdateTick;
-
-            float timeSinceLastUpdate = ticksSinceLastUpdate * zone.TimePerTick + zone.TimeSinceLastTick;
-            float t = timeSinceLastUpdate / zone.TimePerTick;
-
-            transform.position = Vector3.LerpUnclamped(previousPosition, currentPosition, t);
-        }
-
-        public void UpdatePosition(Vector3 newPosition, int tick)
-        {
-            if ((newPosition - currentPosition).sqrMagnitude < maxInterpolationDistance * maxInterpolationDistance)
-            {
-                previousPosition = currentPosition;
-            }
-            else
-            {
-                previousPosition = newPosition;
-            }
-
-            currentPosition = newPosition;
-
-            lastUpdateTick = tick;
+            interpolation = GetComponent<PlayerInterpolationBehaviour>();
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp

@@ -29,16 +29,20 @@ namespace Prototype.Networking.Players
 
         private void FixedUpdate()
         {
-            Simulate();
+            var currentData = character.interpolation.current;
+            var newData = Simulate(currentData, input);
+
+            character.interpolation.UpdateData(newData);
         }
 
-        public void Simulate()
+        public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)
         {
-            Vector2 position = character.currentPosition;
-            position += input.movement * zone.TimePerTick * 5;
-            position = Wrap(position);
+            updateData.playerPosition += (Vector3)input.movement * zone.TimePerTick * 5;
+            updateData.playerPosition = Wrap(updateData.playerPosition);
 
-            character.UpdatePosition(position, zone.Tick);
+            updateData.tick++;
+
+            return updateData;
         }
 
         private static Vector2 Wrap(Vector2 position)

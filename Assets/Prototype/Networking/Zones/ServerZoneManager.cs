@@ -178,7 +178,7 @@ namespace Prototype.Networking.Zones
             joinPacket.guid = sender.Guid;
             joinPacket.tick = sender.Tick;
             joinPacket.localPlayer.playerId = newPlayer.Id;
-            joinPacket.localPlayer.playerPosition = newPlayer.Character.currentPosition;
+            joinPacket.localPlayer.playerPosition = newPlayer.Character.interpolation.current.playerPosition;
 
             foreach (ServerPlayer player in sender.Players)
             {
@@ -190,11 +190,11 @@ namespace Prototype.Networking.Zones
                 joinPacket.zonePlayers.Add(new PlayerCreateData()
                 {
                     playerId = player.Id,
-                    playerPosition = player.Character.currentPosition,
+                    playerPosition = player.Character.interpolation.current.playerPosition,
                 });
 
                 playerEnterPacket.data.playerId = newPlayer.Id;
-                playerEnterPacket.data.playerPosition = newPlayer.Character.currentPosition;
+                playerEnterPacket.data.playerPosition = newPlayer.Character.interpolation.current.playerPosition;
 
                 server.SendPacket(player.Connection.Peer, playerEnterPacket, DeliveryMethod.ReliableOrdered);
             }

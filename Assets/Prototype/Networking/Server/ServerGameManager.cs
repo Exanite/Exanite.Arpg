@@ -208,7 +208,7 @@ namespace Prototype.Networking.Server
                                 {
                                     tick = zone.Tick,
 
-                                    playerPosition = current.Character.currentPosition,
+                                    playerPosition = current.Character.interpolation.current.playerPosition,
                                 },
                             },
                             DeliveryMethod.Unreliable);
