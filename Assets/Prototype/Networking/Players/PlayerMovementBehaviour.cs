@@ -40,8 +40,6 @@ namespace Prototype.Networking.Players
             updateData.playerPosition += (Vector3)input.movement * zone.TimePerTick * 5;
             updateData.playerPosition = Wrap(updateData.playerPosition);
 
-            updateData.tick++;
-
             return updateData;
         }
 

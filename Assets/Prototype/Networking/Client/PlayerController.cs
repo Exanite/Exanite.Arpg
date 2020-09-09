@@ -45,7 +45,6 @@ namespace Prototype.Networking.Client
             movementBehaviour.input = new PlayerInputData()
             {
                 movement = useAI ? GetPerlinMovementInput() : GetMovementInput(),
-                tick = zone.Tick,
             };
 
             SendInput();
@@ -75,6 +74,7 @@ namespace Prototype.Networking.Client
 
         public void SendInput()
         {
+            inputPacket.tick = zone.Tick;
             inputPacket.data = movementBehaviour.input;
 
             client.SendPacketToServer(inputPacket, DeliveryMethod.Unreliable);

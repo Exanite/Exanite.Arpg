@@ -206,8 +206,6 @@ namespace Prototype.Networking.Server
                                 playerId = current.Id,
                                 data = new PlayerUpdateData()
                                 {
-                                    tick = zone.Tick,
-
                                     playerPosition = current.Character.interpolation.current.playerPosition,
                                 },
                             },
