@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Prototype.Networking.Players
 {
-    public class PlayerMovementBehaviour : MonoBehaviour
+    public class PlayerLogicBehaviour : MonoBehaviour
     {
         public const float MapSize = 10; // ! temp
 

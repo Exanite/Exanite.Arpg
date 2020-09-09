@@ -20,7 +20,7 @@ namespace Prototype.Networking.Client
         private UnityClient client;
         private Player player;
         private Zone zone;
-        private PlayerMovementBehaviour movementBehaviour;
+        private PlayerLogicBehaviour logic;
 
         [Inject]
         public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
@@ -37,12 +37,12 @@ namespace Prototype.Networking.Client
             useAI = settings.useAI;
 
             seed = Random.Range(-1000f, 1000f);
-            movementBehaviour = GetComponent<PlayerMovementBehaviour>();
+            logic = GetComponent<PlayerLogicBehaviour>();
         }
 
         private void FixedUpdate()
         {
-            movementBehaviour.input = new PlayerInputData()
+            logic.input = new PlayerInputData()
             {
                 movement = useAI ? GetPerlinMovementInput() : GetMovementInput(),
             };
@@ -75,7 +75,7 @@ namespace Prototype.Networking.Client
         public void SendInput()
         {
             inputPacket.tick = zone.Tick;
-            inputPacket.data = movementBehaviour.input;
+            inputPacket.data = logic.input;
 
             client.SendPacketToServer(inputPacket, DeliveryMethod.Unreliable);
         }
