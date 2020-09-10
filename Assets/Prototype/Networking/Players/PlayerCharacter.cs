@@ -17,8 +17,8 @@ namespace Prototype.Networking.Players
         [Inject]
         public void Inject(Player player, Zone zone)
         {
-            this.Player = player;
-            this.Zone = zone;
+            Player = player;
+            Zone = zone;
 
             Controller = GetComponent<PlayerController>();
             Interpolation = GetComponent<PlayerInterpolation>();
