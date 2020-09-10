@@ -185,7 +185,7 @@ namespace Prototype.Networking.Server
                         updatePacket.tick = zone.Tick;
 
                         updatePacket.playerId = current.Id;
-                        updatePacket.data = current.Character.interpolation.current;
+                        updatePacket.data = current.Character.Interpolation.current;
 
                         server.SendPacket(target.Connection.Peer, updatePacket, DeliveryMethod.Unreliable);
                     }

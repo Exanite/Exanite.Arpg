@@ -137,7 +137,7 @@ namespace Prototype.Networking.Zones
             currentZone.AddPlayer(player);
 
             player.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
-            player.Character.interpolation.UpdateData(data.UpdateData, true);
+            player.Character.Interpolation.UpdateData(data.UpdateData, true);
         }
 
         private void CreateLocalPlayer(PlayerCreateData data)

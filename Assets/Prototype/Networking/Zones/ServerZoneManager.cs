@@ -177,7 +177,7 @@ namespace Prototype.Networking.Zones
 
             joinPacket.guid = sender.Guid;
             joinPacket.tick = sender.Tick;
-            joinPacket.localPlayer = new PlayerCreateData(newPlayer.Id, newPlayer.Character.interpolation.current);
+            joinPacket.localPlayer = new PlayerCreateData(newPlayer.Id, newPlayer.Character.Interpolation.current);
 
             foreach (ServerPlayer player in sender.Players)
             {
@@ -186,10 +186,10 @@ namespace Prototype.Networking.Zones
                     continue;
                 }
 
-                joinPacket.zonePlayers.Add(new PlayerCreateData(player.Id, player.Character.interpolation.current));
+                joinPacket.zonePlayers.Add(new PlayerCreateData(player.Id, player.Character.Interpolation.current));
 
                 playerEnterPacket.data.PlayerId = newPlayer.Id;
-                playerEnterPacket.data.UpdateData = newPlayer.Character.interpolation.current;
+                playerEnterPacket.data.UpdateData = newPlayer.Character.Interpolation.current;
 
                 server.SendPacket(player.Connection.Peer, playerEnterPacket, DeliveryMethod.ReliableOrdered);
             }

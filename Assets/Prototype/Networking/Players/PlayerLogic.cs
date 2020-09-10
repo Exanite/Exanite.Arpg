@@ -29,10 +29,10 @@ namespace Prototype.Networking.Players
 
         private void FixedUpdate()
         {
-            var currentData = character.interpolation.current;
+            var currentData = character.Interpolation.current;
             var newData = Simulate(currentData, input);
 
-            character.interpolation.UpdateData(newData);
+            character.Interpolation.UpdateData(newData);
         }
 
         public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)

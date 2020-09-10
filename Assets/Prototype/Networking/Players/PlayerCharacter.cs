@@ -1,4 +1,5 @@
-﻿using Prototype.Networking.Zones;
+﻿using Exanite.Arpg.Gameplay.Player;
+using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
 
@@ -6,7 +7,9 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
-        public PlayerInterpolation interpolation;
+        private PlayerController controller;
+        private PlayerInterpolation interpolation;
+        private PlayerLogic logic;
 
         private Player player;
         private Zone zone;
@@ -14,10 +17,77 @@ namespace Prototype.Networking.Players
         [Inject]
         public void Inject(Player player, Zone zone)
         {
-            this.player = player;
-            this.zone = zone;
+            this.Player = player;
+            this.Zone = zone;
 
-            interpolation = GetComponent<PlayerInterpolation>();
+            Controller = GetComponent<PlayerController>();
+            Interpolation = GetComponent<PlayerInterpolation>();
+            Logic = GetComponent<PlayerLogic>();
+        }
+
+        public PlayerController Controller
+        {
+            get
+            {
+                return controller;
+            }
+
+            private set
+            {
+                controller = value;
+            }
+        }
+
+        public PlayerInterpolation Interpolation
+        {
+            get
+            {
+                return interpolation;
+            }
+
+            private set
+            {
+                interpolation = value;
+            }
+        }
+
+        public PlayerLogic Logic
+        {
+            get
+            {
+                return logic;
+            }
+
+            private set
+            {
+                logic = value;
+            }
+        }
+
+        public Player Player
+        {
+            get
+            {
+                return player;
+            }
+
+            private set
+            {
+                player = value;
+            }
+        }
+
+        public Zone Zone
+        {
+            get
+            {
+                return zone;
+            }
+
+            private set
+            {
+                zone = value;
+            }
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp
@@ -27,7 +97,7 @@ namespace Prototype.Networking.Players
             {
                 GL.Color(color);
 
-                Vector3 position = player.Character.transform.position;
+                Vector3 position = Player.Character.transform.position;
 
                 GL.Vertex3(position.x - size, position.y - size, transform.position.z);
                 GL.Vertex3(position.x - size, position.y + size, transform.position.z);
