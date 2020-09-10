@@ -6,7 +6,7 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
-        public PlayerInterpolationBehaviour interpolation;
+        public PlayerInterpolation interpolation;
 
         private Player player;
         private Zone zone;
@@ -17,7 +17,7 @@ namespace Prototype.Networking.Players
             this.player = player;
             this.zone = zone;
 
-            interpolation = GetComponent<PlayerInterpolationBehaviour>();
+            interpolation = GetComponent<PlayerInterpolation>();
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp

@@ -28,11 +28,11 @@ namespace Prototype.Networking.Players
             }
         }
 
-        public PlayerLogicBehaviour Logic
+        public PlayerLogic Logic
         {
             get
             {
-                return Character.GetComponent<PlayerLogicBehaviour>(); // ! temporary
+                return Character.GetComponent<PlayerLogic>(); // ! temporary
             }
         }
     }

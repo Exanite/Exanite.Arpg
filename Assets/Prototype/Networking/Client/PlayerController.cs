@@ -20,7 +20,7 @@ namespace Prototype.Networking.Client
         private UnityClient client;
         private Player player;
         private Zone zone;
-        private PlayerLogicBehaviour logic;
+        private PlayerLogic logic;
 
         [Inject]
         public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
@@ -37,7 +37,7 @@ namespace Prototype.Networking.Client
             useAI = settings.useAI;
 
             seed = Random.Range(-1000f, 1000f);
-            logic = GetComponent<PlayerLogicBehaviour>();
+            logic = GetComponent<PlayerLogic>();
         }
 
         private void FixedUpdate()

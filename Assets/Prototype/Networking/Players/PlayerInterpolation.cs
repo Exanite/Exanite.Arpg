@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Prototype.Networking.Players
 {
-    public class PlayerInterpolationBehaviour : MonoBehaviour
+    public class PlayerInterpolation : MonoBehaviour
     {
         public PlayerUpdateData current;
         public PlayerUpdateData previous;
