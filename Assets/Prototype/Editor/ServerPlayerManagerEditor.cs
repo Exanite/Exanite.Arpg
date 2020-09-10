@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Prototype.Networking.Players;
+using Prototype.Networking.Server;
 using UnityEditor;
 using UnityEngine;
 

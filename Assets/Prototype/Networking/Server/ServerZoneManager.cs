@@ -8,14 +8,14 @@ using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Data;
-using Prototype.Networking.Server;
+using Prototype.Networking.Zones;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Prototype.Networking.Zones
+namespace Prototype.Networking.Server
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {

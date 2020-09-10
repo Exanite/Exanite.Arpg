@@ -1,6 +1,6 @@
-﻿using Prototype.Networking.Zones;
+﻿using Prototype.Networking.Players;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Server
 {
     /// <summary>
     /// Represents a player connected to the server

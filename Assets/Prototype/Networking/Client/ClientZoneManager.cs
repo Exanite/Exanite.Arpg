@@ -5,15 +5,15 @@ using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.Networking.Client;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Data;
 using Prototype.Networking.Startup;
+using Prototype.Networking.Zones;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Prototype.Networking.Zones
+namespace Prototype.Networking.Client
 {
     public class ClientZoneManager : ZoneManager, IPacketHandler
     {
