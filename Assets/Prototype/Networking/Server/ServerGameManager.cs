@@ -49,27 +49,9 @@ namespace Prototype.Networking.Server
             server.Port = startSettings.port;
 
             StartServer();
-
-            //while (true) // for testing moving players between zones
-            //{
-            //    MoveRandomPlayerToRandomZone();
-
-            //    await UniTask.Delay(TimeSpan.FromSeconds(1));
-            //}
         }
 
-        //private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
-        //{
-        //    if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
-        //    {
-        //        var player = playerManager.Players.OrderBy(x => Random.value).First();
-        //        var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
-
-        //        zoneManager.MovePlayerToZone(player, zone);
-        //    }
-        //}
-
-        private void Update() // for debug
+        private void Update() // ! for debug
         {
             if (zoneManager.publicZones == null)
             {
