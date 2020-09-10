@@ -1,6 +1,6 @@
-﻿using Prototype.Networking.Zones;
+﻿using Prototype.Networking.Players;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Server
 {
     /// <summary>
     /// Represents a player connected to the server
@@ -25,14 +25,6 @@ namespace Prototype.Networking.Players
             get
             {
                 return connection;
-            }
-        }
-
-        public PlayerMovementBehaviour MovementBehaviour
-        {
-            get
-            {
-                return Character.GetComponent<PlayerMovementBehaviour>(); // ! temporary
             }
         }
     }

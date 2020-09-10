@@ -5,15 +5,15 @@ using Exanite.Arpg.Logging;
 using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.Networking.Client;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Startup;
+using Prototype.Networking.Zones;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Prototype.Networking.Zones
+namespace Prototype.Networking.Client
 {
     public class ClientZoneManager : ZoneManager, IPacketHandler
     {
@@ -124,20 +124,20 @@ namespace Prototype.Networking.Zones
 
         private void CreatePlayer(PlayerCreateData data, Player player = null)
         {
-            if (currentZone.PlayersById.ContainsKey(data.playerId))
+            if (currentZone.PlayersById.ContainsKey(data.PlayerId))
             {
                 log.Warning("Cannot create player that already exists");
             }
 
             if (player == null)
             {
-                player = new Player(data.playerId, this, false, false);
+                player = new Player(data.PlayerId, this, false, false);
             }
 
             currentZone.AddPlayer(player);
 
             player.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
-            player.Character.UpdatePosition(data.playerPosition, currentZone.Tick);
+            player.Character.Interpolation.UpdateData(data.UpdateData, true);
         }
 
         private void CreateLocalPlayer(PlayerCreateData data)

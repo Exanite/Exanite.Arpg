@@ -1,7 +1,7 @@
 ﻿using System;
 using LiteNetLib;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Server
 {
     /// <summary>
     /// Represents a <see cref="Player"/>'s connection to the server

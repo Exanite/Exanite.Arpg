@@ -1,4 +1,5 @@
-﻿using Prototype.Networking.Zones;
+﻿using Exanite.Arpg.Gameplay.Player;
+using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
 
@@ -6,11 +7,9 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
-        public const float maxInterpolationDistance = 2; // ! temp
-
-        public Vector3 currentPosition;
-        public Vector3 previousPosition;
-        public int lastUpdateTick;
+        private PlayerController controller;
+        private PlayerInterpolation interpolation;
+        private PlayerLogic logic;
 
         private Player player;
         private Zone zone;
@@ -18,34 +17,77 @@ namespace Prototype.Networking.Players
         [Inject]
         public void Inject(Player player, Zone zone)
         {
-            this.player = player;
-            this.zone = zone;
+            this.Player = player;
+            this.Zone = zone;
+
+            Controller = GetComponent<PlayerController>();
+            Interpolation = GetComponent<PlayerInterpolation>();
+            Logic = GetComponent<PlayerLogic>();
         }
 
-        private void Update()
+        public PlayerController Controller
         {
-            int ticksSinceLastUpdate = zone.Tick - lastUpdateTick;
+            get
+            {
+                return controller;
+            }
 
-            float timeSinceLastUpdate = ticksSinceLastUpdate * zone.TimePerTick + zone.TimeSinceLastTick;
-            float t = timeSinceLastUpdate / zone.TimePerTick;
-
-            transform.position = Vector3.LerpUnclamped(previousPosition, currentPosition, t);
+            private set
+            {
+                controller = value;
+            }
         }
 
-        public void UpdatePosition(Vector3 newPosition, int tick)
+        public PlayerInterpolation Interpolation
         {
-            if ((newPosition - currentPosition).sqrMagnitude < maxInterpolationDistance * maxInterpolationDistance)
+            get
             {
-                previousPosition = currentPosition;
-            }
-            else
-            {
-                previousPosition = newPosition;
+                return interpolation;
             }
 
-            currentPosition = newPosition;
+            private set
+            {
+                interpolation = value;
+            }
+        }
 
-            lastUpdateTick = tick;
+        public PlayerLogic Logic
+        {
+            get
+            {
+                return logic;
+            }
+
+            private set
+            {
+                logic = value;
+            }
+        }
+
+        public Player Player
+        {
+            get
+            {
+                return player;
+            }
+
+            private set
+            {
+                player = value;
+            }
+        }
+
+        public Zone Zone
+        {
+            get
+            {
+                return zone;
+            }
+
+            private set
+            {
+                zone = value;
+            }
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp
@@ -55,7 +97,7 @@ namespace Prototype.Networking.Players
             {
                 GL.Color(color);
 
-                Vector3 position = player.Character.transform.position;
+                Vector3 position = Player.Character.transform.position;
 
                 GL.Vertex3(position.x - size, position.y - size, transform.position.z);
                 GL.Vertex3(position.x - size, position.y + size, transform.position.z);

@@ -21,6 +21,8 @@ namespace Prototype.Networking.Server
 
         private Zone selectedZone;
 
+        private PlayerUpdatePacket updatePacket = new PlayerUpdatePacket();
+
         private ILog log;
         private GameStartSettings startSettings;
         private Scene scene;
@@ -47,27 +49,9 @@ namespace Prototype.Networking.Server
             server.Port = startSettings.port;
 
             StartServer();
-
-            //while (true) // for testing moving players between zones
-            //{
-            //    MoveRandomPlayerToRandomZone();
-
-            //    await UniTask.Delay(TimeSpan.FromSeconds(1));
-            //}
         }
 
-        //private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
-        //{
-        //    if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
-        //    {
-        //        var player = playerManager.Players.OrderBy(x => Random.value).First();
-        //        var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
-
-        //        zoneManager.MovePlayerToZone(player, zone);
-        //    }
-        //}
-
-        private void Update() // for debug
+        private void Update() // ! for debug
         {
             if (zoneManager.publicZones == null)
             {
@@ -186,7 +170,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.MovementBehaviour.input = e.data;
+                player.Character.Logic.input = e.data;
             }
         }
 
@@ -198,16 +182,12 @@ namespace Prototype.Networking.Server
                 {
                     foreach (ServerPlayer current in zone.Players)
                     {
-                        server.SendPacket(
-                            target.Connection.Peer,
-                            new PlayerPositionUpdatePacket()
-                            {
-                                tick = zone.Tick,
+                        updatePacket.tick = zone.Tick;
 
-                                playerId = current.Id,
-                                playerPosition = current.Character.currentPosition,
-                            },
-                            DeliveryMethod.Unreliable);
+                        updatePacket.playerId = current.Id;
+                        updatePacket.data = current.Character.Interpolation.current;
+
+                        server.SendPacket(target.Connection.Peer, updatePacket, DeliveryMethod.Unreliable);
                     }
                 }
             }

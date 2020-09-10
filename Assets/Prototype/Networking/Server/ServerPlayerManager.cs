@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Exanite.Arpg;
 using LiteNetLib;
-using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
 
-namespace Prototype.Networking.Players
+namespace Prototype.Networking.Server
 {
     public class ServerPlayerManager : MonoBehaviour
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
@@ -8,15 +7,15 @@ using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
-using Prototype.Networking.Players.Packets;
-using Prototype.Networking.Server;
+using Prototype.Networking.Players.Data;
+using Prototype.Networking.Zones;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Prototype.Networking.Zones
+namespace Prototype.Networking.Server
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
@@ -111,7 +110,9 @@ namespace Prototype.Networking.Zones
 
             await UniTask.WaitWhile(() => isCreatingPublicZones);
 
-            return publicZones.OrderBy(x => Random.value).First();
+            int index = Random.Range(0, publicZones.Count);
+
+            return publicZones[index];
         }
 
         public override bool IsPlayerLoading(Player player)
@@ -176,8 +177,7 @@ namespace Prototype.Networking.Zones
 
             joinPacket.guid = sender.Guid;
             joinPacket.tick = sender.Tick;
-            joinPacket.localPlayer.playerId = newPlayer.Id;
-            joinPacket.localPlayer.playerPosition = newPlayer.Character.currentPosition;
+            joinPacket.localPlayer = new PlayerCreateData(newPlayer.Id, newPlayer.Character.Interpolation.current);
 
             foreach (ServerPlayer player in sender.Players)
             {
@@ -186,14 +186,10 @@ namespace Prototype.Networking.Zones
                     continue;
                 }
 
-                joinPacket.zonePlayers.Add(new PlayerCreateData()
-                {
-                    playerId = player.Id,
-                    playerPosition = player.Character.currentPosition,
-                });
+                joinPacket.zonePlayers.Add(new PlayerCreateData(player.Id, player.Character.Interpolation.current));
 
-                playerEnterPacket.data.playerId = newPlayer.Id;
-                playerEnterPacket.data.playerPosition = newPlayer.Character.currentPosition;
+                playerEnterPacket.data.PlayerId = newPlayer.Id;
+                playerEnterPacket.data.UpdateData = newPlayer.Character.Interpolation.current;
 
                 server.SendPacket(player.Connection.Peer, playerEnterPacket, DeliveryMethod.ReliableOrdered);
             }

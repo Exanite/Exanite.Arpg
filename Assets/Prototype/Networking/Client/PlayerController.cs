@@ -1,6 +1,7 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
@@ -19,7 +20,7 @@ namespace Prototype.Networking.Client
         private UnityClient client;
         private Player player;
         private Zone zone;
-        private PlayerMovementBehaviour movementBehaviour;
+        private PlayerLogic logic;
 
         [Inject]
         public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
@@ -36,15 +37,14 @@ namespace Prototype.Networking.Client
             useAI = settings.useAI;
 
             seed = Random.Range(-1000f, 1000f);
-            movementBehaviour = GetComponent<PlayerMovementBehaviour>();
+            logic = GetComponent<PlayerLogic>();
         }
 
         private void FixedUpdate()
         {
-            movementBehaviour.input = new PlayerInputData()
+            logic.input = new PlayerInputData()
             {
                 movement = useAI ? GetPerlinMovementInput() : GetMovementInput(),
-                tick = zone.Tick,
             };
 
             SendInput();
@@ -74,7 +74,8 @@ namespace Prototype.Networking.Client
 
         public void SendInput()
         {
-            inputPacket.data = movementBehaviour.input;
+            inputPacket.tick = zone.Tick;
+            inputPacket.data = logic.input;
 
             client.SendPacketToServer(inputPacket, DeliveryMethod.Unreliable);
         }
