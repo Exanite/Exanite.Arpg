@@ -170,7 +170,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.Logic.input = e.data;
+                player.Character.Logic.input = e.data;
             }
         }
 

@@ -27,13 +27,5 @@ namespace Prototype.Networking.Players
                 return connection;
             }
         }
-
-        public PlayerLogic Logic
-        {
-            get
-            {
-                return Character.GetComponent<PlayerLogic>(); // ! temporary
-            }
-        }
     }
 }
