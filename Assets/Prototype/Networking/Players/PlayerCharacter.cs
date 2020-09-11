@@ -2,6 +2,7 @@
 using Exanite.Arpg.Networking.Client;
 using Prototype.Networking.Client;
 using Prototype.Networking.Players.Data;
+using Prototype.Networking.Startup;
 using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
@@ -23,13 +24,15 @@ namespace Prototype.Networking.Players
         private UnityClient client;
         private Player player;
         private Zone zone;
+        private GameStartSettings settings;
 
         [Inject]
-        public void Inject([InjectOptional] UnityClient client, Player player, Zone zone)
+        public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
         {
             this.client = client;
             Player = player;
             Zone = zone;
+            this.settings = settings;
 
             Controller = GetComponent<PlayerController>();
             Interpolation = GetComponent<PlayerInterpolation>();
@@ -130,7 +133,7 @@ namespace Prototype.Networking.Players
 
         private void OnGUI() // ! debug
         {
-            if (player.Id == 0 && player.IsLocal)
+            if (player.IsLocal && (!settings.useAI || player.Id == 0))
             {
                 GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
                 {
