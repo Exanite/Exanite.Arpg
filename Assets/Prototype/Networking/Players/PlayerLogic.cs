@@ -12,13 +12,8 @@ namespace Prototype.Networking.Players
         private Zone zone;
 
         [Inject]
-        public void Inject(Player player, Zone zone)
+        public void Inject(Zone zone)
         {
-            if (!(player.IsLocal || player.IsServer))
-            {
-                enabled = false;
-            }
-
             this.zone = zone;
         }
 

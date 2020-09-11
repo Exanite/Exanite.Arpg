@@ -95,10 +95,20 @@ namespace Prototype.Networking.Players
 
         private void FixedUpdate()
         {
-            var currentData = Interpolation.current;
-            var newData = Logic.Simulate(currentData, input);
+            if (player.IsLocal)
+            {
+                var input = Controller.GetInput();
 
-            Interpolation.UpdateData(newData);
+                Controller.SendInput(input);
+            }
+
+            if (player.IsServer || player.IsLocal)
+            {
+                var currentData = Interpolation.current;
+                var newData = Logic.Simulate(currentData, input);
+
+                Interpolation.UpdateData(newData);
+            }
         }
 
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp

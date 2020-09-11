@@ -11,13 +11,11 @@ namespace Prototype.Networking.Players
         public PlayerUpdateData previous;
         public int lastUpdateTick;
 
-        private Player player;
         private Zone zone;
 
         [Inject]
-        public void Inject(Player player, Zone zone)
+        public void Inject(Zone zone)
         {
-            this.player = player;
             this.zone = zone;
         }
 

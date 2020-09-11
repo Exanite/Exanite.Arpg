@@ -1,6 +1,5 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.Networking.Players;
 using Prototype.Networking.Players.Data;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
@@ -18,36 +17,25 @@ namespace Prototype.Networking.Client
         private float seed;
 
         private UnityClient client;
-        private Player player;
         private Zone zone;
-        private PlayerCharacter character;
 
         [Inject]
-        public void Inject([InjectOptional] UnityClient client, Player player, Zone zone, GameStartSettings settings)
+        public void Inject([InjectOptional] UnityClient client, Zone zone, GameStartSettings settings)
         {
-            if (!player.IsLocal)
-            {
-                enabled = false;
-            }
-
             this.client = client;
-            this.player = player;
             this.zone = zone;
 
             useAI = settings.useAI;
 
             seed = Random.Range(-1000f, 1000f);
-            character = GetComponent<PlayerCharacter>();
         }
 
-        private void FixedUpdate()
+        public PlayerInputData GetInput()
         {
-            character.input = new PlayerInputData()
-            {
-                movement = useAI ? GetPerlinMovementInput() : GetMovementInput(),
-            };
+            var input = new PlayerInputData();
+            input.movement = useAI ? GetPerlinMovementInput() : GetMovementInput();
 
-            SendInput();
+            return input;
         }
 
         public Vector2 GetMovementInput()
@@ -72,10 +60,10 @@ namespace Prototype.Networking.Client
             return input * Mathf.PerlinNoise(Time.time * 0.1f + seed, 0) * 2;
         }
 
-        public void SendInput()
+        public void SendInput(PlayerInputData inputData)
         {
             inputPacket.tick = zone.Tick;
-            inputPacket.data = character.input;
+            inputPacket.data = inputData;
 
             client.SendPacketToServer(inputPacket, DeliveryMethod.Unreliable);
         }
