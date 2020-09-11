@@ -6,13 +6,13 @@ namespace Prototype.Networking.Players.Packets
 {
     public class PlayerInputPacket : IPacket
     {
-        public int tick; // ! unused
+        public uint tick;
 
         public PlayerInputData data;
 
         public void Deserialize(NetDataReader reader)
         {
-            tick = reader.GetInt();
+            tick = reader.GetUInt();
 
             data.Deserialize(reader);
         }

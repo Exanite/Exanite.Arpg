@@ -9,7 +9,7 @@ namespace Prototype.Networking.Zones.Packets
     public class ZoneJoinPacket : IPacket
     {
         public Guid guid;
-        public int tick;
+        public uint tick;
 
         public PlayerCreateData localPlayer;
         public List<PlayerCreateData> zonePlayers = new List<PlayerCreateData>();
@@ -17,7 +17,7 @@ namespace Prototype.Networking.Zones.Packets
         public void Deserialize(NetDataReader reader)
         {
             guid = reader.GetGuid();
-            tick = reader.GetInt();
+            tick = reader.GetUInt();
 
             localPlayer.Deserialize(reader);
             reader.GetListWithCount(zonePlayers);

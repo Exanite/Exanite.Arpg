@@ -9,7 +9,7 @@ namespace Prototype.Networking.Players
     {
         public PlayerUpdateData current;
         public PlayerUpdateData previous;
-        public int lastUpdateTick;
+        public uint lastUpdateTick;
 
         private Zone zone;
 
@@ -21,7 +21,7 @@ namespace Prototype.Networking.Players
 
         private void Update()
         {
-            int ticksSinceLastUpdate = zone.Tick - lastUpdateTick;
+            uint ticksSinceLastUpdate = zone.Tick - lastUpdateTick;
 
             float timeSinceLastUpdate = ticksSinceLastUpdate * zone.TimePerTick + zone.TimeSinceLastTick;
             float t = timeSinceLastUpdate / zone.TimePerTick;

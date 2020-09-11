@@ -6,14 +6,14 @@ namespace Prototype.Networking.Players.Packets
 {
     public class PlayerUpdatePacket : IPacket
     {
-        public int tick; // ! unused
+        public uint tick;
 
         public int playerId;
         public PlayerUpdateData data;
 
         public void Deserialize(NetDataReader reader)
         {
-            tick = reader.GetInt();
+            tick = reader.GetUInt();
 
             playerId = reader.GetInt();
             data.Deserialize(reader);

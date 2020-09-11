@@ -18,7 +18,7 @@ namespace Prototype.Networking.Zones
         private bool isCreated;
         private Scene scene;
 
-        private int tick;
+        private uint tick;
 
         private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
@@ -76,7 +76,7 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        public int Tick
+        public uint Tick
         {
             get
             {
