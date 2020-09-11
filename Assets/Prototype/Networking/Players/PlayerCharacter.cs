@@ -1,4 +1,4 @@
-﻿using Exanite.Arpg.Gameplay.Player;
+﻿using Prototype.Networking.Client;
 using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
