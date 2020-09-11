@@ -1,4 +1,5 @@
 ﻿using Prototype.Networking.Client;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Zones;
 using UnityEngine;
 using Zenject;
@@ -7,6 +8,8 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
+        public PlayerInputData input;
+
         private PlayerController controller;
         private PlayerInterpolation interpolation;
         private PlayerLogic logic;
@@ -93,7 +96,7 @@ namespace Prototype.Networking.Players
         private void FixedUpdate()
         {
             var currentData = Interpolation.current;
-            var newData = Logic.Simulate(currentData, logic.input);
+            var newData = Logic.Simulate(currentData, input);
 
             Interpolation.UpdateData(newData);
         }

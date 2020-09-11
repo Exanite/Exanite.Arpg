@@ -9,8 +9,6 @@ namespace Prototype.Networking.Players
     {
         public const float MapSize = 10; // ! temp
 
-        public PlayerInputData input;
-
         private Zone zone;
 
         [Inject]
@@ -26,7 +24,7 @@ namespace Prototype.Networking.Players
 
         public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)
         {
-            updateData.playerPosition += (Vector3)input.movement * zone.TimePerTick * 5;
+            updateData.playerPosition += (Vector3)inputData.movement * zone.TimePerTick * 5;
             updateData.playerPosition = Wrap(updateData.playerPosition);
 
             return updateData;
