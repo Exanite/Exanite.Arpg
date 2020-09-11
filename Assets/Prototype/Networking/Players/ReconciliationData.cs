@@ -6,7 +6,14 @@ namespace Prototype.Networking.Players
     {
         public uint tick;
 
-        public PlayerInputData inputData;
         public PlayerUpdateData updateData;
+        public PlayerInputData inputData;
+
+        public ReconciliationData(uint tick, PlayerUpdateData updateData, PlayerInputData inputData)
+        {
+            this.tick = tick;
+            this.updateData = updateData;
+            this.inputData = inputData;
+        }
     }
 }
