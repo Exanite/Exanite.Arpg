@@ -12,7 +12,6 @@ namespace Prototype.Networking.Players
         public PlayerInputData input;
 
         private Zone zone;
-        private PlayerCharacter character;
 
         [Inject]
         public void Inject(Player player, Zone zone)
@@ -23,16 +22,6 @@ namespace Prototype.Networking.Players
             }
 
             this.zone = zone;
-
-            character = GetComponent<PlayerCharacter>();
-        }
-
-        private void FixedUpdate()
-        {
-            var currentData = character.Interpolation.current;
-            var newData = Simulate(currentData, input);
-
-            character.Interpolation.UpdateData(newData);
         }
 
         public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)

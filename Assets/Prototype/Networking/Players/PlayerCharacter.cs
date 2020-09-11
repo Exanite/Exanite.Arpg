@@ -90,6 +90,14 @@ namespace Prototype.Networking.Players
             }
         }
 
+        private void FixedUpdate()
+        {
+            var currentData = Interpolation.current;
+            var newData = Logic.Simulate(currentData, logic.input);
+
+            Interpolation.UpdateData(newData);
+        }
+
         public void DrawWithGL(Material material, Color color, float size = 0.25f) // ! temp
         {
             material.SetPass(0);
