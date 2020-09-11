@@ -40,18 +40,12 @@ namespace Prototype.Networking.Players
             return position;
         }
 
-        /// <summary>
-        /// Wraps a value between min and max values
-        /// </summary>
-        public static float Wrap(float value, float min, float max)
+        private static float Wrap(float value, float min, float max)
         {
             return Modulo(value - min, max - min) + min;
         }
 
-        /// <summary>
-        /// Returns the true modulo of a value when divided by a divisor
-        /// </summary>
-        public static float Modulo(float value, float divisor)
+        private static float Modulo(float value, float divisor)
         {
             return ((value % divisor) + divisor) % divisor;
         }
