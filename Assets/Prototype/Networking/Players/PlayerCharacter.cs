@@ -201,7 +201,7 @@ namespace Prototype.Networking.Players
                     if (Vector3.Distance(reconciliationData.updateData.playerPosition, updateData.playerPosition) > 0.05f)
                     {
                         var ticksToProcess = unconfirmedTicks.ToArray();
-                        Interpolation.current = reconciliationData.updateData;
+                        Interpolation.current = updateData;
 
                         for (int i = 0; i < ticksToProcess.Length; i++)
                         {
