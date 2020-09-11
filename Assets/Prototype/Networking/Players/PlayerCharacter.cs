@@ -1,4 +1,5 @@
-﻿using Prototype.Networking.Client;
+﻿using System.Collections.Generic;
+using Prototype.Networking.Client;
 using Prototype.Networking.Players.Data;
 using Prototype.Networking.Zones;
 using UnityEngine;
@@ -8,7 +9,10 @@ namespace Prototype.Networking.Players
 {
     public class PlayerCharacter : MonoBehaviour
     {
-        public PlayerInputData input;
+        private List<ReconciliationData> unconfirmedTicks = new List<ReconciliationData>();
+        private int lastTickFromServer;
+
+        private PlayerInputData input;
 
         private PlayerController controller;
         private PlayerInterpolation interpolation;
@@ -129,6 +133,16 @@ namespace Prototype.Networking.Players
                 GL.Vertex3(position.x - size, position.y - size, transform.position.z);
             }
             GL.End();
+        }
+
+        public void OnInput(PlayerInputData inputData)
+        {
+            input = inputData;
+        }
+
+        public void OnUpdate(PlayerUpdateData updateData)
+        {
+            Interpolation.UpdateData(updateData);
         }
     }
 }

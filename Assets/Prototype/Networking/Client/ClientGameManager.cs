@@ -125,7 +125,7 @@ namespace Prototype.Networking.Client
         {
             if (zoneManager.currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
-                player.Character.Interpolation.UpdateData(e.data);
+                player.Character.OnUpdate(e.data);
             }
         }
     }
