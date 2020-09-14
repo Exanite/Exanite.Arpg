@@ -32,7 +32,10 @@ namespace Prototype.Movement
 
         public void ReceivePlayerUpdate(PlayerUpdateData data)
         {
-            updateBuffer.Enqueue(data);
+            if (!updateBuffer.IsFull)
+            {
+                updateBuffer.Enqueue(data);
+            }
         }
     }
 }

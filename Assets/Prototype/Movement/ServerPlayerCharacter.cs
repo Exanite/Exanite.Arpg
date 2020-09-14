@@ -30,7 +30,10 @@ namespace Prototype.Movement
 
         public void ReceivePlayerInput(PlayerInputData data)
         {
-            inputBuffer.Enqueue(data);
+            if (!inputBuffer.IsFull)
+            {
+                inputBuffer.Enqueue(data);
+            }
         }
     }
 }
