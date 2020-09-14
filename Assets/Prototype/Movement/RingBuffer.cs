@@ -96,6 +96,28 @@ namespace Prototype.Movement
             return false;
         }
 
+        public T Peek()
+        {
+            if (IsEmpty)
+            {
+                throw new InvalidOperationException("Buffer is empty. Cannot Peek an item.");
+            }
+
+            return this[read];
+        }
+
+        public bool TryPeek(out T value)
+        {
+            if (!IsEmpty)
+            {
+                value = this[read];
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
         private int GetNextPowerOfTwo(int value)
         {
             int result = 2;
