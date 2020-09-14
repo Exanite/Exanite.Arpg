@@ -26,17 +26,19 @@ namespace Prototype.Movement
 
             lastTickFromServer = tick;
 
-            while (reconciliationBuffer.Count > 0 && reconciliationBuffer.Peek().tick < lastTickFromServer)
+            while (reconciliationBuffer.Count > 0 && reconciliationBuffer.Peek().tick < tick)
             {
                 reconciliationBuffer.Dequeue();
             }
 
-            if (reconciliationBuffer.Count > 0 && reconciliationBuffer.Peek().tick == lastTickFromServer)
+            if (reconciliationBuffer.TryPeek(out PlayerReconciliationData reconciliationData) && reconciliationData.tick == tick)
             {
-                PlayerReconciliationData reconciliationData = reconciliationBuffer.Dequeue();
+                reconciliationBuffer.Dequeue();
 
                 if (Vector3.Distance(reconciliationData.updateData.playerPosition, newData.playerPosition) > reconciliationPositionThreshold)
                 {
+                    currentData = newData;
+
                     for (int i = 0; i < reconciliationBuffer.Count; i++)
                     {
                         currentData = logic.Simulate(currentData, reconciliationBuffer[i].inputData);

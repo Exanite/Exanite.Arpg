@@ -41,7 +41,7 @@ namespace Prototype.Movement
             // state
             if (updateBuffer.TryDequeue(out PlayerUpdateData updateData))
             {
-                reconciliation.Reconciliate(ref currentUpdateData, updateData, tick); // todo use tick from server
+                reconciliation.Reconciliate(ref currentUpdateData, updateData, tick - 1); // todo use tick from server
             }
 
             // simulation
