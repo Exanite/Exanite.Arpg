@@ -5,7 +5,7 @@ namespace Prototype.Movement
 {
     public class PlayerInterpolation
     {
-        public readonly Transform player;
+        public Transform player;
 
         public PlayerUpdateData current;
         public PlayerUpdateData previous;
@@ -25,7 +25,7 @@ namespace Prototype.Movement
             float timeSinceLastUpdate = ticksSinceLastUpdate * timePerTick + timeSinceLastTick;
             float t = timeSinceLastUpdate / timePerTick;
 
-            player.position = Vector3.LerpUnclamped(previous.playerPosition, previous.playerPosition, t);
+            player.position = Vector3.LerpUnclamped(previous.playerPosition, current.playerPosition, t);
         }
 
         public void UpdateData(PlayerUpdateData newData, uint tick)
