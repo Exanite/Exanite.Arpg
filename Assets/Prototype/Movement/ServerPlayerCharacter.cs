@@ -7,23 +7,34 @@ namespace Prototype.Movement
     {
         public ClientPlayerCharacter client;
         public uint tick;
+        public float mapSize = 10;
+
+        private PlayerUpdateData currentUpdateData;
 
         private RingBuffer<PlayerInputData> inputBuffer;
+
+        private PlayerLogic logic;
 
         private void Start()
         {
             inputBuffer = new RingBuffer<PlayerInputData>(64);
+
+            logic = new PlayerLogic(mapSize);
         }
 
         private void FixedUpdate()
         {
             // input
+            inputBuffer.TryDequeue(out PlayerInputData inputData);
 
             // state
-
             // simulation
+            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
+
+            transform.position = currentUpdateData.playerPosition; // ! temp
 
             // messaging
+            client.ReceivePlayerUpdate(currentUpdateData);
 
             tick++;
         }
@@ -43,7 +54,7 @@ namespace Prototype.Movement
 
         public void ReceivePlayerInput(PlayerInputData data)
         {
-            if (!inputBuffer.IsFull)
+            if (!inputBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
             {
                 inputBuffer.Enqueue(data);
             }
