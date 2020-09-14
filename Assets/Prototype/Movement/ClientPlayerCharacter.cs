@@ -57,6 +57,17 @@ namespace Prototype.Movement
             tick++;
         }
 
+        private void OnGUI()
+        {
+            GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
+            {
+                GUILayout.Label($"--Client--");
+                GUILayout.Label($"Tick: {tick}");
+                GUILayout.Label($"UpdateBuffer.Count: {updateBuffer.Count}");
+            }
+            GUILayout.EndArea();
+        }
+
         public void ReceivePlayerUpdate(PlayerUpdateData data)
         {
             if (!updateBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
