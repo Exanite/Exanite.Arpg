@@ -16,6 +16,7 @@ namespace Prototype.Movement
         private PlayerInput input;
         private PlayerLogic logic;
         private PlayerInterpolation interpolation;
+        private PlayerReconciliation reconciliation;
 
         private void Start()
         {
@@ -24,6 +25,7 @@ namespace Prototype.Movement
             input = new PlayerInput();
             logic = new PlayerLogic(mapSize);
             interpolation = new PlayerInterpolation(transform);
+            reconciliation = new PlayerReconciliation(logic);
         }
 
         private void Update()
@@ -37,6 +39,10 @@ namespace Prototype.Movement
             var inputData = input.Get();
 
             // state
+            if (updateBuffer.TryDequeue(out PlayerUpdateData updateData))
+            {
+                reconciliation.Reconciliate(ref currentUpdateData, updateData, tick); // todo use tick from server
+            }
 
             // simulation
             currentUpdateData = logic.Simulate(currentUpdateData, inputData);
@@ -46,13 +52,14 @@ namespace Prototype.Movement
 
             // messaging
             server.ReceivePlayerInput(inputData);
+            reconciliation.AddFrame(tick, currentUpdateData, inputData);
 
             tick++;
         }
 
         public void ReceivePlayerUpdate(PlayerUpdateData data)
         {
-            if (!updateBuffer.IsFull)
+            if (!updateBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
             {
                 updateBuffer.Enqueue(data);
             }
