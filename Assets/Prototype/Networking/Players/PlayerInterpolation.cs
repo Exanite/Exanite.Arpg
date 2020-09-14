@@ -26,7 +26,7 @@ namespace Prototype.Networking.Players
             float timeSinceLastUpdate = ticksSinceLastUpdate * zone.TimePerTick + zone.TimeSinceLastTick;
             float t = timeSinceLastUpdate / zone.TimePerTick;
 
-            transform.position = Vector3.LerpUnclamped(previous.playerPosition, previous.playerPosition, t);
+            transform.position = Vector3.LerpUnclamped(previous.playerPosition, current.playerPosition, t);
         }
 
         public void UpdateData(PlayerUpdateData newData, bool snapInterpolation = false)
