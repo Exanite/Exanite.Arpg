@@ -16,8 +16,8 @@ namespace Prototype.Movement
         {
             float timePerTick = Time.fixedDeltaTime;
 
-            updateData.playerPosition += (Vector3)inputData.movement * timePerTick * 5;
-            updateData.playerPosition = Wrap(updateData.playerPosition);
+            updateData.position += (Vector3)inputData.movement * timePerTick * 5;
+            updateData.position = Wrap(updateData.position);
 
             return updateData;
         }

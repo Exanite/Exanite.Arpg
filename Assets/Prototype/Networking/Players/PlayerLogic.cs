@@ -19,8 +19,8 @@ namespace Prototype.Networking.Players
 
         public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)
         {
-            updateData.playerPosition += (Vector3)inputData.movement * zone.TimePerTick * 5;
-            updateData.playerPosition = Wrap(updateData.playerPosition);
+            updateData.position += (Vector3)inputData.movement * zone.TimePerTick * 5;
+            updateData.position = Wrap(updateData.position);
 
             return updateData;
         }

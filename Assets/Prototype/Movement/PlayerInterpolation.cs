@@ -27,14 +27,14 @@ namespace Prototype.Movement
             float timeSinceLastUpdate = ticksSinceLastUpdate * timePerTick + timeSinceLastTick;
             float t = timeSinceLastUpdate / timePerTick;
 
-            player.position = Vector3.LerpUnclamped(previous.playerPosition, current.playerPosition, t);
+            player.position = Vector3.LerpUnclamped(previous.position, current.position, t);
         }
 
         public void UpdateData(PlayerUpdateData newData, uint tick)
         {
-            if ((newData.playerPosition - current.playerPosition).sqrMagnitude > positionSnapThreshold * positionSnapThreshold)
+            if ((newData.position - current.position).sqrMagnitude > positionSnapThreshold * positionSnapThreshold)
             {
-                current.playerPosition = newData.playerPosition;
+                current.position = newData.position;
             }
 
             previous = current;

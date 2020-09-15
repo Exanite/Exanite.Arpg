@@ -6,16 +6,16 @@ namespace Prototype.Networking.Players.Data
 {
     public struct PlayerUpdateData : INetSerializable
     {
-        public Vector3 playerPosition;
+        public Vector3 position;
 
         public void Deserialize(NetDataReader reader)
         {
-            playerPosition = reader.GetVector3();
+            position = reader.GetVector3();
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.Put(playerPosition);
+            writer.Put(position);
         }
     }
 }

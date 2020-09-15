@@ -31,7 +31,7 @@ namespace Prototype.Movement
             // simulation
             currentUpdateData = logic.Simulate(currentUpdateData, inputData);
 
-            transform.position = currentUpdateData.playerPosition; // ! temp
+            transform.position = currentUpdateData.position; // ! temp
 
             // messaging
             client.ReceivePlayerUpdate(currentUpdateData);

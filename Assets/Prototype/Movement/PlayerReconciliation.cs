@@ -35,7 +35,7 @@ namespace Prototype.Movement
             {
                 reconciliationBuffer.Dequeue();
 
-                if (Vector3.Distance(reconciliationData.updateData.playerPosition, newData.playerPosition) > reconciliationPositionThreshold)
+                if (Vector3.Distance(reconciliationData.updateData.position, newData.position) > reconciliationPositionThreshold)
                 {
                     currentData = newData;
 
