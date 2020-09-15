@@ -5,8 +5,7 @@ namespace Exanite.Arpg.Collections
     public class RingBuffer<T>
     {
         private readonly T[] array;
-
-        private int bitmask;
+        private readonly int bitmask;
 
         private int read;
         private int write;
@@ -23,12 +22,22 @@ namespace Exanite.Arpg.Collections
         {
             get
             {
-                return array[index & bitmask];
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection");
+                }
+
+                return array[bitmask & (read + index)];
             }
 
             set
             {
-                array[index & bitmask] = value;
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection");
+                }
+
+                array[bitmask & (read + index)] = value;
             }
         }
 
@@ -71,7 +80,7 @@ namespace Exanite.Arpg.Collections
                 throw new InvalidOperationException("Buffer is full. Cannot Queue a new item.");
             }
 
-            this[write++] = value;
+            array[bitmask & write++] = value;
         }
 
         public T Dequeue()
@@ -81,14 +90,14 @@ namespace Exanite.Arpg.Collections
                 throw new InvalidOperationException("Buffer is empty. Cannot Dequeue an item.");
             }
 
-            return this[read++];
+            return array[bitmask & read++];
         }
 
         public bool TryDequeue(out T value)
         {
             if (!IsEmpty)
             {
-                value = this[read++];
+                value = array[bitmask & read++];
                 return true;
             }
 
@@ -103,14 +112,14 @@ namespace Exanite.Arpg.Collections
                 throw new InvalidOperationException("Buffer is empty. Cannot Peek an item.");
             }
 
-            return this[read];
+            return array[bitmask & read];
         }
 
         public bool TryPeek(out T value)
         {
             if (!IsEmpty)
             {
-                value = this[read];
+                value = array[bitmask & read];
                 return true;
             }
 
