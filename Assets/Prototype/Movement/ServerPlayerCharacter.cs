@@ -1,4 +1,5 @@
-﻿using Prototype.Networking.Players.Data;
+﻿using Exanite.Arpg.Collections;
+using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement

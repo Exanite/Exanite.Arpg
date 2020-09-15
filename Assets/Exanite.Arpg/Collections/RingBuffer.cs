@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prototype.Movement
+namespace Exanite.Arpg.Collections
 {
     public class RingBuffer<T>
     {
