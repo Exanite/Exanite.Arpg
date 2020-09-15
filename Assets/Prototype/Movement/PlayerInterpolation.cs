@@ -6,14 +6,16 @@ namespace Prototype.Movement
     public class PlayerInterpolation
     {
         public Transform player;
+        public float positionSnapThreshold;
 
         public PlayerUpdateData current;
         public PlayerUpdateData previous;
         public uint lastUpdateTick;
 
-        public PlayerInterpolation(Transform player)
+        public PlayerInterpolation(Transform player, float positionSnapThreshold = 2f)
         {
             this.player = player;
+            this.positionSnapThreshold = positionSnapThreshold;
         }
 
         public void Update(uint currentTick)
@@ -30,6 +32,11 @@ namespace Prototype.Movement
 
         public void UpdateData(PlayerUpdateData newData, uint tick)
         {
+            if ((newData.playerPosition - current.playerPosition).sqrMagnitude > positionSnapThreshold * positionSnapThreshold)
+            {
+                current.playerPosition = newData.playerPosition;
+            }
+
             previous = current;
             current = newData;
 
