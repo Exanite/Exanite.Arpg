@@ -2,6 +2,9 @@
 
 namespace Exanite.Arpg.Collections
 {
+    /// <summary>
+    /// Represents a fixed-sized circular queue
+    /// </summary>
     public class RingBuffer<T>
     {
         private readonly T[] array;
@@ -10,6 +13,10 @@ namespace Exanite.Arpg.Collections
         private int read;
         private int write;
 
+        /// <summary>
+        /// Creates a new <see cref="RingBuffer{T}"/>
+        /// </summary>
+        /// <param name="capacity">Power of two capacity of the buffer</param>
         public RingBuffer(int capacity)
         {
             capacity = GetNextPowerOfTwo(capacity);
@@ -18,6 +25,10 @@ namespace Exanite.Arpg.Collections
             bitmask = capacity - 1;
         }
 
+        /// <summary>
+        /// Gets or sets the object at the specified index
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="index"/> must be non-negative and less than the size of the collection</exception>
         public T this[int index]
         {
             get
@@ -41,6 +52,9 @@ namespace Exanite.Arpg.Collections
             }
         }
 
+        /// <summary>
+        /// The max number of objects the <see cref="RingBuffer{T}"/> can hold
+        /// </summary>
         public int Capacity
         {
             get
@@ -49,6 +63,9 @@ namespace Exanite.Arpg.Collections
             }
         }
 
+        /// <summary>
+        /// The number of objects contained in the <see cref="RingBuffer{T}"/>
+        /// </summary>
         public int Count
         {
             get
@@ -57,6 +74,9 @@ namespace Exanite.Arpg.Collections
             }
         }
 
+        /// <summary>
+        /// Is the <see cref="RingBuffer{T}"/> empty
+        /// </summary>
         public bool IsEmpty
         {
             get
@@ -65,6 +85,9 @@ namespace Exanite.Arpg.Collections
             }
         }
 
+        /// <summary>
+        /// Is the <see cref="RingBuffer{T}"/> full
+        /// </summary>
         public bool IsFull
         {
             get
@@ -73,6 +96,10 @@ namespace Exanite.Arpg.Collections
             }
         }
 
+        /// <summary>
+        /// Adds an object to the end of the <see cref="RingBuffer{T}"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The <see cref="RingBuffer{T}"/> is full</exception>
         public void Enqueue(T value)
         {
             if (IsFull)
@@ -83,6 +110,10 @@ namespace Exanite.Arpg.Collections
             array[bitmask & write++] = value;
         }
 
+        /// <summary>
+        /// Removes and returns the object at the beginning of the <see cref="RingBuffer{T}"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The <see cref="RingBuffer{T}"/> is empty</exception>
         public T Dequeue()
         {
             if (IsEmpty)
@@ -93,6 +124,9 @@ namespace Exanite.Arpg.Collections
             return array[bitmask & read++];
         }
 
+        /// <summary>
+        /// Tries to remove and return the object at the beginning of the <see cref="RingBuffer{T}"/>
+        /// </summary>
         public bool TryDequeue(out T value)
         {
             if (!IsEmpty)
@@ -105,6 +139,10 @@ namespace Exanite.Arpg.Collections
             return false;
         }
 
+        /// <summary>
+        /// Returns the object at the beginning of the <see cref="RingBuffer{T}"/> without removing it
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The <see cref="RingBuffer{T}"/> is empty</exception>
         public T Peek()
         {
             if (IsEmpty)
@@ -115,6 +153,9 @@ namespace Exanite.Arpg.Collections
             return array[bitmask & read];
         }
 
+        /// <summary>
+        /// Tries to returns the object at the beginning of the <see cref="RingBuffer{T}"/> without removing it
+        /// </summary>
         public bool TryPeek(out T value)
         {
             if (!IsEmpty)
