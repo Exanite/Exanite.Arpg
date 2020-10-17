@@ -1,39 +1,41 @@
 ﻿using Exanite.Arpg.Networking.Client;
 using LiteNetLib;
-using Prototype.Networking.Players;
+using Prototype.Networking.Players.Data;
 using Prototype.Networking.Players.Packets;
+using Prototype.Networking.Startup;
+using Prototype.Networking.Zones;
 using UnityEngine;
+using Zenject;
 
 namespace Prototype.Networking.Client
 {
     public class PlayerController : MonoBehaviour
     {
-        public UnityClient client; // inject this later
-        public Player player;
+        [SerializeField] private bool useAI;
 
-        public bool useAI;
-
+        private PlayerInputPacket inputPacket = new PlayerInputPacket();
         private float seed;
 
-        private void Start()
+        private UnityClient client;
+        private Zone zone;
+
+        [Inject]
+        public void Inject([InjectOptional] UnityClient client, Zone zone, GameStartSettings settings)
         {
+            this.client = client;
+            this.zone = zone;
+
+            useAI = settings.useAI;
+
             seed = Random.Range(-1000f, 1000f);
         }
 
-        private void FixedUpdate()
+        public PlayerInputData GetInput()
         {
-            Vector2 input;
+            var input = new PlayerInputData();
+            input.movement = useAI ? GetPerlinMovementInput() : GetMovementInput();
 
-            if (useAI)
-            {
-                input = GetPerlinMovementInput();
-            }
-            else
-            {
-                input = GetMovementInput();
-            }
-
-            SendMovementInput(input);
+            return input;
         }
 
         public Vector2 GetMovementInput()
@@ -58,9 +60,12 @@ namespace Prototype.Networking.Client
             return input * Mathf.PerlinNoise(Time.time * 0.1f + seed, 0) * 2;
         }
 
-        public void SendMovementInput(Vector2 movementInput)
+        public void SendInput(PlayerInputData inputData)
         {
-            client.SendPacketToServer(new PlayerInputPacket() { movementInput = movementInput }, DeliveryMethod.Unreliable);
+            inputPacket.tick = zone.Tick;
+            inputPacket.data = inputData;
+
+            client.SendPacketToServer(inputPacket, DeliveryMethod.Unreliable);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Prototype.Networking.Players;
+using Prototype.Networking.Server;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,7 +51,7 @@ namespace Prototype.Editor
                 using (new EditorGUI.IndentLevelScope())
                 {
                     EditorGUILayout.Toggle("Is loading zone", player.IsLoadingZone);
-                    EditorGUILayout.TextField("Current zone", player.CurrentZone?.guid.ToString());
+                    EditorGUILayout.TextField("Current zone", player.CurrentZone?.Guid.ToString());
 
                     if (DrawButton("Disconnect"))
                     {

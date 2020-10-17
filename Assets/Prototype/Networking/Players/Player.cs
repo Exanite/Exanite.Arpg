@@ -1,6 +1,7 @@
 ﻿using System;
 using Exanite.Arpg;
 using Prototype.Networking.Zones;
+using Zenject;
 
 namespace Prototype.Networking.Players
 {
@@ -14,13 +15,19 @@ namespace Prototype.Networking.Players
         private readonly int id;
         private readonly ZoneManager zoneManager;
 
+        private readonly bool isServer;
+        private readonly bool isLocal;
+
         /// <summary>
         /// Creates a new <see cref="Player"/>
         /// </summary>
-        public Player(int id, ZoneManager zoneManager)
+        public Player(int id, ZoneManager zoneManager, bool isServer, bool isLocal)
         {
             this.id = id;
             this.zoneManager = zoneManager;
+
+            this.isServer = isServer;
+            this.isLocal = isLocal;
         }
 
         /// <summary>
@@ -73,18 +80,42 @@ namespace Prototype.Networking.Players
             }
         }
 
+        public bool IsServer
+        {
+            get
+            {
+                return isServer;
+            }
+        }
+
+        public bool IsLocal
+        {
+            get
+            {
+                return isLocal;
+            }
+        }
+
         /// <summary>
         /// Creates a new <see cref="PlayerCharacter"/> in the <see cref="Player"/>'s current zone
         /// </summary>
-        public void CreatePlayerCharacter()
+        public void CreatePlayerCharacter(PlayerCharacter prefab, SceneContextRegistry registry)
         {
             if (CurrentZone == null)
             {
                 throw new InvalidOperationException("Player is currently not in a Zone");
             }
 
-            Character = CurrentZone.scene.InstantiateNew($"Player {Id}").AddComponent<PlayerCharacter>();
-            Character.player = this;
+            Character = CurrentZone.Scene.Instantiate(prefab);
+            Character.name = $"Player {Id}";
+
+            var context = Character.GetComponent<GameObjectContext>();
+            context.PreInstall += () =>
+            {
+                context.Container.Bind<Player>().FromInstance(this).AsSingle();
+            };
+
+            registry.GetContainerForScene(CurrentZone.Scene).InjectGameObject(Character.gameObject);
         }
     }
 }

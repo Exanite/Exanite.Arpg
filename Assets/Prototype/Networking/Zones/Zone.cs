@@ -5,28 +5,129 @@ using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Prototype.Networking.Players;
 using UnityEngine.SceneManagement;
+using Zenject;
+using UnityTime = UnityEngine.Time;
 
 namespace Prototype.Networking.Zones
 {
     public class Zone
     {
-        public bool isCreated;
+        private readonly Guid guid;
+        private readonly bool isServer;
 
-        public Guid guid;
-        public Scene scene;
+        private bool isCreated;
+        private Scene scene;
 
-        public Dictionary<int, Player> playersById = new Dictionary<int, Player>();
+        private uint tick;
 
-        public Zone(string zoneSceneName) : this(Guid.NewGuid(), zoneSceneName) { }
+        private Dictionary<int, Player> playersById = new Dictionary<int, Player>();
 
-        public Zone(Guid guid, string zoneSceneName)
+        public Zone(bool isServer) : this(Guid.NewGuid(), isServer) { }
+
+        public Zone(Guid guid, bool isServer)
         {
             this.guid = guid;
+            this.isServer = isServer;
         }
 
         public event EventHandler<Zone, Player> PlayerEnteredEvent;
 
         public event EventHandler<Zone, Player> PlayerLeftEvent;
+
+        public Guid Guid
+        {
+            get
+            {
+                return guid;
+            }
+        }
+
+        public bool IsServer
+        {
+            get
+            {
+                return isServer;
+            }
+        }
+
+        public bool IsCreated
+        {
+            get
+            {
+                return isCreated;
+            }
+
+            private set
+            {
+                isCreated = value;
+            }
+        }
+
+        public Scene Scene
+        {
+            get
+            {
+                return scene;
+            }
+
+            private set
+            {
+                scene = value;
+            }
+        }
+
+        public uint Tick
+        {
+            get
+            {
+                return tick;
+            }
+
+            set
+            {
+                tick = value;
+            }
+        }
+
+        public float Time
+        {
+            get
+            {
+                return Tick * TimePerTick;
+            }
+        }
+
+        public float TimePerTick
+        {
+            get
+            {
+                return UnityTime.fixedDeltaTime;
+            }
+        }
+
+        public float TimeSinceLastTick
+        {
+            get
+            {
+                return UnityTime.time - UnityTime.fixedTime;
+            }
+        }
+
+        public IReadOnlyDictionary<int, Player> PlayersById
+        {
+            get
+            {
+                return playersById;
+            }
+        }
+
+        public IReadOnlyCollection<Player> Players
+        {
+            get
+            {
+                return playersById.Values;
+            }
+        }
 
         public void AddPlayer(Player player)
         {
@@ -47,29 +148,34 @@ namespace Prototype.Networking.Zones
 
         public async UniTask Create(string zoneSceneName, Scene parent, SceneLoader sceneLoader)
         {
-            if (isCreated)
+            if (IsCreated)
             {
                 throw new InvalidOperationException("Zone has already been created.");
             }
 
-            scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent);
+            Action<DiContainer> bindings = (container) =>
+            {
+                container.Bind<Zone>().FromInstance(this).AsSingle();
+            };
 
-            isCreated = true;
+            Scene = await sceneLoader.LoadAdditiveScene(zoneSceneName, parent, bindings);
+
+            IsCreated = true;
         }
 
         public async UniTask Destroy(SceneLoader sceneLoader)
         {
-            if (!isCreated)
+            if (!IsCreated)
             {
                 return;
             }
 
-            foreach (var player in playersById.Values.ToArray())
+            foreach (var player in Players.ToArray())
             {
                 RemovePlayer(player);
             }
 
-            await sceneLoader.UnloadScene(scene);
+            await sceneLoader.UnloadScene(Scene);
         }
     }
 }

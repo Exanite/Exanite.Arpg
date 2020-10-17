@@ -20,6 +20,9 @@ namespace Exanite.Arpg.Networking
         [SerializeField] private int maxLatency = 100;
         [SerializeField] private int packetLoss = 0;
 
+        [Header("Settings:")]
+        [SerializeField] private int pingInterval = 250;
+
         /// <summary>
         /// <see cref="NetManager"/> used by the <see cref="UnityNetwork"/>
         /// </summary>
@@ -49,6 +52,8 @@ namespace Exanite.Arpg.Networking
             netManager.SimulationMinLatency = minLatency;
             netManager.SimulationMaxLatency = maxLatency;
             netManager.SimulationPacketLossChance = packetLoss;
+
+            netManager.PingInterval = pingInterval;
         }
 
         private void FixedUpdate()

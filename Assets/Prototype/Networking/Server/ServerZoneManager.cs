@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Exanite.Arpg;
 using Exanite.Arpg.Logging;
@@ -8,13 +7,15 @@ using Exanite.Arpg.Networking;
 using Exanite.Arpg.Networking.Server;
 using LiteNetLib;
 using Prototype.Networking.Players;
+using Prototype.Networking.Players.Data;
+using Prototype.Networking.Zones;
 using Prototype.Networking.Zones.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Prototype.Networking.Zones
+namespace Prototype.Networking.Server
 {
     public class ServerZoneManager : ZoneManager, IPacketHandler
     {
@@ -31,28 +32,41 @@ namespace Prototype.Networking.Zones
 
         private ILog log;
         private UnityServer server;
+        private ServerGameManager gameManager;
         private ServerPlayerManager playerManager;
         private Scene scene;
         private SceneLoader sceneLoader;
+        private SceneContextRegistry sceneContextRegistry;
 
         [Inject]
-        public void Inject(ILog log, UnityServer server, ServerPlayerManager playerManager, Scene scene, SceneLoader sceneLoader)
+        public void Inject(ILog log, UnityServer server, ServerGameManager gameManager, ServerPlayerManager playerManager, Scene scene, SceneLoader sceneLoader, SceneContextRegistry sceneContextRegistry)
         {
             this.log = log;
             this.server = server;
+            this.gameManager = gameManager;
             this.playerManager = playerManager;
             this.scene = scene;
             this.sceneLoader = sceneLoader;
+            this.sceneContextRegistry = sceneContextRegistry;
         }
 
         public event EventHandler<ServerZoneManager, Zone> ZoneAddedEvent;
         public event EventHandler<ServerZoneManager, Zone> ZoneRemovedEvent;
 
+        public async UniTask<Zone> CreateZone()
+        {
+            var zone = new Zone(true);
+            await zone.Create(zoneSceneName, scene, sceneLoader);
+
+            AddZone(zone);
+            return zone;
+        }
+
         public void AddZone(Zone zone)
         {
-            if (!zones.ContainsKey(zone.guid))
+            if (!zones.ContainsKey(zone.Guid))
             {
-                zones.Add(zone.guid, zone);
+                zones.Add(zone.Guid, zone);
 
                 zone.PlayerEnteredEvent += OnZonePlayerEntered;
                 zone.PlayerLeftEvent += OnZonePlayerLeft;
@@ -63,7 +77,7 @@ namespace Prototype.Networking.Zones
 
         public void RemoveZone(Zone zone)
         {
-            if (zones.Remove(zone.guid))
+            if (zones.Remove(zone.Guid))
             {
                 zone.PlayerEnteredEvent -= OnZonePlayerEntered;
                 zone.PlayerLeftEvent -= OnZonePlayerLeft;
@@ -72,22 +86,13 @@ namespace Prototype.Networking.Zones
             }
         }
 
-        public async UniTask<Zone> CreateZone()
-        {
-            var zone = new Zone(zoneSceneName);
-            await zone.Create(zoneSceneName, scene, sceneLoader);
-
-            AddZone(zone);
-            return zone;
-        }
-
         public override Zone GetPlayerCurrentZone(Player player)
         {
             // ! replace with Dictionary<Player, Zone> lookup: O(n) -> O(1)
 
             foreach (var zone in zones.Values)
             {
-                if (zone.playersById.ContainsValue(player))
+                if (zone.PlayersById.ContainsKey(player.Id))
                 {
                     return zone;
                 }
@@ -105,7 +110,9 @@ namespace Prototype.Networking.Zones
 
             await UniTask.WaitWhile(() => isCreatingPublicZones);
 
-            return publicZones.OrderBy(x => Random.value).First();
+            int index = Random.Range(0, publicZones.Count);
+
+            return publicZones[index];
         }
 
         public override bool IsPlayerLoading(Player player)
@@ -130,7 +137,7 @@ namespace Prototype.Networking.Zones
             }
 
             loadingPlayers.Add(player, zone);
-            server.SendPacket(player.Connection.Peer, new ZoneLoadPacket() { guid = zone.guid }, DeliveryMethod.ReliableOrdered);
+            server.SendPacket(player.Connection.Peer, new ZoneLoadPacket() { guid = zone.Guid }, DeliveryMethod.ReliableOrdered);
         }
 
         public void RegisterPackets(UnityNetwork network)
@@ -161,19 +168,33 @@ namespace Prototype.Networking.Zones
 
         private void OnZonePlayerEntered(Zone sender, Player e)
         {
-            e.CreatePlayerCharacter();
+            var newPlayer = (ServerPlayer)e;
 
-            var packet = new ZonePlayerEnteredPacket();
-            foreach (ServerPlayer player in sender.playersById.Values)
+            newPlayer.CreatePlayerCharacter(gameManager.playerCharacterPrefab, sceneContextRegistry);
+
+            var playerEnterPacket = new ZonePlayerEnteredPacket();
+            var joinPacket = new ZoneJoinPacket();
+
+            joinPacket.guid = sender.Guid;
+            joinPacket.tick = sender.Tick;
+            joinPacket.localPlayer = new PlayerCreateData(newPlayer.Id, newPlayer.Character.Interpolation.current);
+
+            foreach (ServerPlayer player in sender.Players)
             {
-                packet.playerId = e.Id;
-                packet.playerPosition = e.Character.transform.position;
-                server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+                if (player == newPlayer)
+                {
+                    continue;
+                }
 
-                packet.playerId = player.Id;
-                packet.playerPosition = player.Character.transform.position;
-                server.SendPacket(((ServerPlayer)e).Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
+                joinPacket.zonePlayers.Add(new PlayerCreateData(player.Id, player.Character.Interpolation.current));
+
+                playerEnterPacket.data.PlayerId = newPlayer.Id;
+                playerEnterPacket.data.UpdateData = newPlayer.Character.Interpolation.current;
+
+                server.SendPacket(player.Connection.Peer, playerEnterPacket, DeliveryMethod.ReliableOrdered);
             }
+
+            server.SendPacket(newPlayer.Connection.Peer, joinPacket, DeliveryMethod.ReliableOrdered);
         }
 
         private void OnZonePlayerLeft(Zone sender, Player e)
@@ -183,7 +204,7 @@ namespace Prototype.Networking.Zones
                 playerId = e.Id,
             };
 
-            foreach (ServerPlayer player in sender.playersById.Values)
+            foreach (ServerPlayer player in sender.Players)
             {
                 server.SendPacket(player.Connection.Peer, packet, DeliveryMethod.ReliableOrdered);
             }
@@ -196,7 +217,7 @@ namespace Prototype.Networking.Zones
                 return;
             }
 
-            if (!loadingPlayers.TryGetValue(loadingPlayer, out Zone zone) || zone.guid != e.guid)
+            if (!loadingPlayers.TryGetValue(loadingPlayer, out Zone zone) || zone.Guid != e.guid)
             {
                 log.Warning("Player with Id '{Id}' attempted to enter invalid zone", sender.Id);
                 return;

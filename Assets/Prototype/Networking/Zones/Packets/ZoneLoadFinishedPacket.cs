@@ -12,12 +12,12 @@ namespace Prototype.Networking.Zones.Packets
 
         public void Deserialize(NetDataReader reader)
         {
-            guid = new Guid(reader.GetBytesWithLength());
+            guid = reader.GetGuid();
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.PutBytesWithLength(guid.ToByteArray());
+            writer.Put(guid);
         }
     }
 }

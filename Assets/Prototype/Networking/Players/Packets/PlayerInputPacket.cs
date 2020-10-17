@@ -1,25 +1,27 @@
 ﻿using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
-using UnityEngine;
+using Prototype.Networking.Players.Data;
 
 namespace Prototype.Networking.Players.Packets
 {
     public class PlayerInputPacket : IPacket
     {
-        public Vector2 movementInput;
+        public uint tick;
+
+        public PlayerInputData data;
 
         public void Deserialize(NetDataReader reader)
         {
-            movementInput = reader.GetVector2();
+            tick = reader.GetUInt();
 
-            movementInput = Vector2.ClampMagnitude(movementInput, 1);
+            data.Deserialize(reader);
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            movementInput = Vector2.ClampMagnitude(movementInput, 1);
+            writer.Put(tick);
 
-            writer.Put(movementInput);
+            data.Serialize(writer);
         }
     }
 }

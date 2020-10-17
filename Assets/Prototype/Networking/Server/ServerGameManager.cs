@@ -17,8 +17,11 @@ namespace Prototype.Networking.Server
     {
         public UnityServer server;
         public Material glMaterial;
+        public PlayerCharacter playerCharacterPrefab;
 
         private Zone selectedZone;
+
+        private PlayerUpdatePacket updatePacket = new PlayerUpdatePacket();
 
         private ILog log;
         private GameStartSettings startSettings;
@@ -46,27 +49,9 @@ namespace Prototype.Networking.Server
             server.Port = startSettings.port;
 
             StartServer();
-
-            //while (true) // for testing moving players between zones
-            //{
-            //    MoveRandomPlayerToRandomZone();
-
-            //    await UniTask.Delay(TimeSpan.FromSeconds(1));
-            //}
         }
 
-        //private void MoveRandomPlayerToRandomZone() // for testing moving players between zones
-        //{
-        //    if (playerManager.PlayerCount > 0 && zoneManager.zones.Count > 0)
-        //    {
-        //        var player = playerManager.Players.OrderBy(x => Random.value).First();
-        //        var zone = zoneManager.zones.OrderBy(x => Random.value).First().Value;
-
-        //        zoneManager.MovePlayerToZone(player, zone);
-        //    }
-        //}
-
-        private void Update() // for debug
+        private void Update() // ! for debug
         {
             if (zoneManager.publicZones == null)
             {
@@ -89,47 +74,7 @@ namespace Prototype.Networking.Server
 
         private void FixedUpdate()
         {
-            foreach (var player in playerManager.Players)
-            {
-                if (!player.Character)
-                {
-                    continue;
-                }
-
-                var playerTransform = player.Character.transform;
-
-                playerTransform.position += (Vector3)(player.Character.movementInput * Time.deltaTime * 5);
-
-                float verticalExtents = Camera.main.orthographicSize;
-                float horizontalExtents = Camera.main.orthographicSize * Screen.width / Screen.height;
-
-                if (playerTransform.position.x > horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x -= horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.x < -horizontalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.x += horizontalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y > verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y -= verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-                else if (playerTransform.position.y < -verticalExtents)
-                {
-                    Vector2 newPosition = playerTransform.position;
-                    newPosition.y += verticalExtents * 2;
-                    playerTransform.position = newPosition;
-                }
-
-                SendPositionUpdates();
-            }
+            SendPositionUpdates();
         }
 
         private void OnRenderObject()
@@ -139,7 +84,7 @@ namespace Prototype.Networking.Server
                 return;
             }
 
-            foreach (var player in selectedZone.playersById.Values)
+            foreach (var player in selectedZone.Players)
             {
                 if (player.Character)
                 {
@@ -150,7 +95,8 @@ namespace Prototype.Networking.Server
 
         private void OnGUI()
         {
-            GUILayout.Label($"Selected zone: {selectedZone?.guid}");
+            GUILayout.Label($"Selected zone: {selectedZone?.Guid}");
+            GUILayout.Label($"Selected zone tick: {selectedZone?.Tick}");
             GUILayout.Label($"Active zone count: {zoneManager.zones.Count}");
             GUILayout.Label($"(Use the 1-9 keys to change selected zones)");
         }
@@ -224,7 +170,7 @@ namespace Prototype.Networking.Server
         {
             if (playerManager.TryGetPlayer(sender.Id, out ServerPlayer player))
             {
-                player.Character.movementInput = e.movementInput;
+                player.Character.OnInput(e.data);
             }
         }
 
@@ -232,18 +178,16 @@ namespace Prototype.Networking.Server
         {
             foreach (Zone zone in zoneManager.zones.Values)
             {
-                foreach (ServerPlayer target in zone.playersById.Values)
+                foreach (ServerPlayer target in zone.Players)
                 {
-                    foreach (ServerPlayer current in zone.playersById.Values)
+                    foreach (ServerPlayer current in zone.Players)
                     {
-                        server.SendPacket(
-                            target.Connection.Peer,
-                            new PlayerPositionUpdatePacket()
-                            {
-                                playerId = current.Id,
-                                playerPosition = current.Character.transform.position,
-                            },
-                            DeliveryMethod.Unreliable);
+                        updatePacket.tick = zone.Tick;
+
+                        updatePacket.playerId = current.Id;
+                        updatePacket.data = current.Character.Interpolation.current;
+
+                        server.SendPacket(target.Connection.Peer, updatePacket, DeliveryMethod.Unreliable);
                     }
                 }
             }

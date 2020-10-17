@@ -1,24 +1,21 @@
 ﻿using Exanite.Arpg.Networking;
 using LiteNetLib.Utils;
-using UnityEngine;
+using Prototype.Networking.Players.Data;
 
 namespace Prototype.Networking.Zones.Packets
 {
     public class ZonePlayerEnteredPacket : IPacket
     {
-        public int playerId;
-        public Vector3 playerPosition;
+        public PlayerCreateData data;
 
         public void Deserialize(NetDataReader reader)
         {
-            playerId = reader.GetInt();
-            playerPosition = reader.GetVector3();
+            data.Deserialize(reader);
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.Put(playerId);
-            writer.Put(playerPosition);
+            data.Serialize(writer);
         }
     }
 }

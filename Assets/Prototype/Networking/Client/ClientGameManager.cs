@@ -7,7 +7,6 @@ using LiteNetLib;
 using Prototype.Networking.Players;
 using Prototype.Networking.Players.Packets;
 using Prototype.Networking.Startup;
-using Prototype.Networking.Zones;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -18,6 +17,7 @@ namespace Prototype.Networking.Client
     {
         public UnityClient client;
         public Material glMaterial;
+        public PlayerCharacter playerCharacterPrefab;
 
         public Player localPlayer;
 
@@ -54,7 +54,7 @@ namespace Prototype.Networking.Client
         {
             if (!startSettings.useAI && zoneManager.currentZone != null)
             {
-                foreach (var player in zoneManager.currentZone.playersById.Values)
+                foreach (var player in zoneManager.currentZone.Players)
                 {
                     if (player.Character)
                     {
@@ -95,7 +95,7 @@ namespace Prototype.Networking.Client
             client.DisconnectedEvent += OnDisconnected;
 
             client.RegisterPacketReceiver<PlayerIdAssignmentPacket>(OnPlayerIdAssignment);
-            client.RegisterPacketReceiver<PlayerPositionUpdatePacket>(OnPlayerPositionUpdate);
+            client.RegisterPacketReceiver<PlayerUpdatePacket>(OnPlayerUpdate);
 
             zoneManager.RegisterPackets(client);
         }
@@ -104,7 +104,7 @@ namespace Prototype.Networking.Client
         {
             zoneManager.UnregisterPackets(client);
 
-            client.ClearPacketReceiver<PlayerPositionUpdatePacket>();
+            client.ClearPacketReceiver<PlayerUpdatePacket>();
             client.ClearPacketReceiver<PlayerIdAssignmentPacket>();
 
             client.DisconnectedEvent -= OnDisconnected;
@@ -118,17 +118,14 @@ namespace Prototype.Networking.Client
 
         private void OnPlayerIdAssignment(NetPeer sender, PlayerIdAssignmentPacket e)
         {
-            localPlayer = new Player(e.id, zoneManager);
+            localPlayer = new Player(e.id, zoneManager, false, true);
         }
 
-        private void OnPlayerPositionUpdate(NetPeer sender, PlayerPositionUpdatePacket e)
+        private void OnPlayerUpdate(NetPeer sender, PlayerUpdatePacket e)
         {
-            if (zoneManager.currentZone.playersById.TryGetValue(e.playerId, out Player player))
+            if (zoneManager.currentZone.PlayersById.TryGetValue(e.playerId, out Player player))
             {
-                if (player.Character)
-                {
-                    player.Character.transform.position = e.playerPosition;
-                }
+                player.Character.OnUpdate(e.data, e.tick);
             }
         }
     }
