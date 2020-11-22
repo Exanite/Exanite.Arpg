@@ -4,13 +4,9 @@ using UnityEngine;
 
 namespace Prototype.Movement
 {
-    public class ServerPlayerCharacter : MonoBehaviour
+    public class ServerPlayerCharacter : PlayerCharacter
     {
         public ClientPlayerCharacter client;
-        public uint tick;
-        public float mapSize = 10;
-
-        private PlayerUpdateData currentUpdateData;
 
         private RingBuffer<Frame<PlayerInputData>> inputFrameBuffer;
 
