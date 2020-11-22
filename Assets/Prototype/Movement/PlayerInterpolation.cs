@@ -1,4 +1,4 @@
-﻿using Prototype.Networking.Players.Data;
+using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
@@ -8,8 +8,8 @@ namespace Prototype.Movement
         public Transform player;
         public float positionSnapThreshold;
 
-        public PlayerUpdateData current;
-        public PlayerUpdateData previous;
+        public PlayerStateData current;
+        public PlayerStateData previous;
         public uint lastUpdateTick;
 
         public PlayerInterpolation(Transform player, float positionSnapThreshold = 2f)
@@ -24,13 +24,13 @@ namespace Prototype.Movement
             float timePerTick = Time.fixedDeltaTime;
             float timeSinceLastTick = Time.time - Time.fixedTime;
 
-            float timeSinceLastUpdate = ticksSinceLastUpdate * timePerTick + timeSinceLastTick;
+            float timeSinceLastUpdate = (ticksSinceLastUpdate * timePerTick) + timeSinceLastTick;
             float t = timeSinceLastUpdate / timePerTick;
 
             player.position = Vector3.LerpUnclamped(previous.position, current.position, t);
         }
 
-        public void UpdateData(PlayerUpdateData newData, uint tick)
+        public void UpdateData(PlayerStateData newData, uint tick)
         {
             if ((newData.position - current.position).sqrMagnitude > positionSnapThreshold * positionSnapThreshold)
             {

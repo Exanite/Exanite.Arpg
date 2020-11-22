@@ -16,12 +16,12 @@ namespace Prototype.Movement
 
         private void OnEnable()
         {
-            character.Updated += Character_Updated;
+            character.StateUpdated += Character_StateUpdated;
         }
 
         private void OnDisable()
         {
-            character.Updated -= Character_Updated;
+            character.StateUpdated -= Character_StateUpdated;
         }
 
         private void Update()
@@ -29,7 +29,7 @@ namespace Prototype.Movement
             interpolation.Update(character.tick);
         }
 
-        private void Character_Updated(PlayerCharacter sender, PlayerUpdateData e)
+        private void Character_StateUpdated(PlayerCharacter sender, PlayerStateData e)
         {
             interpolation.UpdateData(e, character.tick);
         }

@@ -8,7 +8,7 @@ namespace Prototype.Movement
     {
         public ServerPlayerCharacter server;
 
-        private RingBuffer<Frame<PlayerUpdateData>> updateFrameBuffer;
+        private RingBuffer<Frame<PlayerStateData>> stateFrameBuffer;
 
         private PlayerInput input;
         private PlayerLogic logic;
@@ -16,7 +16,7 @@ namespace Prototype.Movement
 
         private void Start()
         {
-            updateFrameBuffer = new RingBuffer<Frame<PlayerUpdateData>>(64);
+            stateFrameBuffer = new RingBuffer<Frame<PlayerStateData>>(64);
 
             input = new PlayerInput();
             logic = new PlayerLogic(mapSize);
@@ -29,19 +29,19 @@ namespace Prototype.Movement
             var inputData = input.Get();
 
             // simulation
-            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
+            currentStateData = logic.Simulate(currentStateData, inputData);
 
             // state
-            if (updateFrameBuffer.TryDequeue(out var updateFrame))
+            if (stateFrameBuffer.TryDequeue(out var stateFrame))
             {
-                reconciliation.Reconciliate(ref currentUpdateData, updateFrame.data, updateFrame.tick);
+                reconciliation.Reconciliate(ref currentStateData, stateFrame.data, stateFrame.tick);
             }
 
-            OnUpdated();
+            OnStateUpdated();
 
             // messaging
             server.OnReceivePlayerInput(tick, inputData);
-            reconciliation.AddFrame(tick, currentUpdateData, inputData);
+            reconciliation.AddFrame(tick, currentStateData, inputData);
 
             tick++;
         }
@@ -52,19 +52,19 @@ namespace Prototype.Movement
             {
                 GUILayout.Label("--Client--");
                 GUILayout.Label($"Tick: {tick}");
-                GUILayout.Label($"UpdateBuffer.Count: {updateFrameBuffer.Count}");
+                GUILayout.Label($"UpdateBuffer.Count: {stateFrameBuffer.Count}");
             }
             GUILayout.EndArea();
         }
 
-        public void OnReceivePlayerUpdate(uint tick, PlayerUpdateData data)
+        public void OnReceivePlayerState(uint tick, PlayerStateData data)
         {
-            if (updateFrameBuffer.IsFull)
+            if (stateFrameBuffer.IsFull)
             {
-                updateFrameBuffer.Dequeue();
+                stateFrameBuffer.Dequeue();
             }
 
-            updateFrameBuffer.Enqueue(new Frame<PlayerUpdateData>(tick, data));
+            stateFrameBuffer.Enqueue(new Frame<PlayerStateData>(tick, data));
         }
     }
 }

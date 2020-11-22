@@ -25,15 +25,15 @@ namespace Prototype.Movement
             inputFrameBuffer.TryDequeue(out var inputFrame);
 
             // simulation
-            currentUpdateData = logic.Simulate(currentUpdateData, inputFrame.data);
+            currentStateData = logic.Simulate(currentStateData, inputFrame.data);
 
-            transform.position = currentUpdateData.position; // ! temp
+            transform.position = currentStateData.position; // ! temp
 
             // state
-            OnUpdated();
+            OnStateUpdated();
 
             // messaging
-            client.OnReceivePlayerUpdate(tick, currentUpdateData);
+            client.OnReceivePlayerState(tick, currentStateData);
 
             tick++;
         }

@@ -1,5 +1,4 @@
 using Exanite.Arpg;
-using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
@@ -9,13 +8,13 @@ namespace Prototype.Movement
         public uint tick;
         public float mapSize = 10;
 
-        public PlayerUpdateData currentUpdateData;
+        public PlayerStateData currentStateData;
 
-        public event EventHandler<PlayerCharacter, PlayerUpdateData> Updated;
+        public event EventHandler<PlayerCharacter, PlayerStateData> StateUpdated;
 
-        protected void OnUpdated()
+        protected void OnStateUpdated()
         {
-            Updated?.Invoke(this, currentUpdateData);
+            StateUpdated?.Invoke(this, currentStateData);
         }
     }
 }
