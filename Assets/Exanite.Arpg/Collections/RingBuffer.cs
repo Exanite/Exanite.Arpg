@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Exanite.Arpg.Collections
 {
@@ -28,26 +28,18 @@ namespace Exanite.Arpg.Collections
         /// <summary>
         /// Gets or sets the object at the specified index
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="index"/> must be non-negative and less than the size of the collection</exception>
-        public T this[int index]
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public T this[int index, bool ignoreOutOfRange = false]
         {
             get
             {
-                if (index < 0 || index >= Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection");
-                }
-
+                ValidateIndex(index);
                 return array[bitmask & (read + index)];
             }
 
             set
             {
-                if (index < 0 || index >= Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection");
-                }
-
+                ValidateIndex(index);
                 array[bitmask & (read + index)] = value;
             }
         }
@@ -177,6 +169,14 @@ namespace Exanite.Arpg.Collections
             }
 
             return result;
+        }
+
+        private void ValidateIndex(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection");
+            }
         }
     }
 }
