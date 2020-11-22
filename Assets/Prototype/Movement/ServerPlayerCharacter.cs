@@ -56,10 +56,12 @@ namespace Prototype.Movement
 
         public void ReceivePlayerInput(uint tick, PlayerInputData data)
         {
-            if (!inputFrameBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
+            if (inputFrameBuffer.IsFull)
             {
-                inputFrameBuffer.Enqueue(new Frame<PlayerInputData>(tick, data));
+                inputFrameBuffer.Dequeue();
             }
+
+            inputFrameBuffer.Enqueue(new Frame<PlayerInputData>(tick, data));
         }
     }
 }
