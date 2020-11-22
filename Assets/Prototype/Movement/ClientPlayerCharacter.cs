@@ -36,6 +36,7 @@ namespace Prototype.Movement
                 reconciliation.Reconciliate(ref currentStateData, stateFrame.data, stateFrame.tick);
             }
 
+            ApplyState(currentStateData);
             OnStateUpdated();
 
             // messaging

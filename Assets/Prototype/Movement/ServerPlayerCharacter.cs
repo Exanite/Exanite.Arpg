@@ -27,9 +27,8 @@ namespace Prototype.Movement
             // simulation
             currentStateData = logic.Simulate(currentStateData, inputFrame.data);
 
-            transform.position = currentStateData.position; // ! temp
-
             // state
+            ApplyState(currentStateData);
             OnStateUpdated();
 
             // messaging
