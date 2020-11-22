@@ -12,13 +12,13 @@ namespace Prototype.Movement
 
         private PlayerUpdateData currentUpdateData;
 
-        private RingBuffer<PlayerInputData> inputBuffer;
+        private RingBuffer<Frame<PlayerInputData>> inputFrameBuffer;
 
         private PlayerLogic logic;
 
         private void Start()
         {
-            inputBuffer = new RingBuffer<PlayerInputData>(64);
+            inputFrameBuffer = new RingBuffer<Frame<PlayerInputData>>(64);
 
             logic = new PlayerLogic(mapSize);
         }
@@ -26,17 +26,17 @@ namespace Prototype.Movement
         private void FixedUpdate()
         {
             // input
-            inputBuffer.TryDequeue(out PlayerInputData inputData);
+            inputFrameBuffer.TryDequeue(out var inputFrame);
 
             // simulation
-            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
+            currentUpdateData = logic.Simulate(currentUpdateData, inputFrame.data);
 
             transform.position = currentUpdateData.position; // ! temp
 
             // state
 
             // messaging
-            client.ReceivePlayerUpdate(currentUpdateData);
+            client.ReceivePlayerUpdate(tick, currentUpdateData);
 
             tick++;
         }
@@ -49,16 +49,16 @@ namespace Prototype.Movement
 
                 GUILayout.Label($"--Server--");
                 GUILayout.Label($"Tick: {tick}");
-                GUILayout.Label($"InputBuffer.Count: {inputBuffer.Count}");
+                GUILayout.Label($"InputBuffer.Count: {inputFrameBuffer.Count}");
             }
             GUILayout.EndArea();
         }
 
-        public void ReceivePlayerInput(PlayerInputData data)
+        public void ReceivePlayerInput(uint tick, PlayerInputData data)
         {
-            if (!inputBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
+            if (!inputFrameBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
             {
-                inputBuffer.Enqueue(data);
+                inputFrameBuffer.Enqueue(new Frame<PlayerInputData>(tick, data));
             }
         }
     }

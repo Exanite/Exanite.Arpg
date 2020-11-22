@@ -12,7 +12,7 @@ namespace Prototype.Movement
 
         private PlayerUpdateData currentUpdateData;
 
-        private RingBuffer<PlayerUpdateData> updateBuffer;
+        private RingBuffer<Frame<PlayerUpdateData>> updateFrameBuffer;
 
         private PlayerInput input;
         private PlayerLogic logic;
@@ -21,7 +21,7 @@ namespace Prototype.Movement
 
         private void Start()
         {
-            updateBuffer = new RingBuffer<PlayerUpdateData>(64);
+            updateFrameBuffer = new RingBuffer<Frame<PlayerUpdateData>>(64);
 
             input = new PlayerInput();
             logic = new PlayerLogic(mapSize);
@@ -43,16 +43,16 @@ namespace Prototype.Movement
             currentUpdateData = logic.Simulate(currentUpdateData, inputData);
 
             // state
-            if (updateBuffer.TryDequeue(out PlayerUpdateData updateData))
+            if (updateFrameBuffer.TryDequeue(out var updateFrame))
             {
-                reconciliation.Reconciliate(ref currentUpdateData, updateData, tick - 1); // todo use tick from server
+                reconciliation.Reconciliate(ref currentUpdateData, updateFrame.data, updateFrame.tick);
             }
 
             // view
             interpolation.UpdateData(currentUpdateData, tick);
 
             // messaging
-            server.ReceivePlayerInput(inputData);
+            server.ReceivePlayerInput(tick, inputData);
             reconciliation.AddFrame(tick, currentUpdateData, inputData);
 
             tick++;
@@ -64,16 +64,16 @@ namespace Prototype.Movement
             {
                 GUILayout.Label($"--Client--");
                 GUILayout.Label($"Tick: {tick}");
-                GUILayout.Label($"UpdateBuffer.Count: {updateBuffer.Count}");
+                GUILayout.Label($"UpdateBuffer.Count: {updateFrameBuffer.Count}");
             }
             GUILayout.EndArea();
         }
 
-        public void ReceivePlayerUpdate(PlayerUpdateData data)
+        public void ReceivePlayerUpdate(uint tick, PlayerUpdateData data)
         {
-            if (!updateBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
+            if (!updateFrameBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
             {
-                updateBuffer.Enqueue(data);
+                updateFrameBuffer.Enqueue(new Frame<PlayerUpdateData>(tick, data));
             }
         }
     }
