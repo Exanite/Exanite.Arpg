@@ -29,7 +29,7 @@ namespace Exanite.Arpg.Collections
         /// Gets or sets the object at the specified index
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public T this[int index, bool ignoreOutOfRange = false]
+        public T this[int index]
         {
             get
             {
