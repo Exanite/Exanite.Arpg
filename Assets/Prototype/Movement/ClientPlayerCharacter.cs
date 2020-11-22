@@ -12,7 +12,6 @@ namespace Prototype.Movement
 
         private PlayerInput input;
         private PlayerLogic logic;
-        private PlayerInterpolation interpolation;
         private PlayerReconciliation reconciliation;
 
         private void Start()
@@ -21,13 +20,7 @@ namespace Prototype.Movement
 
             input = new PlayerInput();
             logic = new PlayerLogic(mapSize);
-            interpolation = new PlayerInterpolation(transform);
             reconciliation = new PlayerReconciliation(logic);
-        }
-
-        private void Update()
-        {
-            interpolation.Update(tick);
         }
 
         private void FixedUpdate()
@@ -45,9 +38,6 @@ namespace Prototype.Movement
             }
 
             OnUpdated();
-
-            // view
-            interpolation.UpdateData(currentUpdateData, tick);
 
             // messaging
             server.OnReceivePlayerInput(tick, inputData);
