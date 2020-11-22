@@ -47,7 +47,7 @@ namespace Prototype.Movement
             {
                 GUILayout.FlexibleSpace();
 
-                GUILayout.Label($"--Server--");
+                GUILayout.Label("--Server--");
                 GUILayout.Label($"Tick: {tick}");
                 GUILayout.Label($"InputBuffer.Count: {inputFrameBuffer.Count}");
             }

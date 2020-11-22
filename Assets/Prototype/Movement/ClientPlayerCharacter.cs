@@ -62,7 +62,7 @@ namespace Prototype.Movement
         {
             GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
             {
-                GUILayout.Label($"--Client--");
+                GUILayout.Label("--Client--");
                 GUILayout.Label($"Tick: {tick}");
                 GUILayout.Label($"UpdateBuffer.Count: {updateFrameBuffer.Count}");
             }
