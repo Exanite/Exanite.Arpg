@@ -1,4 +1,3 @@
-using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
