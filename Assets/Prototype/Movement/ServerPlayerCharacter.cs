@@ -22,7 +22,8 @@ namespace Prototype.Movement
         private void FixedUpdate()
         {
             // input
-            inputFrameBuffer.TryDequeue(out var inputFrame);
+            Frame<PlayerInputData> inputFrame;
+            while (inputFrameBuffer.TryDequeue(out inputFrame) && inputFrame.tick < tick) { }
 
             // simulation
             currentStateData = logic.Simulate(currentStateData, inputFrame.data);

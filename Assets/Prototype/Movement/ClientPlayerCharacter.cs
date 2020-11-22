@@ -31,7 +31,15 @@ namespace Prototype.Movement
             currentStateData = logic.Simulate(currentStateData, inputData);
 
             // state
-            if (stateFrameBuffer.TryDequeue(out var stateFrame))
+            Frame<PlayerStateData> stateFrame;
+            bool hasValue = false;
+
+            while (stateFrameBuffer.TryDequeue(out stateFrame) && stateFrame.tick < tick)
+            {
+                hasValue = true;
+            }
+
+            if (hasValue)
             {
                 reconciliation.Reconciliate(ref currentStateData, stateFrame.data, stateFrame.tick);
             }
