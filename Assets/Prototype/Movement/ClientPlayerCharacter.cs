@@ -52,7 +52,7 @@ namespace Prototype.Movement
             interpolation.UpdateData(currentUpdateData, tick);
 
             // messaging
-            server.ReceivePlayerInput(tick, inputData);
+            server.OnReceivePlayerInput(tick, inputData);
             reconciliation.AddFrame(tick, currentUpdateData, inputData);
 
             tick++;
@@ -69,7 +69,7 @@ namespace Prototype.Movement
             GUILayout.EndArea();
         }
 
-        public void ReceivePlayerUpdate(uint tick, PlayerUpdateData data)
+        public void OnReceivePlayerUpdate(uint tick, PlayerUpdateData data)
         {
             if (updateFrameBuffer.IsFull)
             {

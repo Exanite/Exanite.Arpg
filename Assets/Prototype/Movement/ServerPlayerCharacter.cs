@@ -36,7 +36,7 @@ namespace Prototype.Movement
             // state
 
             // messaging
-            client.ReceivePlayerUpdate(tick, currentUpdateData);
+            client.OnReceivePlayerUpdate(tick, currentUpdateData);
 
             tick++;
         }
@@ -54,7 +54,7 @@ namespace Prototype.Movement
             GUILayout.EndArea();
         }
 
-        public void ReceivePlayerInput(uint tick, PlayerInputData data)
+        public void OnReceivePlayerInput(uint tick, PlayerInputData data)
         {
             if (inputFrameBuffer.IsFull)
             {
