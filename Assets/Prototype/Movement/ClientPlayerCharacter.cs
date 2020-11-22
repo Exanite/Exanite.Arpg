@@ -1,4 +1,4 @@
-﻿using Exanite.Arpg.Collections;
+using Exanite.Arpg.Collections;
 using Prototype.Networking.Players.Data;
 using UnityEngine;
 
@@ -39,14 +39,14 @@ namespace Prototype.Movement
             // input
             var inputData = input.Get();
 
+            // simulation
+            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
+
             // state
             if (updateBuffer.TryDequeue(out PlayerUpdateData updateData))
             {
                 reconciliation.Reconciliate(ref currentUpdateData, updateData, tick - 1); // todo use tick from server
             }
-
-            // simulation
-            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
 
             // view
             interpolation.UpdateData(currentUpdateData, tick);

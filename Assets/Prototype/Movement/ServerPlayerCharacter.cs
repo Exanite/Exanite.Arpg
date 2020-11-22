@@ -1,4 +1,4 @@
-﻿using Exanite.Arpg.Collections;
+using Exanite.Arpg.Collections;
 using Prototype.Networking.Players.Data;
 using UnityEngine;
 
@@ -28,11 +28,12 @@ namespace Prototype.Movement
             // input
             inputBuffer.TryDequeue(out PlayerInputData inputData);
 
-            // state
             // simulation
             currentUpdateData = logic.Simulate(currentUpdateData, inputData);
 
             transform.position = currentUpdateData.position; // ! temp
+
+            // state
 
             // messaging
             client.ReceivePlayerUpdate(currentUpdateData);
