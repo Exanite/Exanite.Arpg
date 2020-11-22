@@ -30,6 +30,7 @@ namespace Prototype.Movement
             transform.position = currentUpdateData.position; // ! temp
 
             // state
+            OnUpdated();
 
             // messaging
             client.OnReceivePlayerUpdate(tick, currentUpdateData);

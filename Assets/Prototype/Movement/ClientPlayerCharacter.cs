@@ -44,6 +44,8 @@ namespace Prototype.Movement
                 reconciliation.Reconciliate(ref currentUpdateData, updateFrame.data, updateFrame.tick);
             }
 
+            OnUpdated();
+
             // view
             interpolation.UpdateData(currentUpdateData, tick);
 
