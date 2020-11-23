@@ -9,7 +9,7 @@ namespace Prototype.Movement
 
         public PlayerStateData current;
         public PlayerStateData previous;
-        public uint lastUpdateTick;
+        public uint lastTick;
 
         public PlayerInterpolation(Transform player, float positionSnapThreshold = 2f)
         {
@@ -17,15 +17,12 @@ namespace Prototype.Movement
             this.positionSnapThreshold = positionSnapThreshold;
         }
 
-        public void Update(uint currentTick)
+        public void Update(ZoneTime time)
         {
-            uint ticksSinceLastUpdate = currentTick - lastUpdateTick - 1;
+            uint ticksSinceLastUpdate = time.CurrentTick - lastTick;
+            float timeSinceLastUpdate = (ticksSinceLastUpdate * time.TimePerTick) + time.TimeSinceLastTick;
 
-            float timePerTick = Time.fixedDeltaTime;
-            float timeSinceLastTick = Time.time - Time.fixedTime;
-
-            float timeSinceLastUpdate = (ticksSinceLastUpdate * timePerTick) + timeSinceLastTick;
-            float t = timeSinceLastUpdate / timePerTick;
+            float t = timeSinceLastUpdate / time.TimePerTick;
 
             player.position = Vector3.LerpUnclamped(previous.position, current.position, t);
         }
@@ -40,7 +37,7 @@ namespace Prototype.Movement
             previous = current;
             current = newData;
 
-            lastUpdateTick = tick;
+            lastTick = tick;
         }
     }
 }

@@ -25,12 +25,12 @@ namespace Prototype.Movement
 
         private void Update()
         {
-            interpolation.Update(character.tick);
+            interpolation.Update(character.Time);
         }
 
         private void Character_StateUpdated(PlayerCharacter sender, PlayerStateData e)
         {
-            interpolation.UpdateData(e, character.tick);
+            interpolation.UpdateData(e, character.Time.CurrentTick);
         }
     }
 }

@@ -270,6 +270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1025484057}
   - component: {fileID: 1025484058}
+  - component: {fileID: 1025484059}
   m_Layer: 0
   m_Name: Client
   m_TagString: Untagged
@@ -303,9 +304,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd8ccc27cb8a6e4b8d765ad894557b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tick: 0
+  Time: {fileID: 1025484059}
   mapSize: 10
   server: {fileID: 1310562733}
+--- !u!114 &1025484059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025484056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad7e88ab08759b4f92791614cae8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1089436611
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,6 +574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1310562732}
   - component: {fileID: 1310562733}
+  - component: {fileID: 1310562734}
   m_Layer: 0
   m_Name: Server
   m_TagString: Untagged
@@ -594,9 +608,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e572f44dc43f0244ba5c0ae6922bb377, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tick: 0
+  Time: {fileID: 1310562734}
   mapSize: 10
   client: {fileID: 1025484058}
+--- !u!114 &1310562734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310562731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad7e88ab08759b4f92791614cae8809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1339135795
 GameObject:
   m_ObjectHideFlags: 0

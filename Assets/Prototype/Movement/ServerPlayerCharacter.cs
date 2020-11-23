@@ -19,11 +19,11 @@ namespace Prototype.Movement
             logic = new PlayerLogic(mapSize);
         }
 
-        private void FixedUpdate()
+        protected override void OnTick()
         {
             // input
             Frame<PlayerInputData> inputFrame;
-            while (inputFrameBuffer.TryDequeue(out inputFrame) && inputFrame.tick < tick) { }
+            while (inputFrameBuffer.TryDequeue(out inputFrame) && inputFrame.tick < Time.CurrentTick) { }
 
             // simulation
             currentStateData = logic.Simulate(currentStateData, inputFrame.data);
@@ -33,9 +33,7 @@ namespace Prototype.Movement
             OnStateUpdated();
 
             // messaging
-            client.OnReceivePlayerState(tick, currentStateData);
-
-            tick++;
+            client.OnReceivePlayerState(Time.CurrentTick, currentStateData);
         }
 
         private void OnGUI()
@@ -45,7 +43,7 @@ namespace Prototype.Movement
                 GUILayout.FlexibleSpace();
 
                 GUILayout.Label("--Server--");
-                GUILayout.Label($"Tick: {tick}");
+                GUILayout.Label($"Tick: {Time.CurrentTick}");
                 GUILayout.Label($"InputBuffer.Count: {inputFrameBuffer.Count}");
             }
             GUILayout.EndArea();

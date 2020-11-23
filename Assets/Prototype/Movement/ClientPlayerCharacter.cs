@@ -22,7 +22,7 @@ namespace Prototype.Movement
             reconciliation = new PlayerReconciliation(logic);
         }
 
-        private void FixedUpdate()
+        protected override void OnTick()
         {
             // input
             var inputData = input.Get();
@@ -34,7 +34,7 @@ namespace Prototype.Movement
             Frame<PlayerStateData> stateFrame = default;
             bool hasValue = false;
 
-            while (stateFrameBuffer.Count > 0 && stateFrameBuffer.Peek().tick < tick)
+            while (stateFrameBuffer.Count > 0 && stateFrameBuffer.Peek().tick < Time.CurrentTick)
             {
                 stateFrame = stateFrameBuffer.Dequeue();
                 hasValue = true;
@@ -42,17 +42,15 @@ namespace Prototype.Movement
 
             if (hasValue)
             {
-                reconciliation.Reconciliate(ref currentStateData, stateFrame.data, stateFrame.tick);
+                reconciliation.Reconciliate(ref currentStateData, stateFrame.data, stateFrame.tick + 1); // ! shouldn't need to '+ 1' after tick sync
             }
 
             ApplyState(currentStateData);
             OnStateUpdated();
 
             // messaging
-            server.OnReceivePlayerInput(tick, inputData);
-            reconciliation.AddFrame(tick, currentStateData, inputData);
-
-            tick++;
+            server.OnReceivePlayerInput(Time.CurrentTick + 1, inputData); // ! shouldn't need to '+ 1' after tick sync
+            reconciliation.AddFrame(Time.CurrentTick, currentStateData, inputData);
         }
 
         private void OnGUI()
@@ -60,7 +58,7 @@ namespace Prototype.Movement
             GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
             {
                 GUILayout.Label("--Client--");
-                GUILayout.Label($"Tick: {tick}");
+                GUILayout.Label($"Tick: {Time.CurrentTick}");
                 GUILayout.Label($"UpdateBuffer.Count: {stateFrameBuffer.Count}");
             }
             GUILayout.EndArea();
