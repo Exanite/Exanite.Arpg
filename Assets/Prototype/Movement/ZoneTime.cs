@@ -5,12 +5,11 @@ namespace Prototype.Movement
 {
     public class ZoneTime : MonoBehaviour
     {
-        private float timeOfLastTick;
-        private float elapsedTime;
-
         public event Action Tick;
 
         public uint CurrentTick { get; private set; }
+
+        public float TimeSinceLastTick { get; private set; }
 
         public float CurrentTime
         {
@@ -28,21 +27,13 @@ namespace Prototype.Movement
             }
         }
 
-        public float TimeSinceLastTick
-        {
-            get
-            {
-                return Time.time - timeOfLastTick;
-            }
-        }
-
         private void Update()
         {
-            elapsedTime += Time.deltaTime;
+            TimeSinceLastTick += Time.deltaTime;
 
-            while (elapsedTime > TimePerTick)
+            while (TimeSinceLastTick > TimePerTick)
             {
-                elapsedTime -= TimePerTick;
+                TimeSinceLastTick -= TimePerTick;
 
                 OnTick();
             }
@@ -51,7 +42,6 @@ namespace Prototype.Movement
         private void OnTick()
         {
             CurrentTick++;
-            timeOfLastTick = Time.time;
 
             Tick?.Invoke();
         }
