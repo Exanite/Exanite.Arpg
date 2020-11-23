@@ -31,11 +31,12 @@ namespace Prototype.Movement
             currentStateData = logic.Simulate(currentStateData, inputData);
 
             // state
-            Frame<PlayerStateData> stateFrame;
+            Frame<PlayerStateData> stateFrame = default;
             bool hasValue = false;
 
-            while (stateFrameBuffer.TryDequeue(out stateFrame) && stateFrame.tick < tick)
+            while (stateFrameBuffer.Count > 0 && stateFrameBuffer.Peek().tick < tick)
             {
+                stateFrame = stateFrameBuffer.Dequeue();
                 hasValue = true;
             }
 
