@@ -19,7 +19,8 @@ namespace Prototype.Movement
 
         public void Update(uint currentTick)
         {
-            uint ticksSinceLastUpdate = currentTick - lastUpdateTick;
+            uint ticksSinceLastUpdate = currentTick - lastUpdateTick - 1;
+
             float timePerTick = Time.fixedDeltaTime;
             float timeSinceLastTick = Time.time - Time.fixedTime;
 
