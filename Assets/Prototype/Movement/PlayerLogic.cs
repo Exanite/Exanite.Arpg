@@ -1,4 +1,4 @@
-﻿using Prototype.Networking.Players.Data;
+using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
@@ -12,14 +12,14 @@ namespace Prototype.Movement
             this.mapSize = mapSize;
         }
 
-        public PlayerUpdateData Simulate(PlayerUpdateData updateData, PlayerInputData inputData)
+        public PlayerStateData Simulate(PlayerStateData stateData, PlayerInputData inputData)
         {
             float timePerTick = Time.fixedDeltaTime;
 
-            updateData.position += (Vector3)inputData.movement * timePerTick * 5;
-            updateData.position = Wrap(updateData.position);
+            stateData.position += (Vector3)inputData.movement * timePerTick * 5;
+            stateData.position = Wrap(stateData.position);
 
-            return updateData;
+            return stateData;
         }
 
         private Vector2 Wrap(Vector2 position)

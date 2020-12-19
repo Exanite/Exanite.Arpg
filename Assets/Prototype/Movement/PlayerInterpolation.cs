@@ -1,4 +1,3 @@
-﻿using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
@@ -8,9 +7,9 @@ namespace Prototype.Movement
         public Transform player;
         public float positionSnapThreshold;
 
-        public PlayerUpdateData current;
-        public PlayerUpdateData previous;
-        public uint lastUpdateTick;
+        public PlayerStateData current;
+        public PlayerStateData previous;
+        public uint lastTick;
 
         public PlayerInterpolation(Transform player, float positionSnapThreshold = 2f)
         {
@@ -18,19 +17,17 @@ namespace Prototype.Movement
             this.positionSnapThreshold = positionSnapThreshold;
         }
 
-        public void Update(uint currentTick)
+        public void Update(ZoneTime time)
         {
-            uint ticksSinceLastUpdate = currentTick - lastUpdateTick;
-            float timePerTick = Time.fixedDeltaTime;
-            float timeSinceLastTick = Time.time - Time.fixedTime;
+            uint ticksSinceLastUpdate = time.CurrentTick - lastTick;
+            float timeSinceLastUpdate = (ticksSinceLastUpdate * time.TimePerTick) + time.TimeSinceLastTick;
 
-            float timeSinceLastUpdate = ticksSinceLastUpdate * timePerTick + timeSinceLastTick;
-            float t = timeSinceLastUpdate / timePerTick;
+            float t = timeSinceLastUpdate / time.TimePerTick;
 
             player.position = Vector3.LerpUnclamped(previous.position, current.position, t);
         }
 
-        public void UpdateData(PlayerUpdateData newData, uint tick)
+        public void UpdateData(PlayerStateData newData, uint tick)
         {
             if ((newData.position - current.position).sqrMagnitude > positionSnapThreshold * positionSnapThreshold)
             {
@@ -40,7 +37,7 @@ namespace Prototype.Movement
             previous = current;
             current = newData;
 
-            lastUpdateTick = tick;
+            lastTick = tick;
         }
     }
 }

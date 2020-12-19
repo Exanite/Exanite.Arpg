@@ -1,4 +1,4 @@
-﻿using Exanite.Arpg.Collections;
+using Exanite.Arpg.Collections;
 using Prototype.Networking.Players.Data;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ namespace Prototype.Movement
             this.reconciliationPositionThreshold = reconciliationPositionThreshold;
         }
 
-        public void Reconciliate(ref PlayerUpdateData currentData, PlayerUpdateData newData, uint tick)
+        public void Reconciliate(ref PlayerStateData currentData, PlayerStateData newData, uint tick)
         {
             if (tick < lastTickFromServer)
             {
@@ -36,7 +36,7 @@ namespace Prototype.Movement
             {
                 reconciliationBuffer.Dequeue();
 
-                if (Vector3.Distance(reconciliationData.updateData.position, newData.position) > reconciliationPositionThreshold)
+                if (Vector3.Distance(reconciliationData.stateData.position, newData.position) > reconciliationPositionThreshold)
                 {
                     currentData = newData;
 
@@ -48,9 +48,9 @@ namespace Prototype.Movement
             }
         }
 
-        public void AddFrame(uint tick, PlayerUpdateData updateData, PlayerInputData inputData)
+        public void AddFrame(uint tick, PlayerStateData stateData, PlayerInputData inputData)
         {
-            var reconciliationData = new PlayerReconciliationData(tick, updateData, inputData);
+            var reconciliationData = new PlayerReconciliationData(tick, stateData, inputData);
 
             if (!reconciliationBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
             {

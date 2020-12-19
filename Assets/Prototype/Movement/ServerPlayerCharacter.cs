@@ -1,43 +1,39 @@
-﻿using Exanite.Arpg.Collections;
+using Exanite.Arpg.Collections;
 using Prototype.Networking.Players.Data;
 using UnityEngine;
 
 namespace Prototype.Movement
 {
-    public class ServerPlayerCharacter : MonoBehaviour
+    public class ServerPlayerCharacter : PlayerCharacter
     {
         public ClientPlayerCharacter client;
-        public uint tick;
-        public float mapSize = 10;
 
-        private PlayerUpdateData currentUpdateData;
-
-        private RingBuffer<PlayerInputData> inputBuffer;
+        private RingBuffer<Frame<PlayerInputData>> inputFrameBuffer;
 
         private PlayerLogic logic;
 
         private void Start()
         {
-            inputBuffer = new RingBuffer<PlayerInputData>(64);
+            inputFrameBuffer = new RingBuffer<Frame<PlayerInputData>>(64);
 
             logic = new PlayerLogic(mapSize);
         }
 
-        private void FixedUpdate()
+        protected override void OnTick()
         {
             // input
-            inputBuffer.TryDequeue(out PlayerInputData inputData);
+            Frame<PlayerInputData> inputFrame;
+            while (inputFrameBuffer.TryDequeue(out inputFrame) && inputFrame.tick < Time.CurrentTick) { }
+
+            // simulation
+            currentStateData = logic.Simulate(currentStateData, inputFrame.data);
 
             // state
-            // simulation
-            currentUpdateData = logic.Simulate(currentUpdateData, inputData);
-
-            transform.position = currentUpdateData.position; // ! temp
+            ApplyState(currentStateData);
+            OnStateUpdated();
 
             // messaging
-            client.ReceivePlayerUpdate(currentUpdateData);
-
-            tick++;
+            client.OnReceivePlayerState(Time.CurrentTick, currentStateData);
         }
 
         private void OnGUI()
@@ -46,19 +42,21 @@ namespace Prototype.Movement
             {
                 GUILayout.FlexibleSpace();
 
-                GUILayout.Label($"--Server--");
-                GUILayout.Label($"Tick: {tick}");
-                GUILayout.Label($"InputBuffer.Count: {inputBuffer.Count}");
+                GUILayout.Label("--Server--");
+                GUILayout.Label($"Tick: {Time.CurrentTick}");
+                GUILayout.Label($"InputBuffer.Count: {inputFrameBuffer.Count}");
             }
             GUILayout.EndArea();
         }
 
-        public void ReceivePlayerInput(PlayerInputData data)
+        public void OnReceivePlayerInput(uint tick, PlayerInputData data)
         {
-            if (!inputBuffer.IsFull) // todo add functionality for overwriting existing, but outdated entries
+            if (inputFrameBuffer.IsFull)
             {
-                inputBuffer.Enqueue(data);
+                inputFrameBuffer.Dequeue();
             }
+
+            inputFrameBuffer.Enqueue(new Frame<PlayerInputData>(tick, data));
         }
     }
 }

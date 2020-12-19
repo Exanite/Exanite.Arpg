@@ -1,4 +1,4 @@
-﻿using Prototype.Networking.Players.Data;
+using Prototype.Networking.Players.Data;
 
 namespace Prototype.Movement
 {
@@ -6,13 +6,13 @@ namespace Prototype.Movement
     {
         public uint tick;
 
-        public PlayerUpdateData updateData;
+        public PlayerStateData stateData;
         public PlayerInputData inputData;
 
-        public PlayerReconciliationData(uint tick, PlayerUpdateData updateData, PlayerInputData inputData)
+        public PlayerReconciliationData(uint tick, PlayerStateData stateData, PlayerInputData inputData)
         {
             this.tick = tick;
-            this.updateData = updateData;
+            this.stateData = stateData;
             this.inputData = inputData;
         }
     }
