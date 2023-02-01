@@ -6,6 +6,7 @@ using Exanite.Arpg.Logging;
 using Exanite.Arpg.Versioning;
 using Prototype.Networking.Startup;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Zenject;
 
