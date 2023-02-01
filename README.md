@@ -1,4 +1,3 @@
-![Continuous Integration](https://github.com/Exanite/Exanite.Arpg/workflows/Continuous%20Integration/badge.svg?branch=master)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Exanite/Exanite.Arpg)
 
 # Exanite.Arpg
